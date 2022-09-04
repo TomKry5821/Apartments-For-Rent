@@ -6,11 +6,19 @@
       <list>
         <option value="$PROJECT_DIR$/pom.xml" />
         <option value="$PROJECT_DIR$/Apartments-for-rent-gateway/pom.xml" />
+        <option value="$PROJECT_DIR$/User-service/pom.xml" />
+        <option value="$PROJECT_DIR$/Message-service/pom.xml" />
+        <option value="$PROJECT_DIR$/Gateway-service/pom.xml" />
+        <option value="$PROJECT_DIR$/Announcement-service/pom.xml" />
       </list>
     </option>
     <option name="ignoredFiles">
       <set>
+        <option value="$PROJECT_DIR$/Apartments-for-rent-announcement/pom.xml" />
         <option value="$PROJECT_DIR$/Apartments-for-rent-ga/pom.xml" />
+        <option value="$PROJECT_DIR$/Apartments-for-rent-message/pom.xml" />
+        <option value="$PROJECT_DIR$/Apartments-for-rent-user/pom.xml" />
+        <option value="$PROJECT_DIR$/user-service/pom.xml" />
       </set>
     </option>
   </component>
