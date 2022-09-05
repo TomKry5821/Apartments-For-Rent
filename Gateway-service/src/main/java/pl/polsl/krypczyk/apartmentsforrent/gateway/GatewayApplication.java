@@ -14,13 +14,13 @@ public class GatewayApplication {
         return builder.routes()
                 .route( r -> r
                         .path("/user/api/v1/**")
-                        .uri("http://172.17.0.2:8081"))
+                        .uri("http://localhost:8081"))
                 .route(r -> r
                         .path("/announcement/api/v1/**")
-                        .uri("http://172.17.0.3:8082"))
+                        .uri("http://localhost:8082"))
                 .route(r -> r
                         .path("/message/api/v1/**")
-                        .uri("http://172.17.0.4:8083"))
+                        .uri("http://localhost:8083"))
                 .build();
     }
 
