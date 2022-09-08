@@ -1,8 +1,12 @@
 package pl.polsl.krypczyk.apartmentsforrent.userservice.userdetails;
 
-import lombok.*;
+
+
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -29,5 +33,8 @@ public class UserDetailsEntity {
 
     @Column(name = "PASSWORD", nullable = false)
     private String password;
+
+    @Column(name = "CREATION_DATE", nullable = false)
+    private LocalDateTime creationDate;
 
 }
