@@ -3,6 +3,9 @@ package pl.polsl.krypczyk.apartmentsforrent.userservice.authorization;
 import lombok.RequiredArgsConstructor;
 import org.mapstruct.factory.Mappers;
 import org.springframework.stereotype.Service;
+import pl.polsl.krypczyk.apartmentsforrent.userservice.exception.BadCredentialsException;
+import pl.polsl.krypczyk.apartmentsforrent.userservice.exception.UserAlreadyExistsException;
+import pl.polsl.krypczyk.apartmentsforrent.userservice.exception.UserNotFoundException;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.role.RoleEntity;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.role.RoleRepository;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.user.UserDetailsDTOUserDetailsEntityMapper;
@@ -35,8 +38,13 @@ public class AuthorizationServiceImpl implements AuthorizationService {
 
     private final UserDetailsDTOUserDetailsEntityMapper userDetailsDTOUserDetailsEntityMapper = Mappers.getMapper(UserDetailsDTOUserDetailsEntityMapper.class);
 
-    public UserCreatedResponseDTO registerNewUser(UserDetailsDTO userDetailsDTO) {
-        Objects.requireNonNull(userDetailsDTO, "Invalid user data");
+    public UserCreatedResponseDTO registerNewUser(UserDetailsDTO userDetailsDTO) throws BadCredentialsException, UserAlreadyExistsException {
+        if(Objects.isNull(userDetailsDTO)){
+            throw new BadCredentialsException();
+        }
+        if(this.userAlreadyExists(userDetailsDTO.getEmail())){
+            throw new UserAlreadyExistsException();
+        }
 
         RoleEntity role = this.createAndSaveUserRole();
 
@@ -46,12 +54,15 @@ public class AuthorizationServiceImpl implements AuthorizationService {
 
         UserAuthorizationEntity userAuthorization = createAndSaveUserAuthorization(user);
 
-        return new UserCreatedResponseDTO(userDetailsDTO.getEmail(),
-                userAuthorization.getToken(),
+        return new UserCreatedResponseDTO(userDetailsDTO.getEmail(), userAuthorization.getToken(),
                 user.getRoles()
                         .stream()
                         .map(RoleEntity::getName).collect(Collectors.toList())
         );
+    }
+
+    private Boolean userAlreadyExists(String email){
+        return this.userDetailsRepository.existsByEmail(email);
     }
 
     private RoleEntity createAndSaveUserRole() {
@@ -86,8 +97,10 @@ public class AuthorizationServiceImpl implements AuthorizationService {
     }
 
     @Override
-    public UserLoggedInResponseDTO loginUser(UserLoginRequestDTO userLoginRequestDTO) {
-        Objects.requireNonNull(userLoginRequestDTO, "Invalid credentials");
+    public UserLoggedInResponseDTO loginUser(UserLoginRequestDTO userLoginRequestDTO) throws UserNotFoundException, BadCredentialsException {
+        if(Objects.isNull(userLoginRequestDTO)){
+            throw new BadCredentialsException();
+        }
 
         UserDetailsEntity userDetails = retrieveUserDetailsByEmailAndPassword(userLoginRequestDTO.getEmail(), userLoginRequestDTO.getPassword());
 
@@ -101,10 +114,10 @@ public class AuthorizationServiceImpl implements AuthorizationService {
                 .map(RoleEntity::getName).collect(Collectors.toList()));
     }
 
-    private UserDetailsEntity retrieveUserDetailsByEmailAndPassword(String email, String password) {
+    private UserDetailsEntity retrieveUserDetailsByEmailAndPassword(String email, String password) throws UserNotFoundException {
         UserDetailsEntity userDetails = this.userDetailsRepository.findUserDetailsEntityByEmailAndPassword(email, password);
         if (Objects.isNull(userDetails)) {
-            throw new RuntimeException();
+            throw new UserNotFoundException();
         }
 
         return userDetails;
