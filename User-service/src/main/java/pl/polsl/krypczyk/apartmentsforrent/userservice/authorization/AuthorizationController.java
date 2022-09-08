@@ -6,6 +6,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.user.dto.UserCreatedResponseDTO;
+import pl.polsl.krypczyk.apartmentsforrent.userservice.user.dto.UserLoggedInResponseDTO;
+import pl.polsl.krypczyk.apartmentsforrent.userservice.user.dto.UserLoginRequestDTO;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.userdetails.UserDetailsDTO;
 
 @RestController
@@ -16,8 +18,13 @@ public class AuthorizationController {
     private final AuthorizationService authorizationService;
 
     @PostMapping("/register")
-    public UserCreatedResponseDTO createUser(@RequestBody UserDetailsDTO userDetailsDTO){
-        return this.authorizationService.createUser(userDetailsDTO);
+    public UserCreatedResponseDTO registerNewUser(@RequestBody UserDetailsDTO userDetailsDTO){
+        return this.authorizationService.registerNewUser(userDetailsDTO);
+    }
+
+    @PostMapping("/login")
+    public UserLoggedInResponseDTO loginUser(@RequestBody UserLoginRequestDTO userLoginRequestDTO){
+        return this.authorizationService.loginUser(userLoginRequestDTO);
     }
 
 }

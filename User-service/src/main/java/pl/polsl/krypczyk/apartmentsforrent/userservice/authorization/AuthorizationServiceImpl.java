@@ -9,6 +9,8 @@ import pl.polsl.krypczyk.apartmentsforrent.userservice.user.UserDetailsDTOUserDe
 import pl.polsl.krypczyk.apartmentsforrent.userservice.user.UserEntity;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.user.UserRepository;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.user.dto.UserCreatedResponseDTO;
+import pl.polsl.krypczyk.apartmentsforrent.userservice.user.dto.UserLoggedInResponseDTO;
+import pl.polsl.krypczyk.apartmentsforrent.userservice.user.dto.UserLoginRequestDTO;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.userauthorization.UserAuthorizationEntity;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.userauthorization.UserAuthorizationRepository;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.userdetails.UserDetailsDTO;
@@ -33,44 +35,44 @@ public class AuthorizationServiceImpl implements AuthorizationService {
 
     private final UserDetailsDTOUserDetailsEntityMapper userDetailsDTOUserDetailsEntityMapper = Mappers.getMapper(UserDetailsDTOUserDetailsEntityMapper.class);
 
-    public UserCreatedResponseDTO createUser(UserDetailsDTO userDetailsDTO) {
+    public UserCreatedResponseDTO registerNewUser(UserDetailsDTO userDetailsDTO) {
         Objects.requireNonNull(userDetailsDTO, "Invalid user data");
 
-        RoleEntity roleEntity = this.createAndSaveUserRole();
+        RoleEntity role = this.createAndSaveUserRole();
 
-        UserDetailsEntity userDetailsEntity = createAndSaveUserDetails(userDetailsDTO);
+        UserDetailsEntity userDetails = createAndSaveUserDetails(userDetailsDTO);
 
-        UserEntity userEntity = this.createAndSaveUserEntity(userDetailsEntity, List.of(roleEntity));
+        UserEntity user = this.createAndSaveUserEntity(userDetails, List.of(role));
 
-        UserAuthorizationEntity userAuthorizationEntity = createAndSaveUserAuthorization(userEntity);
+        UserAuthorizationEntity userAuthorization = createAndSaveUserAuthorization(user);
 
         return new UserCreatedResponseDTO(userDetailsDTO.getEmail(),
-                userAuthorizationEntity.getToken(),
-                userEntity.getRoles()
-                    .stream()
-                    .map(RoleEntity::getName).collect(Collectors.toList()),
-                userEntity.getId());
+                userAuthorization.getToken(),
+                user.getRoles()
+                        .stream()
+                        .map(RoleEntity::getName).collect(Collectors.toList())
+        );
     }
 
     private RoleEntity createAndSaveUserRole() {
-        RoleEntity roleEntity = new RoleEntity("ROLE_USER");
-        roleRepository.save(roleEntity);
-        return roleEntity;
+        RoleEntity role = new RoleEntity("ROLE_USER");
+        roleRepository.save(role);
+        return role;
     }
 
     private UserAuthorizationEntity createAndSaveUserAuthorization(UserEntity userEntity) {
-        UserAuthorizationEntity userAuthorizationEntity = new UserAuthorizationEntity();
-        userAuthorizationEntity.setToken(UUID.randomUUID());
-        userAuthorizationEntity.setUserEntity(userEntity);
-        userAuthorizationRepository.save(userAuthorizationEntity);
-        return userAuthorizationEntity;
+        UserAuthorizationEntity userAuthorization = new UserAuthorizationEntity();
+        userAuthorization.setToken(UUID.randomUUID());
+        userAuthorization.setUserEntity(userEntity);
+        userAuthorizationRepository.save(userAuthorization);
+        return userAuthorization;
     }
 
     private UserDetailsEntity createAndSaveUserDetails(UserDetailsDTO userDetailsDTO) {
-        UserDetailsEntity userDetailsEntity = this.userDetailsDTOUserDetailsEntityMapper.userDetailsDTOToUserDetailsEntity(userDetailsDTO);
-        userDetailsEntity.setCreationDate(LocalDateTime.now());
-        userDetailsRepository.save(userDetailsEntity);
-        return userDetailsEntity;
+        UserDetailsEntity userDetails = this.userDetailsDTOUserDetailsEntityMapper.userDetailsDTOToUserDetailsEntity(userDetailsDTO);
+        userDetails.setCreationDate(LocalDateTime.now());
+        userDetailsRepository.save(userDetails);
+        return userDetails;
     }
 
     private UserEntity createAndSaveUserEntity(UserDetailsEntity userDetailsEntity,
@@ -81,5 +83,35 @@ public class AuthorizationServiceImpl implements AuthorizationService {
         userRepository.save(userEntity);
 
         return userEntity;
+    }
+
+    @Override
+    public UserLoggedInResponseDTO loginUser(UserLoginRequestDTO userLoginRequestDTO) {
+        Objects.requireNonNull(userLoginRequestDTO, "Invalid credentials");
+
+        UserDetailsEntity userDetails = retrieveUserDetailsByEmailAndPassword(userLoginRequestDTO.getEmail(), userLoginRequestDTO.getPassword());
+
+        UserEntity user = this.userRepository.findUserEntityByUserDetailsEntity(userDetails);
+
+        UserAuthorizationEntity userAuthorization = this.userAuthorizationRepository.findUserAuthorizationEntityByUserEntity(user);
+
+        this.updateAccessToken(userAuthorization);
+
+        return new UserLoggedInResponseDTO(userAuthorization.getToken(), userDetails.getEmail(), user.getRoles().stream()
+                .map(RoleEntity::getName).collect(Collectors.toList()));
+    }
+
+    private UserDetailsEntity retrieveUserDetailsByEmailAndPassword(String email, String password) {
+        UserDetailsEntity userDetails = this.userDetailsRepository.findUserDetailsEntityByEmailAndPassword(email, password);
+        if (Objects.isNull(userDetails)) {
+            throw new RuntimeException();
+        }
+
+        return userDetails;
+    }
+
+    private void updateAccessToken(UserAuthorizationEntity userAuthorization) {
+        userAuthorization.setToken(UUID.randomUUID());
+        this.userAuthorizationRepository.save(userAuthorization);
     }
 }

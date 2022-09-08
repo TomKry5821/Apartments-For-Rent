@@ -1,24 +1,24 @@
 package pl.polsl.krypczyk.apartmentsforrent.userservice.user.dto;
 
 import lombok.Data;
-import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.UUID;
 
 @Data
-public class UserCreatedResponseDTO {
+public class UserLoggedInResponseDTO {
 
-    private final String email;
     private final UUID accessToken;
+    private final String email;
     private final Collection<String> roles;
-    private final LocalDateTime creationDate;
+    private final LocalDateTime loginDate;
 
-    public UserCreatedResponseDTO(String email, UUID accessToken, Collection<String> roles) {
-        this.email = email;
+    public UserLoggedInResponseDTO(UUID accessToken, String email, Collection<String> roles){
         this.accessToken = accessToken;
+        this.email = email;
         this.roles = roles;
-        this.creationDate = LocalDateTime.now();
+        this.loginDate = LocalDateTime.now();
     }
+
 }
