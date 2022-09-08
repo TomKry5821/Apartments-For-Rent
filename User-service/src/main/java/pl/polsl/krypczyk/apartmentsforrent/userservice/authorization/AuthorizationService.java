@@ -45,9 +45,11 @@ public class AuthorizationService {
         UserAuthorizationEntity userAuthorizationEntity = createAndSaveUserAuthorization(userEntity);
 
         return new UserCreatedResponseDTO(userDetailsDTO.getEmail(),
-                userAuthorizationEntity.getToken(), userEntity.getRoles()
-                .stream()
-                .map(RoleEntity::getName).collect(Collectors.toList()));
+                userAuthorizationEntity.getToken(),
+                userEntity.getRoles()
+                    .stream()
+                    .map(RoleEntity::getName).collect(Collectors.toList()),
+                userEntity.getId());
     }
 
     private RoleEntity createAndSaveUserRole() {
