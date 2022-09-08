@@ -22,17 +22,17 @@ public class GatewayApplication {
                         .path("/user/api/v1/**")
                         .filters(f ->
                                 f.filter(userRoleAuthGatewayFilterFactory.apply(new UserRoleAuthGatewayFilterFactory.Config())))
-                        .uri("http://localhost:8081"))
+                        .uri("http://User:8081"))
                 .route(r -> r
                         .path("/announcement/api/v1/**")
                         .filters(f ->
                                 f.filter(userRoleAuthGatewayFilterFactory.apply(new UserRoleAuthGatewayFilterFactory.Config())))
-                        .uri("http://localhost:8082"))
+                        .uri("http://Announcement:8082"))
                 .route(r -> r
                         .path("/message/api/v1/**")
                         .filters(f ->
                                 f.filter(userRoleAuthGatewayFilterFactory.apply(new UserRoleAuthGatewayFilterFactory.Config())))
-                        .uri("http://localhost:8083"))
+                        .uri("http://Message:8083"))
                 .build();
     }
 

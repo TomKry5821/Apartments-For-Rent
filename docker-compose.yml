@@ -1,0 +1,88 @@
+version: "3.9"
+
+services:
+  user-database:
+    container_name: UserDatabase
+    image: postgres
+    ports:
+      - "8091:5432"
+    environment:
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
+    volumes:
+      - AFR-volume
+    networks:
+      - AFR
+
+  announcement-database:
+    container_name: AnnouncementDatabase
+    image: postgres
+    ports:
+      - "8092:5432"
+    environment:
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
+    volumes:
+      - AFR-volume
+    networks:
+      - AFR
+
+  message-database:
+    container_name: MessageDatabase
+    image: postgres
+    ports:
+      - "8093:5432"
+    environment:
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
+    volumes:
+      - AFR-volume
+    networks:
+      - AFR
+
+  gateway:
+    container_name: Gateway
+    image: gateway-service.jar
+    ports:
+      - "8080:8080"
+    volumes:
+      - AFR-volume
+    networks:
+      - AFR
+
+  user:
+    container_name: User
+    image: user-service.jar
+    ports:
+      - "8081:8081"
+    volumes:
+      - AFR-volume
+    networks:
+      - AFR
+
+  announcement:
+    container_name: Announcement
+    image: announcement-service.jar
+    ports:
+      - "8082:8082"
+    volumes:
+      - AFR-volume
+    networks:
+      - AFR
+
+  message:
+    container_name: Message
+    image: message-service.jar
+    ports:
+      - "8083:8083"
+    volumes:
+      - AFR-volume
+    networks:
+      - AFR
+
+volumes:
+  AFR-volume:
+
+networks:
+  AFR:
+    driver: bridge
