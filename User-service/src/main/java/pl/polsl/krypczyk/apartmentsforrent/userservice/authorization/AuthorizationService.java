@@ -38,11 +38,11 @@ public class AuthorizationService {
 
         RoleEntity roleEntity = this.createAndSaveUserRole();
 
-        UserAuthorizationEntity userAuthorizationEntity = createAndSaveUserAuthorization();
-
         UserDetailsEntity userDetailsEntity = createAndSaveUserDetails(userDetailsDTO);
 
-        UserEntity userEntity = this.createAndSaveUserEntity(userDetailsEntity, userAuthorizationEntity, List.of(roleEntity));
+        UserEntity userEntity = this.createAndSaveUserEntity(userDetailsEntity, List.of(roleEntity));
+
+        UserAuthorizationEntity userAuthorizationEntity = createAndSaveUserAuthorization(userEntity);
 
         return new UserCreatedResponseDTO(userDetailsDTO.getEmail(),
                 userAuthorizationEntity.getToken(), userEntity.getRoles()
@@ -56,9 +56,10 @@ public class AuthorizationService {
         return roleEntity;
     }
 
-    private UserAuthorizationEntity createAndSaveUserAuthorization() {
+    private UserAuthorizationEntity createAndSaveUserAuthorization(UserEntity userEntity) {
         UserAuthorizationEntity userAuthorizationEntity = new UserAuthorizationEntity();
         userAuthorizationEntity.setToken(UUID.randomUUID());
+        userAuthorizationEntity.setUserEntity(userEntity);
         userAuthorizationRepository.save(userAuthorizationEntity);
         return userAuthorizationEntity;
     }
@@ -71,11 +72,9 @@ public class AuthorizationService {
     }
 
     private UserEntity createAndSaveUserEntity(UserDetailsEntity userDetailsEntity,
-                                               UserAuthorizationEntity userAuthorizationEntity,
                                                Collection<RoleEntity> roleEntities) {
         UserEntity userEntity = new UserEntity();
         userEntity.setUserDetailsEntity(userDetailsEntity);
-        userEntity.setUserAuthorizationEntity(userAuthorizationEntity);
         userEntity.setRoles(roleEntities);
         userRepository.save(userEntity);
 

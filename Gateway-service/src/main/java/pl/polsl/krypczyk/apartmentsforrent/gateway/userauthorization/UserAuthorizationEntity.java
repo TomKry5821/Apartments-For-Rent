@@ -1,10 +1,10 @@
-package pl.polsl.krypczyk.apartmentsforrent.userservice.userauthorization;
+package pl.polsl.krypczyk.apartmentsforrent.gateway.userauthorization;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import pl.polsl.krypczyk.apartmentsforrent.userservice.user.UserEntity;
+import pl.polsl.krypczyk.apartmentsforrent.gateway.user.UserEntity;
 
 import javax.persistence.*;
 import java.util.UUID;
@@ -25,7 +25,7 @@ public class UserAuthorizationEntity {
     @Column(name = "TOKEN", nullable = true)
     private UUID token;
 
-    @OneToOne()
-    @JoinColumn(name = "USER_ID", referencedColumnName = "ID")
+    @OneToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "USER_ID", referencedColumnName = "ID", nullable = false)
     private UserEntity userEntity;
 }

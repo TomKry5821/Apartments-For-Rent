@@ -1,4 +1,4 @@
-package pl.polsl.krypczyk.apartmentsforrent.gateway;
+package pl.polsl.krypczyk.apartmentsforrent.gateway.filter;
 
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Component;
