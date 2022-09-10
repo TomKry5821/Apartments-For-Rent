@@ -23,7 +23,7 @@ public class CreateUserRequestDTO {
     @Email(message = "Invalid e-mail")
     private String email;
 
-    @NotEmpty(message = "Invalid is active account")
+    @NotNull(message = "Invalid is active status")
     private Boolean isActive;
 
     @NotEmpty(message = "Invalid password")
