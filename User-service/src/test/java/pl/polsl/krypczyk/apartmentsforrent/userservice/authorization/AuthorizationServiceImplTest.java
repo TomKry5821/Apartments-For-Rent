@@ -6,11 +6,11 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import pl.polsl.krypczyk.apartmentsforrent.userservice.exception.BadCredentialsException;
-import pl.polsl.krypczyk.apartmentsforrent.userservice.exception.UserAlreadyExistsException;
-import pl.polsl.krypczyk.apartmentsforrent.userservice.exception.UserNotFoundException;
+import pl.polsl.krypczyk.apartmentsforrent.userservice.authorization.exception.BadCredentialsException;
+import pl.polsl.krypczyk.apartmentsforrent.userservice.user.exception.UserAlreadyExistsException;
+import pl.polsl.krypczyk.apartmentsforrent.userservice.user.exception.UserNotFoundException;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.user.dto.UserLoginRequestDTO;
-import pl.polsl.krypczyk.apartmentsforrent.userservice.userdetails.dto.CreateUserRequestDTO;
+import pl.polsl.krypczyk.apartmentsforrent.userservice.user.userdetails.dto.CreateUserRequestDTO;
 
 @SpringBootTest
 class AuthorizationServiceImplTest {

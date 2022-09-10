@@ -1,8 +1,8 @@
 package pl.polsl.krypczyk.apartmentsforrent.userservice.user;
 
 import org.mapstruct.Mapper;
-import pl.polsl.krypczyk.apartmentsforrent.userservice.userdetails.dto.CreateUserRequestDTO;
-import pl.polsl.krypczyk.apartmentsforrent.userservice.userdetails.UserDetailsEntity;
+import pl.polsl.krypczyk.apartmentsforrent.userservice.user.userdetails.dto.CreateUserRequestDTO;
+import pl.polsl.krypczyk.apartmentsforrent.userservice.user.userdetails.UserDetailsEntity;
 
 @Mapper
 public interface UserDetailsDTOUserDetailsEntityMapper {

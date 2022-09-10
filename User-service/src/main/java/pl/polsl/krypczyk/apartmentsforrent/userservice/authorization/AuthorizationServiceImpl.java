@@ -2,11 +2,10 @@ package pl.polsl.krypczyk.apartmentsforrent.userservice.authorization;
 
 import lombok.RequiredArgsConstructor;
 import org.mapstruct.factory.Mappers;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import pl.polsl.krypczyk.apartmentsforrent.userservice.exception.BadCredentialsException;
-import pl.polsl.krypczyk.apartmentsforrent.userservice.exception.UserAlreadyExistsException;
-import pl.polsl.krypczyk.apartmentsforrent.userservice.exception.UserNotFoundException;
+import pl.polsl.krypczyk.apartmentsforrent.userservice.authorization.exception.BadCredentialsException;
+import pl.polsl.krypczyk.apartmentsforrent.userservice.user.exception.UserAlreadyExistsException;
+import pl.polsl.krypczyk.apartmentsforrent.userservice.user.exception.UserNotFoundException;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.role.RoleEntity;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.role.RoleRepository;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.user.UserDetailsDTOUserDetailsEntityMapper;
@@ -15,15 +14,12 @@ import pl.polsl.krypczyk.apartmentsforrent.userservice.user.UserRepository;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.user.dto.UserCreatedResponseDTO;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.user.dto.UserLoggedInResponseDTO;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.user.dto.UserLoginRequestDTO;
-import pl.polsl.krypczyk.apartmentsforrent.userservice.userauthorization.UserAuthorizationEntity;
-import pl.polsl.krypczyk.apartmentsforrent.userservice.userauthorization.UserAuthorizationRepository;
-import pl.polsl.krypczyk.apartmentsforrent.userservice.userdetails.dto.CreateUserRequestDTO;
-import pl.polsl.krypczyk.apartmentsforrent.userservice.userdetails.UserDetailsEntity;
-import pl.polsl.krypczyk.apartmentsforrent.userservice.userdetails.UserDetailsRepository;
+import pl.polsl.krypczyk.apartmentsforrent.userservice.user.userauthorization.UserAuthorizationEntity;
+import pl.polsl.krypczyk.apartmentsforrent.userservice.user.userauthorization.UserAuthorizationRepository;
+import pl.polsl.krypczyk.apartmentsforrent.userservice.user.userdetails.dto.CreateUserRequestDTO;
+import pl.polsl.krypczyk.apartmentsforrent.userservice.user.userdetails.UserDetailsEntity;
+import pl.polsl.krypczyk.apartmentsforrent.userservice.user.userdetails.UserDetailsRepository;
 
-import javax.validation.Valid;
-import javax.validation.Validator;
-import javax.validation.executable.ValidateOnExecution;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
@@ -131,7 +127,9 @@ public class AuthorizationServiceImpl implements AuthorizationService {
         this.userAuthorizationRepository.save(userAuthorization);
     }
 
+
     // FOR TEST PURPOSES
+    @Override
     public void  deleteDbContent(){
         this.userAuthorizationRepository.deleteAll();
         this.userRepository.deleteAll();

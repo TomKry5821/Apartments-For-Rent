@@ -1,4 +1,4 @@
-package pl.polsl.krypczyk.apartmentsforrent.userservice.userauthorization;
+package pl.polsl.krypczyk.apartmentsforrent.userservice.user.userauthorization;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

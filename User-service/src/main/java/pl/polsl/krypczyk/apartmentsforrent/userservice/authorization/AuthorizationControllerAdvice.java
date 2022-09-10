@@ -1,15 +1,14 @@
 package pl.polsl.krypczyk.apartmentsforrent.userservice.authorization;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
-import pl.polsl.krypczyk.apartmentsforrent.userservice.exception.BadCredentialsException;
-import pl.polsl.krypczyk.apartmentsforrent.userservice.exception.UserAlreadyExistsException;
-import pl.polsl.krypczyk.apartmentsforrent.userservice.exception.UserNotFoundException;
+import pl.polsl.krypczyk.apartmentsforrent.userservice.authorization.exception.BadCredentialsException;
+import pl.polsl.krypczyk.apartmentsforrent.userservice.user.exception.UserAlreadyExistsException;
+import pl.polsl.krypczyk.apartmentsforrent.userservice.user.exception.UserNotFoundException;
 
 @ControllerAdvice
 public class AuthorizationControllerAdvice {

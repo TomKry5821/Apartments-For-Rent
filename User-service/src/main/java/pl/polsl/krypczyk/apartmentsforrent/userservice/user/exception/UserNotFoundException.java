@@ -1,4 +1,4 @@
-package pl.polsl.krypczyk.apartmentsforrent.userservice.exception;
+package pl.polsl.krypczyk.apartmentsforrent.userservice.user.exception;
 
 public class UserNotFoundException extends RuntimeException {
 

@@ -5,8 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.role.RoleEntity;
-import pl.polsl.krypczyk.apartmentsforrent.userservice.userauthorization.UserAuthorizationEntity;
-import pl.polsl.krypczyk.apartmentsforrent.userservice.userdetails.UserDetailsEntity;
+import pl.polsl.krypczyk.apartmentsforrent.userservice.user.userdetails.UserDetailsEntity;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;

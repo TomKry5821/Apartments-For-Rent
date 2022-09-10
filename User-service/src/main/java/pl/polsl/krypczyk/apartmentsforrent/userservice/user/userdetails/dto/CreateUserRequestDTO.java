@@ -1,4 +1,4 @@
-package pl.polsl.krypczyk.apartmentsforrent.userservice.userdetails.dto;
+package pl.polsl.krypczyk.apartmentsforrent.userservice.user.userdetails.dto;
 
 import lombok.Builder;
 import lombok.Getter;

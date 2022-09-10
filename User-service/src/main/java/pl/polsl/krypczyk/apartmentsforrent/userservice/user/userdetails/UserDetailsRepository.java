@@ -1,4 +1,4 @@
-package pl.polsl.krypczyk.apartmentsforrent.userservice.userdetails;
+package pl.polsl.krypczyk.apartmentsforrent.userservice.user.userdetails;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
