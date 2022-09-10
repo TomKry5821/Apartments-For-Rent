@@ -5,10 +5,15 @@ import pl.polsl.krypczyk.apartmentsforrent.userservice.user.dto.UserLoggedInResp
 import pl.polsl.krypczyk.apartmentsforrent.userservice.user.dto.UserLoginRequestDTO;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.user.userdetails.dto.CreateUserRequestDTO;
 
+import java.util.UUID;
+
 public interface AuthorizationService {
 
-     UserCreatedResponseDTO registerNewUser(CreateUserRequestDTO createUserRequestDTO);
-     UserLoggedInResponseDTO loginUser(UserLoginRequestDTO userLoginRequestDTO);
+    UserCreatedResponseDTO registerNewUser(CreateUserRequestDTO createUserRequestDTO);
+
+    UserLoggedInResponseDTO loginUser(UserLoginRequestDTO userLoginRequestDTO);
+
+    void logoutUser(UUID accessToken);
 
     void deleteDbContent();
 }

@@ -3,6 +3,7 @@ package pl.polsl.krypczyk.apartmentsforrent.userservice.authorization;
 import lombok.RequiredArgsConstructor;
 import org.mapstruct.factory.Mappers;
 import org.springframework.stereotype.Service;
+import pl.polsl.krypczyk.apartmentsforrent.userservice.annotation.uuid;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.authorization.exception.BadCredentialsException;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.user.exception.UserAlreadyExistsException;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.user.exception.UserNotFoundException;
@@ -45,13 +46,13 @@ public class AuthorizationServiceImpl implements AuthorizationService {
             throw new UserAlreadyExistsException();
         }
 
-        RoleEntity role = this.createAndSaveUserRole();
+        var role = this.createAndSaveUserRole();
 
-        UserDetailsEntity userDetails = createAndSaveUserDetails(createUserRequestDTO);
+        var userDetails = createAndSaveUserDetails(createUserRequestDTO);
 
-        UserEntity user = this.createAndSaveUserEntity(userDetails, List.of(role));
+        var user = this.createAndSaveUserEntity(userDetails, List.of(role));
 
-        UserAuthorizationEntity userAuthorization = createAndSaveUserAuthorization(user);
+        var userAuthorization = createAndSaveUserAuthorization(user);
 
         return new UserCreatedResponseDTO(createUserRequestDTO.getEmail(), userAuthorization.getToken(),
                 user.getRoles()
@@ -65,13 +66,13 @@ public class AuthorizationServiceImpl implements AuthorizationService {
     }
 
     private RoleEntity createAndSaveUserRole() {
-        RoleEntity role = new RoleEntity("ROLE_USER");
+        var role = new RoleEntity("ROLE_USER");
         roleRepository.save(role);
         return role;
     }
 
     private UserAuthorizationEntity createAndSaveUserAuthorization(UserEntity userEntity) {
-        UserAuthorizationEntity userAuthorization = new UserAuthorizationEntity();
+        var userAuthorization = new UserAuthorizationEntity();
         userAuthorization.setToken(UUID.randomUUID());
         userAuthorization.setUserEntity(userEntity);
         userAuthorizationRepository.save(userAuthorization);
@@ -79,7 +80,7 @@ public class AuthorizationServiceImpl implements AuthorizationService {
     }
 
     private UserDetailsEntity createAndSaveUserDetails(CreateUserRequestDTO createUserRequestDTO) {
-        UserDetailsEntity userDetails = this.userDetailsDTOUserDetailsEntityMapper.userDetailsDTOToUserDetailsEntity(createUserRequestDTO);
+        var userDetails = this.userDetailsDTOUserDetailsEntityMapper.userDetailsDTOToUserDetailsEntity(createUserRequestDTO);
         userDetails.setCreationDate(LocalDateTime.now());
         userDetailsRepository.save(userDetails);
         return userDetails;
@@ -87,7 +88,7 @@ public class AuthorizationServiceImpl implements AuthorizationService {
 
     private UserEntity createAndSaveUserEntity(UserDetailsEntity userDetailsEntity,
                                                Collection<RoleEntity> roleEntities) {
-        UserEntity userEntity = new UserEntity();
+        var userEntity = new UserEntity();
         userEntity.setUserDetailsEntity(userDetailsEntity);
         userEntity.setRoles(roleEntities);
         userRepository.save(userEntity);
@@ -114,7 +115,7 @@ public class AuthorizationServiceImpl implements AuthorizationService {
     }
 
     private UserDetailsEntity retrieveUserDetailsByEmailAndPassword(String email, String password) {
-        UserDetailsEntity userDetails = this.userDetailsRepository.findUserDetailsEntityByEmailAndPassword(email, password);
+        var userDetails = this.userDetailsRepository.findUserDetailsEntityByEmailAndPassword(email, password);
         if (Objects.isNull(userDetails)) {
             throw new UserNotFoundException();
         }
@@ -127,6 +128,24 @@ public class AuthorizationServiceImpl implements AuthorizationService {
         this.userAuthorizationRepository.save(userAuthorization);
     }
 
+    @Override
+    public void logoutUser(UUID accessToken){
+        var userAuthorization = this.findUserByAccessToken(accessToken);
+        this.resetUserAccessToken(userAuthorization);
+    }
+
+    private UserAuthorizationEntity findUserByAccessToken(UUID accessToken){
+        var userAuthorization = this.userAuthorizationRepository.findUserAuthorizationEntityByToken(accessToken);
+        if(Objects.isNull(userAuthorization)){
+            throw new UserNotFoundException();
+        }
+        return userAuthorization;
+    }
+
+    private void resetUserAccessToken(UserAuthorizationEntity userAuthorization){
+        userAuthorization.setToken(UUID.randomUUID());
+        userAuthorizationRepository.save(userAuthorization);
+    }
 
     // FOR TEST PURPOSES
     @Override
