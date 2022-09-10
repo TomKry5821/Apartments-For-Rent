@@ -1,4 +1,4 @@
-package pl.polsl.krypczyk.apartmentsforrent.userservice.user;
+package pl.polsl.krypczyk.apartmentsforrent.userservice.user.mapper;
 
 import org.mapstruct.Mapper;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.user.userdetails.dto.CreateUserRequestDTO;

@@ -4,7 +4,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import pl.polsl.krypczyk.apartmentsforrent.userservice.role.RoleEntity;
+import pl.polsl.krypczyk.apartmentsforrent.userservice.user.role.RoleEntity;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.user.userdetails.UserDetailsEntity;
 
 import javax.persistence.Entity;
@@ -35,7 +35,7 @@ public class UserEntity {
     @Column(name = "ID")
     private Long id;
 
-    @OneToOne(orphanRemoval = true, optional = false)
+    @OneToOne(orphanRemoval = true, optional = false, fetch = FetchType.EAGER)
     @JoinColumn(name = "USER_DETAILS_ID", referencedColumnName = "ID", nullable = false)
     private UserDetailsEntity userDetailsEntity;
 

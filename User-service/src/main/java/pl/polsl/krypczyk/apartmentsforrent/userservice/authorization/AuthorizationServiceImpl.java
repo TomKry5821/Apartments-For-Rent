@@ -3,13 +3,12 @@ package pl.polsl.krypczyk.apartmentsforrent.userservice.authorization;
 import lombok.RequiredArgsConstructor;
 import org.mapstruct.factory.Mappers;
 import org.springframework.stereotype.Service;
-import pl.polsl.krypczyk.apartmentsforrent.userservice.annotation.uuid;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.authorization.exception.BadCredentialsException;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.user.exception.UserAlreadyExistsException;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.user.exception.UserNotFoundException;
-import pl.polsl.krypczyk.apartmentsforrent.userservice.role.RoleEntity;
-import pl.polsl.krypczyk.apartmentsforrent.userservice.role.RoleRepository;
-import pl.polsl.krypczyk.apartmentsforrent.userservice.user.UserDetailsDTOUserDetailsEntityMapper;
+import pl.polsl.krypczyk.apartmentsforrent.userservice.user.role.RoleEntity;
+import pl.polsl.krypczyk.apartmentsforrent.userservice.user.role.RoleRepository;
+import pl.polsl.krypczyk.apartmentsforrent.userservice.user.mapper.UserDetailsDTOUserDetailsEntityMapper;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.user.UserEntity;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.user.UserRepository;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.user.dto.UserCreatedResponseDTO;
@@ -147,7 +146,10 @@ public class AuthorizationServiceImpl implements AuthorizationService {
         userAuthorizationRepository.save(userAuthorization);
     }
 
-    // FOR TEST PURPOSES
+
+
+    //////////////////////////////////////////////////////////////////////
+    ///////////////////////////////FOR TEST PURPOSES//////////////////////
     @Override
     public void  deleteDbContent(){
         this.userAuthorizationRepository.deleteAll();
