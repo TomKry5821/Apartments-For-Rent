@@ -9,7 +9,9 @@ import pl.polsl.krypczyk.apartmentsforrent.userservice.exception.UserNotFoundExc
 import pl.polsl.krypczyk.apartmentsforrent.userservice.user.dto.UserCreatedResponseDTO;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.user.dto.UserLoggedInResponseDTO;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.user.dto.UserLoginRequestDTO;
-import pl.polsl.krypczyk.apartmentsforrent.userservice.userdetails.UserDetailsDTO;
+import pl.polsl.krypczyk.apartmentsforrent.userservice.userdetails.dto.CreateUserRequestDTO;
+
+import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/user/api/v1/auth")
@@ -20,13 +22,13 @@ public class AuthorizationController {
 
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)
-    public UserCreatedResponseDTO registerNewUser(@RequestBody UserDetailsDTO userDetailsDTO) throws BadCredentialsException, UserAlreadyExistsException {
-        return this.authorizationService.registerNewUser(userDetailsDTO);
+    public UserCreatedResponseDTO registerNewUser(@Valid @RequestBody CreateUserRequestDTO createUserRequestDTO) {
+        return this.authorizationService.registerNewUser(createUserRequestDTO);
     }
 
     @PostMapping("/login")
     @ResponseStatus(HttpStatus.OK)
-    public UserLoggedInResponseDTO loginUser(@RequestBody UserLoginRequestDTO userLoginRequestDTO) throws UserNotFoundException, BadCredentialsException {
+    public UserLoggedInResponseDTO loginUser(@Valid @RequestBody UserLoginRequestDTO userLoginRequestDTO) {
         return this.authorizationService.loginUser(userLoginRequestDTO);
     }
 

@@ -1,6 +1,6 @@
 package pl.polsl.krypczyk.apartmentsforrent.userservice.exception;
 
-public class BadCredentialsException extends Exception {
+public class BadCredentialsException extends RuntimeException {
 
     private static final String BAD_CREDENTIALS_MESSAGE = "Provided credentials are invalid";
 

@@ -2,6 +2,7 @@ package pl.polsl.krypczyk.apartmentsforrent.userservice.authorization;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -31,6 +32,13 @@ public class AuthorizationControllerAdvice {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
     public String handleException(UserAlreadyExistsException e){
+        return e.getMessage();
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseBody
+    public String handleException(MethodArgumentNotValidException e){
         return e.getMessage();
     }
 }
