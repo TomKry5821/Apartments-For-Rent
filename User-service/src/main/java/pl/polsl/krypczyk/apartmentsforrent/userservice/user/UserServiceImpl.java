@@ -67,9 +67,6 @@ public class UserServiceImpl implements UserService {
         var password = changeUserDetailsDTO.getPassword();
         if (!Objects.isNull(password))
             userDetailsEntity.setPassword(password);
-        var isActive = changeUserDetailsDTO.getIsActive();
-        if (!Objects.isNull(isActive))
-            userDetailsEntity.setIsActive(isActive);
 
         this.userDetailsRepository.save(userDetailsEntity);
     }

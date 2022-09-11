@@ -16,8 +16,6 @@ public class ChangeUserDetailsDTO {
 
     private String email;
 
-    private Boolean isActive;
-
     private String password;
 
 }

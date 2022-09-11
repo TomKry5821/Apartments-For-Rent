@@ -89,7 +89,6 @@ class UserControllerTest {
                                         "    \"name\": \"Test\",\n" +
                                         "    \"surname\": \"Testowy\",\n" +
                                         "    \"email\": \"test@test.pl\",\n" +
-                                        "    \"isActive\": true,\n" +
                                         "    \"password\": \"Test\"\n" +
                                         "}")
                                 .header("Authorization", token))
@@ -111,7 +110,6 @@ class UserControllerTest {
                                         "    \"name\": \"Test\",\n" +
                                         "    \"surname\": \"Testowy\",\n" +
                                         "    \"email\": \"test@test.pl\",\n" +
-                                        "    \"isActive\": true,\n" +
                                         "    \"password\": \"Test\"\n" +
                                         "}")
                                 .header("Authorization", token))
@@ -133,7 +131,6 @@ class UserControllerTest {
                                         "    \"name\": \"Test\",\n" +
                                         "    \"surname\": \"Testowy\",\n" +
                                         "    \"email\": \"test@test.pl\",\n" +
-                                        "    \"isActive\": true,\n" +
                                         "    \"password\": \"Test\"\n" +
                                         "}")
                                 .header("Authorization", "sfsf"))

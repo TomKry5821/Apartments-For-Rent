@@ -159,7 +159,6 @@ class UserServiceImplTest {
                 .password(VALID_USER_PASSWORD)
                 .name(VALID_USER_NAME)
                 .email(VALID_USER_EMAIL)
-                .isActive(VALID_USER_IS_ACTIVE)
                 .build();
     }
 
