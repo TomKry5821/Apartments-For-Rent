@@ -41,8 +41,11 @@ public class UserServiceImpl implements UserService {
     public ChangeUserDetailsDTO changeUserDetails(ChangeUserDetailsDTO changeUserDetailsDTO) {
         if (Objects.isNull(changeUserDetailsDTO))
             throw new InvalidUserDetailsException();
+
         var userId = changeUserDetailsDTO.getUserId();
         var user = this.userRepository.findUserEntityById(userId);
+        if(Objects.isNull(user))
+            throw new UserNotFoundException();
         var userDetails = user.getUserDetailsEntity();
 
         if (this.isAccountActive(userDetails))
@@ -76,5 +79,11 @@ public class UserServiceImpl implements UserService {
 
     private Boolean isAccountActive(UserDetailsEntity userDetails) {
         return userDetails.getIsActive().equals(false);
+    }
+
+    ////////////////////////////////////////////////
+    /////////// FOR TESTS PURPOSE //////////////////
+    public void deleteDbContent(){
+        this.userRepository.deleteAll();
     }
 }
