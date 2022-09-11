@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.mapstruct.factory.Mappers;
 import org.springframework.stereotype.Service;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.authorization.exception.BadCredentialsException;
+import pl.polsl.krypczyk.apartmentsforrent.userservice.authorization.exception.UnauthorizedUserException;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.user.exception.UserAlreadyExistsException;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.user.exception.UserNotFoundException;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.user.mapper.UserMapper;
@@ -142,6 +143,14 @@ public class AuthorizationServiceImpl implements AuthorizationService {
         }
 
         return user;
+    }
+
+    @Override
+    public void authorizeUser(Long userId, UUID accessToken){
+        var user = this.userRepository.findUserEntityById(userId);
+        if(Objects.isNull(user) || !user.getUserAuthorizationEntity().getToken().equals(accessToken)){
+            throw new UnauthorizedUserException();
+        }
     }
 
     //////////////////////////////////////////////////////////////////////

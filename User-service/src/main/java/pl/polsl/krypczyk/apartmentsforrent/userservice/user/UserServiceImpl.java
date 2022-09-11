@@ -38,13 +38,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ChangeUserDetailsDTO changeUserDetails(ChangeUserDetailsDTO changeUserDetailsDTO) {
-        if (Objects.isNull(changeUserDetailsDTO))
+    public ChangeUserDetailsDTO changeUserDetails(ChangeUserDetailsDTO changeUserDetailsDTO, Long userId) {
+        if (Objects.isNull(changeUserDetailsDTO) || Objects.isNull(userId) || userId < 1)
             throw new InvalidUserDetailsException();
 
-        var userId = changeUserDetailsDTO.getUserId();
         var user = this.userRepository.findUserEntityById(userId);
-        if(Objects.isNull(user))
+        if (Objects.isNull(user))
             throw new UserNotFoundException();
         var userDetails = user.getUserDetailsEntity();
 
@@ -56,8 +55,6 @@ public class UserServiceImpl implements UserService {
     }
 
     private void changeAndSaveUserDetails(UserDetailsEntity userDetailsEntity, ChangeUserDetailsDTO changeUserDetailsDTO) {
-        if (Objects.isNull(changeUserDetailsDTO.getUserId()))
-            throw new InvalidUserDetailsException();
         var name = changeUserDetailsDTO.getName();
         if (!Objects.isNull(name))
             userDetailsEntity.setName(name);
@@ -83,7 +80,7 @@ public class UserServiceImpl implements UserService {
 
     ////////////////////////////////////////////////
     /////////// FOR TESTS PURPOSE //////////////////
-    public void deleteDbContent(){
+    public void deleteDbContent() {
         this.userRepository.deleteAll();
     }
 }

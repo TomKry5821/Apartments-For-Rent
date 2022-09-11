@@ -84,10 +84,10 @@ class UserServiceImplTest {
         var user = this.createValidUser();
         var response = this.authorizationService.registerNewUser(user);
         var userId = response.getId();
-        var changeUserDetailsDTO = this.createValidChangeUserDetailsDTO(userId);
+        var changeUserDetailsDTO = this.createValidChangeUserDetailsDTO();
 
         //WHEN
-        var expected = this.userService.changeUserDetails(changeUserDetailsDTO);
+        var expected = this.userService.changeUserDetails(changeUserDetailsDTO, userId);
 
         //THEN
         Assertions.assertEquals(expected, changeUserDetailsDTO);
@@ -100,21 +100,24 @@ class UserServiceImplTest {
         var user = this.createValidUser();
         this.authorizationService.registerNewUser(user);
         var userId = INVALID_USER_ID;
-        var changeUserDetailsDTO = this.createValidChangeUserDetailsDTO(userId);
+        var changeUserDetailsDTO = this.createValidChangeUserDetailsDTO();
 
         //WHEN AND THEN
         Assertions.assertThrows(UserNotFoundException.class, () ->
-                this.userService.changeUserDetails(changeUserDetailsDTO));
+                this.userService.changeUserDetails(changeUserDetailsDTO, userId));
     }
 
     @Test
     void changeUserDetailsWithNullUserDetails() {
         //GIVEN
+        var inactiveUser = this.createInactiveUser();
+        var response = this.authorizationService.registerNewUser(inactiveUser);
+        var userId = response.getId();
         ChangeUserDetailsDTO changeUserDetailsDTO = null;
 
         //WHEN AND THEN
         Assertions.assertThrows(InvalidUserDetailsException.class, () ->
-                this.userService.changeUserDetails(changeUserDetailsDTO));
+                this.userService.changeUserDetails(changeUserDetailsDTO, userId));
     }
 
     @Test
@@ -123,11 +126,11 @@ class UserServiceImplTest {
         var inactiveUser = this.createInactiveUser();
         var response = this.authorizationService.registerNewUser(inactiveUser);
         var userId = response.getId();
-        var changeUserDetailsDTO = this.createValidChangeUserDetailsDTO(userId);
+        var changeUserDetailsDTO = this.createValidChangeUserDetailsDTO();
 
         //WHEN AND THEN
         Assertions.assertThrows(AccountNotActiveException.class, () ->
-                this.userService.changeUserDetails(changeUserDetailsDTO));
+                this.userService.changeUserDetails(changeUserDetailsDTO, userId));
     }
 
     private CreateUserRequestDTO createValidUser() {
@@ -150,14 +153,13 @@ class UserServiceImplTest {
                 .build();
     }
 
-    private ChangeUserDetailsDTO createValidChangeUserDetailsDTO(Long userId) {
+    private ChangeUserDetailsDTO createValidChangeUserDetailsDTO() {
         return ChangeUserDetailsDTO.builder()
                 .surname(VALID_USER_SURNAME)
                 .password(VALID_USER_PASSWORD)
                 .name(VALID_USER_NAME)
                 .email(VALID_USER_EMAIL)
                 .isActive(VALID_USER_IS_ACTIVE)
-                .userId(userId)
                 .build();
     }
 

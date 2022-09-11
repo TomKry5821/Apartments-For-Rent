@@ -8,6 +8,6 @@ import java.util.UUID;
 public interface UserService {
 
     UserDetailsDTO getUserDetails(Long userId);
-    ChangeUserDetailsDTO changeUserDetails(ChangeUserDetailsDTO changeUserDetailsDTO);
+    ChangeUserDetailsDTO changeUserDetails(ChangeUserDetailsDTO changeUserDetailsDTO, Long userId);
     void deleteDbContent();
 }

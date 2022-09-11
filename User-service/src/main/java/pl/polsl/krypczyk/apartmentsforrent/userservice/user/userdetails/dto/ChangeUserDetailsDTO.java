@@ -10,9 +10,6 @@ import javax.validation.constraints.NotNull;
 @Builder
 public class ChangeUserDetailsDTO {
 
-    @NotNull(message = "User id cannot be null")
-    private Long userId;
-
     private String name;
 
     private String surname;
