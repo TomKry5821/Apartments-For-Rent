@@ -18,20 +18,18 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
-    private final UserDetailsRepository userDetailsRepository;
-    private final UserAuthorizationRepository userAuthorizationRepository;
+    private final UserRepository userRepository;
     private final UserMapper userMapper = Mappers.getMapper(UserMapper.class);
 
     @Override
-    public UserDetailsDTO getUserDetails(UUID accessToken) {
-        var userAuthorization = this.findUserAuthorizationByAccessToken(accessToken);
-        if (Objects.isNull(userAuthorization)) {
+    public UserDetailsDTO getUserDetails(Long userId) {
+        var user = this.userRepository.findUserEntityById(userId);
+        if (Objects.isNull(user)) {
             throw new UserNotFoundException();
         }
-        return null;
-    }
 
-    private UserAuthorizationEntity findUserAuthorizationByAccessToken(UUID accessToken) {
-        return this.userAuthorizationRepository.findUserAuthorizationEntityByToken(accessToken);
+        var userDetails = user.getUserDetailsEntity();
+        var userDetailsDTO = userMapper.UserDetailsEntityToUserDetailsDTO(userDetails);
+        return userDetailsDTO;
     }
 }

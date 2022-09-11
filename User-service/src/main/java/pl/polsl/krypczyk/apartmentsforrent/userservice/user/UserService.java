@@ -6,5 +6,5 @@ import java.util.UUID;
 
 public interface UserService {
 
-    UserDetailsDTO getUserDetails(UUID accessToken);
+    UserDetailsDTO getUserDetails(Long userId);
 }
