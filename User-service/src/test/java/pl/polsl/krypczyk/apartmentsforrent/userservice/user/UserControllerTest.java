@@ -13,7 +13,6 @@ import pl.polsl.krypczyk.apartmentsforrent.userservice.authorization.Authorizati
 import java.io.UnsupportedEncodingException;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -26,9 +25,6 @@ class UserControllerTest {
 
     @Autowired
     private AuthorizationService authorizationService;
-
-    @Autowired
-    private UserService userService;
 
     @AfterEach
     void deleteDbContent() {

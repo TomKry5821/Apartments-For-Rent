@@ -16,5 +16,6 @@ public interface AuthorizationService {
     void logoutUser(Long userId);
 
     void deleteDbContent();
+
     void authorizeUser(Long userId, UUID accessToken);
 }

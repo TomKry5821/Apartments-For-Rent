@@ -34,7 +34,6 @@ public class AuthorizationServiceImpl implements AuthorizationService {
     private final UserDetailsRepository userDetailsRepository;
     private final UserAuthorizationRepository userAuthorizationRepository;
     private final RoleRepository roleRepository;
-
     private final UserMapper userMapper = Mappers.getMapper(UserMapper.class);
 
     public UserCreatedResponseDTO registerNewUser(CreateUserRequestDTO createUserRequestDTO) {
