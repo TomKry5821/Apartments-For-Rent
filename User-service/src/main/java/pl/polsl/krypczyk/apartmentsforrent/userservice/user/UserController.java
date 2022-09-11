@@ -1,6 +1,7 @@
 package pl.polsl.krypczyk.apartmentsforrent.userservice.user;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.authorization.AuthorizationService;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.user.userdetails.dto.ChangeUserDetailsDTO;
@@ -20,7 +21,7 @@ public class UserController {
 
     @GetMapping("users/{userId}/details")
     public UserDetailsDTO getUserDetails(@PathVariable("userId") @NotNull Long userId,
-                                         @RequestHeader("Authorization") UUID accessToken){
+                                         @RequestHeader("Authorization") UUID accessToken) {
         this.authorizationService.authorizeUser(userId, accessToken);
         return this.userService.getUserDetails(userId);
     }
@@ -28,9 +29,17 @@ public class UserController {
     @PutMapping("users/{userId}/details")
     public ChangeUserDetailsDTO changeUserDetails(@RequestBody @Valid ChangeUserDetailsDTO changeUserDetailsDTO,
                                                   @PathVariable("userId") @NotNull Long userId,
-                                                  @RequestHeader("Authorization") UUID accessToken){
+                                                  @RequestHeader("Authorization") UUID accessToken) {
         this.authorizationService.authorizeUser(userId, accessToken);
         return this.userService.changeUserDetails(changeUserDetailsDTO, userId);
+    }
+
+    @PostMapping("users/{userId}/inactivate")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void inactivateAccount(@PathVariable("userId") @NotNull Long userId,
+                                  @RequestHeader("Authorization") UUID accessToken) {
+        this.authorizationService.authorizeUser(userId, accessToken);
+        this.userService.inactivateAccount(userId);
     }
 }
 

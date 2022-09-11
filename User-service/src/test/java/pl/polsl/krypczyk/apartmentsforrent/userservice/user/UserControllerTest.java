@@ -39,7 +39,7 @@ class UserControllerTest {
 
         //WHEN
         mvc.perform(
-                        get("/user/api/v1/users/7/details")
+                        get("/user/api/v1/users/10/details")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .header("Authorization", token))
                 //THEN
@@ -83,7 +83,7 @@ class UserControllerTest {
 
         //WHEN
         mvc.perform(
-                        put("/user/api/v1/users/9/details")
+                        put("/user/api/v1/users/13/details")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content("{\n" +
                                         "    \"name\": \"Test\",\n" +
@@ -134,6 +134,48 @@ class UserControllerTest {
                                         "    \"password\": \"Test\"\n" +
                                         "}")
                                 .header("Authorization", "sfsf"))
+                //THEN
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void inactivateAccountWithValidUserIdAndValidToken() throws Exception {
+        //GIVEN
+        var response = this.registerValidUser();
+        var token = this.getTokenFromResponse(response);
+
+        //WHEN
+        mvc.perform(
+                        post("/user/api/v1/users/16/inactivate")
+                                .header("Authorization", token))
+                //THEN
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    void inactivateAccountWithInvalidUserIdAndValidToken() throws Exception {
+        //GIVEN
+        var response = this.registerValidUser();
+        var token = this.getTokenFromResponse(response);
+
+        //WHEN
+        mvc.perform(
+                        post("/user/api/v1/users/192/inactivate")
+                                .header("Authorization", token))
+                //THEN
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void inactivateAccountWithInvalidUserIdAndInvalidToken() throws Exception {
+        //GIVEN
+        var response = this.registerValidUser();
+        var token = this.getTokenFromResponse(response);
+
+        //WHEN
+        mvc.perform(
+                        post("/user/api/v1/users/192/inactivate")
+                                .header("Authorization", "sdds"))
                 //THEN
                 .andExpect(status().isBadRequest());
     }

@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.authorization.AuthorizationService;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.authorization.exception.AccountNotActiveException;
+import pl.polsl.krypczyk.apartmentsforrent.userservice.authorization.exception.UnauthorizedUserException;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.user.exception.InvalidUserDetailsException;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.user.exception.UserNotFoundException;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.user.userdetails.dto.ChangeUserDetailsDTO;
@@ -131,6 +132,45 @@ class UserServiceImplTest {
         //WHEN AND THEN
         Assertions.assertThrows(AccountNotActiveException.class, () ->
                 this.userService.changeUserDetails(changeUserDetailsDTO, userId));
+    }
+
+    @Test
+    void inactivateAccountWithValidUserId() {
+        //GIVEN
+        var user = this.createValidUser();
+        var response = this.authorizationService.registerNewUser(user);
+        var userId = response.getId();
+
+        //WHEN
+        this.userService.inactivateAccount(userId);
+
+        //THEN
+        Assertions.assertDoesNotThrow(UserNotFoundException::new);
+        Assertions.assertDoesNotThrow(UnauthorizedUserException::new);
+    }
+
+    @Test
+    void inactivateAccountWithInvalidUserId() {
+        //GIVEN
+        var user = this.createValidUser();
+        var response = this.authorizationService.registerNewUser(user);
+        var userId = INVALID_USER_ID;
+
+        // WHEN AND THEN
+        Assertions.assertThrows(UserNotFoundException.class, () ->
+                this.userService.inactivateAccount(userId));
+    }
+
+    @Test
+    void inactivateInactiveAccount() {
+        //GIVEN
+        var user = this.createInactiveUser();
+        var response = this.authorizationService.registerNewUser(user);
+        var userId = response.getId();
+
+        // WHEN AND THEN
+        Assertions.assertThrows(AccountNotActiveException.class, () ->
+                this.userService.inactivateAccount(userId));
     }
 
     private CreateUserRequestDTO createValidUser() {

@@ -71,6 +71,20 @@ public class UserServiceImpl implements UserService {
         this.userDetailsRepository.save(userDetailsEntity);
     }
 
+    @Override
+    public void inactivateAccount(Long userId){
+        var user = this.userRepository.findUserEntityById(userId);
+        if (Objects.isNull(user))
+            throw new UserNotFoundException();
+
+        var userDetails = user.getUserDetailsEntity();
+        if (this.isAccountActive(userDetails))
+            throw new AccountNotActiveException();
+
+        userDetails.setIsActive(false);
+        this.userDetailsRepository.save(userDetails);
+    }
+
     private Boolean isAccountActive(UserDetailsEntity userDetails) {
         return userDetails.getIsActive().equals(false);
     }

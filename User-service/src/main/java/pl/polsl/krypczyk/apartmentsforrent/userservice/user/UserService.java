@@ -10,4 +10,5 @@ public interface UserService {
     UserDetailsDTO getUserDetails(Long userId);
     ChangeUserDetailsDTO changeUserDetails(ChangeUserDetailsDTO changeUserDetailsDTO, Long userId);
     void deleteDbContent();
+    void inactivateAccount(Long userId);
 }
