@@ -8,6 +8,7 @@ import pl.polsl.krypczyk.apartmentsforrent.userservice.application.user.request.
 import pl.polsl.krypczyk.apartmentsforrent.userservice.application.user.response.CreateUserResponse;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.application.user.response.LoginUserResponse;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.authorization.AuthorizationService;
+import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.authorization.exception.AccountNotActiveException;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.authorization.exception.BadCredentialsException;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.authorization.exception.UnauthorizedUserException;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.role.RoleEntity;
@@ -123,8 +124,14 @@ public class AuthorizationServiceImpl implements AuthorizationService {
     @Override
     public void logoutUser(Long userId) {
         var user = this.findUserByUserId(userId);
+        if (this.isAccountActive(user.getUserDetailsEntity()))
+            throw new AccountNotActiveException();
         var userAuthorization = user.getUserAuthorizationEntity();
         this.resetUserAccessToken(userAuthorization);
+    }
+
+    private Boolean isAccountActive(UserDetailsEntity userDetails) {
+        return userDetails.getIsActive().equals(false);
     }
 
     private void resetUserAccessToken(UserAuthorizationEntity userAuthorization) {
