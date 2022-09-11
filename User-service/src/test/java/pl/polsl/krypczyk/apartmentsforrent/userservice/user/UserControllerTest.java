@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.authorization.AuthorizationService;
@@ -18,6 +19,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 class UserControllerTest {
 
     @Autowired
@@ -39,7 +41,7 @@ class UserControllerTest {
 
         //WHEN
         mvc.perform(
-                        get("/user/api/v1/users/10/details")
+                        get("/user/api/v1/users/1/details")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .header("Authorization", token))
                 //THEN
@@ -83,7 +85,7 @@ class UserControllerTest {
 
         //WHEN
         mvc.perform(
-                        put("/user/api/v1/users/13/details")
+                        put("/user/api/v1/users/1/details")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content("{\n" +
                                         "    \"name\": \"Test\",\n" +
@@ -146,7 +148,7 @@ class UserControllerTest {
 
         //WHEN
         mvc.perform(
-                        post("/user/api/v1/users/16/inactivate")
+                        post("/user/api/v1/users/1/inactivate")
                                 .header("Authorization", token))
                 //THEN
                 .andExpect(status().isNoContent());

@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
@@ -17,6 +18,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 class AuthorizationControllerTest {
 
     @Autowired
@@ -136,7 +138,7 @@ class AuthorizationControllerTest {
 
         //WHEN
         mvc.perform(
-                        post("/user/api/v1/auth/6/logout")
+                        post("/user/api/v1/auth/1/logout")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .header("Authorization", "kjnjghy"))
                 //THEN
