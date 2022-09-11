@@ -38,10 +38,10 @@ public class AuthorizationServiceImpl implements AuthorizationService {
     private final UserMapper userMapper = Mappers.getMapper(UserMapper.class);
 
     public UserCreatedResponseDTO registerNewUser(CreateUserRequestDTO createUserRequestDTO) {
-        if(Objects.isNull(createUserRequestDTO)){
+        if (Objects.isNull(createUserRequestDTO)) {
             throw new BadCredentialsException();
         }
-        if(this.userAlreadyExists(createUserRequestDTO.getEmail())){
+        if (this.userAlreadyExists(createUserRequestDTO.getEmail())) {
             throw new UserAlreadyExistsException();
         }
 
@@ -56,11 +56,12 @@ public class AuthorizationServiceImpl implements AuthorizationService {
         return new UserCreatedResponseDTO(createUserRequestDTO.getEmail(), userAuthorization.getToken(),
                 user.getRoles()
                         .stream()
-                        .map(RoleEntity::getName).collect(Collectors.toList())
+                        .map(RoleEntity::getName).collect(Collectors.toList()),
+                user.getId()
         );
     }
 
-    private Boolean userAlreadyExists(String email){
+    private Boolean userAlreadyExists(String email) {
         return this.userDetailsRepository.existsByEmail(email);
     }
 
@@ -97,7 +98,7 @@ public class AuthorizationServiceImpl implements AuthorizationService {
 
     @Override
     public UserLoggedInResponseDTO loginUser(UserLoginRequestDTO userLoginRequestDTO) {
-        if(Objects.isNull(userLoginRequestDTO)){
+        if (Objects.isNull(userLoginRequestDTO)) {
             throw new BadCredentialsException();
         }
 
@@ -110,7 +111,7 @@ public class AuthorizationServiceImpl implements AuthorizationService {
         this.updateAccessToken(userAuthorization);
 
         return new UserLoggedInResponseDTO(userAuthorization.getToken(), userDetails.getEmail(), user.getRoles().stream()
-                .map(RoleEntity::getName).collect(Collectors.toList()));
+                .map(RoleEntity::getName).collect(Collectors.toList()), user.getId());
     }
 
     private UserDetailsEntity retrieveUserDetailsByEmailAndPassword(String email, String password) {
@@ -128,30 +129,29 @@ public class AuthorizationServiceImpl implements AuthorizationService {
     }
 
     @Override
-    public void logoutUser(UUID accessToken){
+    public void logoutUser(UUID accessToken) {
         var userAuthorization = this.findUserByAccessToken(accessToken);
         this.resetUserAccessToken(userAuthorization);
     }
 
-    private UserAuthorizationEntity findUserByAccessToken(UUID accessToken){
+    private UserAuthorizationEntity findUserByAccessToken(UUID accessToken) {
         var userAuthorization = this.userAuthorizationRepository.findUserAuthorizationEntityByToken(accessToken);
-        if(Objects.isNull(userAuthorization)){
+        if (Objects.isNull(userAuthorization)) {
             throw new UserNotFoundException();
         }
         return userAuthorization;
     }
 
-    private void resetUserAccessToken(UserAuthorizationEntity userAuthorization){
+    private void resetUserAccessToken(UserAuthorizationEntity userAuthorization) {
         userAuthorization.setToken(UUID.randomUUID());
         userAuthorizationRepository.save(userAuthorization);
     }
 
 
-
     //////////////////////////////////////////////////////////////////////
     ///////////////////////////////FOR TEST PURPOSES//////////////////////
     @Override
-    public void  deleteDbContent(){
+    public void deleteDbContent() {
         this.userAuthorizationRepository.deleteAll();
         this.userRepository.deleteAll();
         this.userDetailsRepository.deleteAll();

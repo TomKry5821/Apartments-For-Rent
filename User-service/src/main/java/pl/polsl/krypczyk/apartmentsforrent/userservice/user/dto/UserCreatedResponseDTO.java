@@ -15,10 +15,13 @@ public class UserCreatedResponseDTO {
     private final Collection<String> roles;
     private final LocalDateTime creationDate;
 
-    public UserCreatedResponseDTO(String email, UUID accessToken, Collection<String> roles) {
+    private final Long id;
+
+    public UserCreatedResponseDTO(String email, UUID accessToken, Collection<String> roles, Long id) {
         this.email = email;
         this.accessToken = accessToken;
         this.roles = roles;
         this.creationDate = LocalDateTime.now();
+        this.id = id;
     }
 }
