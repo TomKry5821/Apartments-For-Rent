@@ -172,7 +172,6 @@ class AuthorizationControllerTest {
                                 "}"));
     }
 
-
     private UUID getTokenFromResponse(ResultActions resultActions) throws UnsupportedEncodingException {
         var token = resultActions.andReturn().getResponse().getContentAsString().lines().toArray()[0].toString();
         token = token.substring(39, 75);
