@@ -4,8 +4,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import pl.polsl.krypczyk.apartmentsforrent.userservice.user.UserEntity;
-import pl.polsl.krypczyk.apartmentsforrent.userservice.user.role.RoleEntity;
+import pl.polsl.krypczyk.apartmentsforrent.userservice.user.userauthorization.role.RoleEntity;
 
 import javax.persistence.*;
 import java.util.ArrayList;

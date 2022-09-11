@@ -4,7 +4,6 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import pl.polsl.krypczyk.apartmentsforrent.userservice.user.role.RoleEntity;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.user.userauthorization.UserAuthorizationEntity;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.user.userdetails.UserDetailsEntity;
 
@@ -16,12 +15,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Column;
 import javax.persistence.OneToOne;
 import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
 import javax.persistence.FetchType;
-
-
-import java.util.ArrayList;
-import java.util.Collection;
 
 @Getter
 @Setter

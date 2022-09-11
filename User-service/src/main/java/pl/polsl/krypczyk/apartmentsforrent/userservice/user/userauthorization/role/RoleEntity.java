@@ -1,4 +1,4 @@
-package pl.polsl.krypczyk.apartmentsforrent.userservice.user.role;
+package pl.polsl.krypczyk.apartmentsforrent.userservice.user.userauthorization.role;
 
 import lombok.*;
 
