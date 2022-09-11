@@ -24,8 +24,4 @@ public class UserAuthorizationEntity {
 
     @Column(name = "TOKEN", nullable = true)
     private UUID token;
-
-    @OneToOne()
-    @JoinColumn(name = "USER_ID", referencedColumnName = "ID")
-    private UserEntity userEntity;
 }
