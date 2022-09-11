@@ -26,7 +26,7 @@ public class AuthorizationServiceImpl implements AuthorizationService {
             return new RolesDTO(List.of());
         }
 
-        Collection<RoleEntity> userRoles = userAuthorizationEntity.getUserEntity().getRoles();
+        Collection<RoleEntity> userRoles = userAuthorizationEntity.getRoles();
         Collection<String> stringRoles = this.fillWithUserRoles(userRoles);
 
         return new RolesDTO(stringRoles);

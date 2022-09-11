@@ -4,9 +4,12 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import pl.polsl.krypczyk.apartmentsforrent.gateway.role.RoleEntity;
 import pl.polsl.krypczyk.apartmentsforrent.gateway.user.UserEntity;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.UUID;
 
 @Getter
@@ -25,7 +28,6 @@ public class UserAuthorizationEntity {
     @Column(name = "TOKEN", nullable = true)
     private UUID token;
 
-    @OneToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "USER_ID", referencedColumnName = "ID", nullable = false)
-    private UserEntity userEntity;
+    @OneToMany(fetch = FetchType.EAGER)
+    private Collection<RoleEntity> roles = new ArrayList<>();
 }

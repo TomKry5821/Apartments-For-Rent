@@ -10,8 +10,5 @@ import java.util.UUID;
 public interface UserAuthorizationRepository extends JpaRepository<UserAuthorizationEntity, Long> {
 
     UserAuthorizationEntity save(UserAuthorizationEntity userAuthorizationEntity);
-
-    UserAuthorizationEntity findUserAuthorizationEntityByUserEntity(UserEntity userEntity);
-
     UserAuthorizationEntity findUserAuthorizationEntityByToken(UUID token);
 }

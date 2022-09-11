@@ -13,7 +13,7 @@ public interface AuthorizationService {
 
     UserLoggedInResponseDTO loginUser(UserLoginRequestDTO userLoginRequestDTO);
 
-    void logoutUser(UUID accessToken);
+    void logoutUser(Long userId);
 
     void deleteDbContent();
 }

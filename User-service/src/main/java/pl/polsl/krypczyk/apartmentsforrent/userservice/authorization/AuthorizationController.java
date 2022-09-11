@@ -31,10 +31,10 @@ public class AuthorizationController {
         return this.authorizationService.loginUser(userLoginRequestDTO);
     }
 
-    @PostMapping("/logout")
+    @PostMapping("{userId}/logout")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void logoutUser(@uuid(message = "Invalid access token") @RequestHeader("Authorization") UUID accessToken){
-        this.authorizationService.logoutUser(accessToken);
+    public void logoutUser(@PathVariable("userId") Long userId){
+        this.authorizationService.logoutUser(userId);
     }
 
 }

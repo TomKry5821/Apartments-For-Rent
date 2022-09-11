@@ -10,4 +10,6 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
     UserEntity save(UserEntity userEntity);
 
     UserEntity findUserEntityByUserDetailsEntity(UserDetailsEntity userDetailsEntity);
+
+    UserEntity findUserEntityById(Long id);
 }

@@ -130,13 +130,28 @@ class AuthorizationControllerTest {
     }
 
     @Test
-    void logoutUserWithInvalidToken_ShouldReturn400() throws Exception {
+    void logoutUserWithValidId_ShouldReturn204() throws Exception {
         //GIVEN
         this.registerValidUser();
 
         //WHEN
         mvc.perform(
-                        post("/user/api/v1/auth/logout")
+                        post("/user/api/v1/auth/6/logout")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .header("Authorization", "kjnjghy"))
+                //THEN
+                .andExpect(status().isNoContent());
+
+    }
+
+    @Test
+    void logoutUserWithInvalidId_ShouldReturn400() throws Exception {
+        //GIVEN
+        this.registerValidUser();
+
+        //WHEN
+        mvc.perform(
+                        post("/user/api/v1/auth/100/logout")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .header("Authorization", "kjnjghy"))
                 //THEN

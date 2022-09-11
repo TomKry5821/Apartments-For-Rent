@@ -21,7 +21,6 @@ import pl.polsl.krypczyk.apartmentsforrent.userservice.user.userdetails.UserDeta
 import pl.polsl.krypczyk.apartmentsforrent.userservice.user.userdetails.UserDetailsRepository;
 
 import java.time.LocalDateTime;
-import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -46,15 +45,12 @@ public class AuthorizationServiceImpl implements AuthorizationService {
         }
 
         var role = this.createAndSaveUserRole();
-
         var userDetails = createAndSaveUserDetails(createUserRequestDTO);
-
-        var user = this.createAndSaveUserEntity(userDetails, List.of(role));
-
-        var userAuthorization = createAndSaveUserAuthorization(user);
+        var userAuthorization = createAndSaveUserAuthorization(role);
+        var user = this.createAndSaveUserEntity(userDetails, userAuthorization);
 
         return new UserCreatedResponseDTO(createUserRequestDTO.getEmail(), userAuthorization.getToken(),
-                user.getRoles()
+                userAuthorization.getRoles()
                         .stream()
                         .map(RoleEntity::getName).collect(Collectors.toList()),
                 user.getId()
@@ -71,10 +67,11 @@ public class AuthorizationServiceImpl implements AuthorizationService {
         return role;
     }
 
-    private UserAuthorizationEntity createAndSaveUserAuthorization(UserEntity userEntity) {
+    private UserAuthorizationEntity createAndSaveUserAuthorization(RoleEntity roleEntity) {
         var userAuthorization = new UserAuthorizationEntity();
+
         userAuthorization.setToken(UUID.randomUUID());
-        userAuthorization.setUserEntity(userEntity);
+        userAuthorization.setRoles(List.of(roleEntity));
         userAuthorizationRepository.save(userAuthorization);
         return userAuthorization;
     }
@@ -87,10 +84,10 @@ public class AuthorizationServiceImpl implements AuthorizationService {
     }
 
     private UserEntity createAndSaveUserEntity(UserDetailsEntity userDetailsEntity,
-                                               Collection<RoleEntity> roleEntities) {
+                                               UserAuthorizationEntity userAuthorizationEntity) {
         var userEntity = new UserEntity();
         userEntity.setUserDetailsEntity(userDetailsEntity);
-        userEntity.setRoles(roleEntities);
+        userEntity.setUserAuthorizationEntity(userAuthorizationEntity);
         userRepository.save(userEntity);
 
         return userEntity;
@@ -105,12 +102,10 @@ public class AuthorizationServiceImpl implements AuthorizationService {
         UserDetailsEntity userDetails = retrieveUserDetailsByEmailAndPassword(userLoginRequestDTO.getEmail(), userLoginRequestDTO.getPassword());
 
         UserEntity user = this.userRepository.findUserEntityByUserDetailsEntity(userDetails);
-
-        UserAuthorizationEntity userAuthorization = this.userAuthorizationRepository.findUserAuthorizationEntityByUserEntity(user);
-
+        var userAuthorization = user.getUserAuthorizationEntity();
         this.updateAccessToken(userAuthorization);
 
-        return new UserLoggedInResponseDTO(userAuthorization.getToken(), userDetails.getEmail(), user.getRoles().stream()
+        return new UserLoggedInResponseDTO(userAuthorization.getToken(), userDetails.getEmail(), userAuthorization.getRoles().stream()
                 .map(RoleEntity::getName).collect(Collectors.toList()), user.getId());
     }
 
@@ -129,17 +124,10 @@ public class AuthorizationServiceImpl implements AuthorizationService {
     }
 
     @Override
-    public void logoutUser(UUID accessToken) {
-        var userAuthorization = this.findUserByAccessToken(accessToken);
+    public void logoutUser(Long userId) {
+        var user = this.findUserByUserId(userId);
+        var userAuthorization = user.getUserAuthorizationEntity();
         this.resetUserAccessToken(userAuthorization);
-    }
-
-    private UserAuthorizationEntity findUserByAccessToken(UUID accessToken) {
-        var userAuthorization = this.userAuthorizationRepository.findUserAuthorizationEntityByToken(accessToken);
-        if (Objects.isNull(userAuthorization)) {
-            throw new UserNotFoundException();
-        }
-        return userAuthorization;
     }
 
     private void resetUserAccessToken(UserAuthorizationEntity userAuthorization) {
@@ -147,14 +135,19 @@ public class AuthorizationServiceImpl implements AuthorizationService {
         userAuthorizationRepository.save(userAuthorization);
     }
 
+    private UserEntity findUserByUserId(Long userId) {
+        var user = this.userRepository.findUserEntityById(userId);
+        if (Objects.isNull(user)) {
+            throw new UserNotFoundException();
+        }
+
+        return user;
+    }
 
     //////////////////////////////////////////////////////////////////////
     ///////////////////////////////FOR TEST PURPOSES//////////////////////
     @Override
     public void deleteDbContent() {
-        this.userAuthorizationRepository.deleteAll();
         this.userRepository.deleteAll();
-        this.userDetailsRepository.deleteAll();
-        this.roleRepository.deleteAll();
     }
 }

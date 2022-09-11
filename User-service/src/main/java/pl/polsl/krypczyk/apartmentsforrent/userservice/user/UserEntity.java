@@ -43,8 +43,4 @@ public class UserEntity {
     @OneToOne(orphanRemoval = true, optional = false, fetch = FetchType.EAGER)
     @JoinColumn(name = "USER_AUTHORIZATION_ID", referencedColumnName = "ID", nullable = false)
     private UserAuthorizationEntity userAuthorizationEntity;
-
-    @OneToMany(fetch = FetchType.EAGER)
-    private Collection<RoleEntity> roles = new ArrayList<>();
-
 }

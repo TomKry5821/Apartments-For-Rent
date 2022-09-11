@@ -30,7 +30,7 @@ public class UserEntity {
     @JoinColumn(name = "USER_DETAILS_ID", referencedColumnName = "ID", nullable = false)
     private UserDetailsEntity userDetailsEntity;
 
-    @OneToMany(fetch = FetchType.EAGER)
-    private Collection<RoleEntity> roles = new ArrayList<>();
-
+    @OneToOne(orphanRemoval = true, optional = false)
+    @JoinColumn(name = "USER_AUTHORIZATION_ID", referencedColumnName = "ID", nullable = false)
+    private UserAuthorizationEntity userAuthorizationEntity;
 }

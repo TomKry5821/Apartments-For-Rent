@@ -28,11 +28,7 @@ public class UserServiceImpl implements UserService {
         if (Objects.isNull(userAuthorization)) {
             throw new UserNotFoundException();
         }
-
-        var userDetails = userAuthorization.getUserEntity().getUserDetailsEntity();
-        UserDetailsDTO userDetailsDTO = userMapper.UserDetailsEntityToUserDetailsDTO(userDetails);
-
-        return userDetailsDTO;
+        return null;
     }
 
     private UserAuthorizationEntity findUserAuthorizationByAccessToken(UUID accessToken) {

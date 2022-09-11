@@ -12,8 +12,6 @@ import pl.polsl.krypczyk.apartmentsforrent.userservice.user.exception.UserNotFou
 import pl.polsl.krypczyk.apartmentsforrent.userservice.user.dto.UserLoginRequestDTO;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.user.userdetails.dto.CreateUserRequestDTO;
 
-import java.util.UUID;
-
 @SpringBootTest
 class AuthorizationServiceImplTest {
 
@@ -109,14 +107,27 @@ class AuthorizationServiceImplTest {
     }
 
     @Test
-    void logoutUserThatDoesNotExists(){
+    void logoutUserThatExists() {
+        //GIVEN
+        CreateUserRequestDTO createUserRequestDTO = this.createValidUser();
+        var createUserResponse = this.authorizationService.registerNewUser(createUserRequestDTO);
+        var id = createUserResponse.getId();
+        //WHEN
+        this.authorizationService.logoutUser(id);
+
+        //THEN
+        Assertions.assertDoesNotThrow(UserNotFoundException::new);
+    }
+
+    @Test
+    void logoutUserThatDoesNotExists() {
         //GIVEN
         CreateUserRequestDTO createUserRequestDTO = this.createValidUser();
         this.authorizationService.registerNewUser(createUserRequestDTO);
 
         // WHEN AND THEN
-        Assertions.assertThrows(UserNotFoundException.class, ()->
-                this.authorizationService.logoutUser(UUID.randomUUID()));
+        Assertions.assertThrows(UserNotFoundException.class, () ->
+                this.authorizationService.logoutUser(0L));
     }
 
     private CreateUserRequestDTO createValidUser() {
