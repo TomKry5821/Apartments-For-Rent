@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.*;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.user.userdetails.dto.ChangeUserDetailsDTO;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.user.userdetails.dto.UserDetailsDTO;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 @RestController
@@ -20,7 +21,7 @@ public class UserController {
     }
 
     @PutMapping("users/details")
-    public ChangeUserDetailsDTO changeUserDetails(@RequestBody ChangeUserDetailsDTO changeUserDetailsDTO){
+    public ChangeUserDetailsDTO changeUserDetails(@RequestBody @Valid ChangeUserDetailsDTO changeUserDetailsDTO){
         return this.userService.changeUserDetails(changeUserDetailsDTO);
     }
 }

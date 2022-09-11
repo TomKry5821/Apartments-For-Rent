@@ -1,10 +1,15 @@
 package pl.polsl.krypczyk.apartmentsforrent.userservice.user.userdetails.dto;
 
 import lombok.Data;
-import java.time.LocalDateTime;
+
+import javax.validation.constraints.NotNull;
 
 @Data
-public class UserDetailsDTO {
+@NotNull
+public class ChangeUserDetailsDTO {
+
+    @NotNull(message = "User id cannot be null")
+    private Long userId;
 
     private String name;
 
@@ -16,5 +21,4 @@ public class UserDetailsDTO {
 
     private String password;
 
-    private LocalDateTime creationDate;
 }
