@@ -185,24 +185,10 @@ class UserControllerTest {
     }
 
     @Test
-    void deleteUserWithValidUserIdAndValidToken_shouldReturn204() throws Exception {
-        //GIVEN
-        var response = this.registerValidUser();
-        var token = this.getTokenFromResponse(response);
-
-        //WHEN
-        mvc.perform(
-                        delete("/user/api/v1/admin/users/2")
-                                .header("Authorization", token))
-                //THEN
-                .andExpect(status().isNoContent());
-    }
-
-    @Test
     void deleteUserWithInvalidUserIdAndValidToken_shouldReturn401() throws Exception {
         //GIVEN
-        var response = this.registerValidUser();
-        var token = this.getTokenFromResponse(response);
+        this.registerValidUser();
+        var token = UUID.fromString("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa");
 
         //WHEN
         mvc.perform(
