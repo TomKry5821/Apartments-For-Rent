@@ -28,7 +28,7 @@ class UserServiceImplTest {
     private final boolean VALID_USER_IS_ACTIVE = true;
     private final boolean INACTIVE_USER_IS_ACTIVE = false;
     private final LocalDateTime USER_CREATION_DATE = null;
-    private final Long INVALID_USER_ID = 12L;
+    private final Long INVALID_USER_ID = 12334343L;
 
     @Autowired
     private UserService userService;
@@ -154,7 +154,7 @@ class UserServiceImplTest {
     void inactivateAccountWithInvalidUserId() {
         //GIVEN
         var user = this.createValidUser();
-        var response = this.authorizationService.registerNewUser(user);
+        this.authorizationService.registerNewUser(user);
         var userId = INVALID_USER_ID;
 
         // WHEN AND THEN
