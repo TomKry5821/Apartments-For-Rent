@@ -50,13 +50,14 @@ class AuthorizationControllerTest {
         mvc.perform(
                         post("/user/api/v1/auth/register")
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .content("{\n" +
-                                        "    \"name\": \"\",\n" +
-                                        "    \"surname\": \"]\",\n" +
-                                        "    \"email\": \"testtest.pl\",\n" +
-                                        "    \"isActive\": null,\n" +
-                                        "    \"password\": \"Test\"\n" +
-                                        "}"))
+                                .content("""
+                                        {
+                                            "name": "",
+                                            "surname": "]",
+                                            "email": "testtest.pl",
+                                            "isActive": null,
+                                            "password": "Test"
+                                        }"""))
                 .andExpect(status().isBadRequest())
                 .andExpect(content()
                         .contentTypeCompatibleWith(MediaType.TEXT_PLAIN));
@@ -82,10 +83,11 @@ class AuthorizationControllerTest {
         mvc.perform(
                         post("/user/api/v1/auth/login")
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .content("{\n" +
-                                        "    \"email\": \"test@test.pl\",\n" +
-                                        "    \"password\": \"Test\"\n" +
-                                        "}"))
+                                .content("""
+                                        {
+                                            "email": "test@test.pl",
+                                            "password": "Test"
+                                        }"""))
                 //THEN
                 .andExpect(status().isOk())
                 .andExpect(content()
@@ -102,10 +104,11 @@ class AuthorizationControllerTest {
         mvc.perform(
                         post("/user/api/v1/auth/login")
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .content("{\n" +
-                                        "    \"email\": \"test@telkst.pl\",\n" +
-                                        "    \"password\": \"Testjnj\"\n" +
-                                        "}"))
+                                .content("""
+                                        {
+                                            "email": "test@telkst.pl",
+                                            "password": "Testjnj"
+                                        }"""))
                 //THEN
                 .andExpect(status().isBadRequest())
                 .andExpect(content()
@@ -122,10 +125,11 @@ class AuthorizationControllerTest {
         mvc.perform(
                         post("/user/api/v1/auth/login")
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .content("{\n" +
-                                        "    \"email\": \"\",\n" +
-                                        "    \"password\": null\n" +
-                                        "}"))
+                                .content("""
+                                        {
+                                            "email": "",
+                                            "password": null
+                                        }"""))
                 //THEN
                 .andExpect(status().isBadRequest())
                 .andExpect(content()
@@ -168,13 +172,14 @@ class AuthorizationControllerTest {
         return mvc.perform(
                 post("/user/api/v1/auth/register")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\n" +
-                                "    \"name\": \"Test\",\n" +
-                                "    \"surname\": \"Testowy\",\n" +
-                                "    \"email\": \"test@test.pl\",\n" +
-                                "    \"isActive\": true,\n" +
-                                "    \"password\": \"Test\"\n" +
-                                "}"));
+                        .content("""
+                                {
+                                    "name": "Test",
+                                    "surname": "Testowy",
+                                    "email": "test@test.pl",
+                                    "isActive": true,
+                                    "password": "Test"
+                                }"""));
     }
 
     private UUID getTokenFromResponse(ResultActions resultActions) throws UnsupportedEncodingException {
