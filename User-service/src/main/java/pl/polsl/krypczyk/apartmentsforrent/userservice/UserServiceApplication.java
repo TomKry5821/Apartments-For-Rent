@@ -55,7 +55,7 @@ public class UserServiceApplication {
 
     private UserAuthorizationEntity setUserAuthorization(RoleRepository roleRepository) {
         UserAuthorizationEntity userAuthorization = new UserAuthorizationEntity();
-        userAuthorization.setToken(UUID.fromString("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaa"));
+        userAuthorization.setToken(UUID.fromString("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"));
         RoleEntity admin = new RoleEntity("ROLE_ADMIN");
         roleRepository.save(admin);
         RoleEntity user = new RoleEntity("ROLE_USER");
