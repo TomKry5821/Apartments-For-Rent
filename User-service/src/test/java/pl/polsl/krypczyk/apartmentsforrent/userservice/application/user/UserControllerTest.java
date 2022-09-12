@@ -42,7 +42,7 @@ class UserControllerTest {
 
         //WHEN
         mvc.perform(
-                        get("/user/api/v1/users/1/details")
+                        get("/user/api/v1/users/2/details")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .header("Authorization", token))
                 //THEN
@@ -86,7 +86,7 @@ class UserControllerTest {
 
         //WHEN
         mvc.perform(
-                        put("/user/api/v1/users/1/details")
+                        put("/user/api/v1/users/2/details")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content("""
                                         {
@@ -151,7 +151,7 @@ class UserControllerTest {
 
         //WHEN
         mvc.perform(
-                        post("/user/api/v1/users/1/inactivate")
+                        post("/user/api/v1/users/2/inactivate")
                                 .header("Authorization", token))
                 //THEN
                 .andExpect(status().isNoContent());
@@ -192,7 +192,7 @@ class UserControllerTest {
 
         //WHEN
         mvc.perform(
-                        delete("/user/api/v1/users/1")
+                        delete("/user/api/v1/admin/users/2")
                                 .header("Authorization", token))
                 //THEN
                 .andExpect(status().isNoContent());
@@ -206,7 +206,7 @@ class UserControllerTest {
 
         //WHEN
         mvc.perform(
-                        delete("/user/api/v1/users/194")
+                        delete("/user/api/v1/admin/users/194")
                                 .header("Authorization", token))
                 //THEN
                 .andExpect(status().isUnauthorized());
@@ -219,7 +219,7 @@ class UserControllerTest {
 
         //WHEN
         mvc.perform(
-                        delete("/user/api/v1/users/194")
+                        delete("/user/api/v1/admin/users/194")
                                 .header("Authorization", "sdsd"))
                 //THEN
                 .andExpect(status().isBadRequest());

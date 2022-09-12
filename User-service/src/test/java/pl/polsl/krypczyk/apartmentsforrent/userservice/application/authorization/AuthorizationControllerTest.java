@@ -145,7 +145,7 @@ class AuthorizationControllerTest {
 
         //WHEN
         mvc.perform(
-                        post("/user/api/v1/auth/1/logout")
+                        post("/user/api/v1/auth/2/logout")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .header("Authorization", token))
                 //THEN
