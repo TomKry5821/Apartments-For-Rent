@@ -22,7 +22,7 @@ public class UserController {
     private final UserService userService;
     private final AuthorizationService authorizationService;
 
-    @DeleteMapping("users/{userId}")
+    @DeleteMapping("admin/users/{userId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void DeleteUser(@PathVariable("userId") @NotNull Long userId,
                            @RequestHeader("Authorization") @uuid UUID accessToken){
