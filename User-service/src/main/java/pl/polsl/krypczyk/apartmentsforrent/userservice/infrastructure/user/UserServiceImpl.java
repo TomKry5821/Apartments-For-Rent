@@ -93,6 +93,16 @@ public class UserServiceImpl implements UserService {
         return userDetails.getIsActive().equals(false);
     }
 
+    @Override
+    public void deleteUser(Long userId) {
+        var user = this.userRepository.findUserEntityById(userId);
+        if (Objects.isNull(user))
+            throw new UserNotFoundException();
+
+        this.userRepository.delete(user);
+    }
+
+
     ////////////////////////////////////////////////
     /////////// FOR TESTS PURPOSE //////////////////
     public void deleteDbContent() {

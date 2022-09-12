@@ -35,7 +35,7 @@ class UserControllerTest {
     }
 
     @Test
-    void getUserDetailsWithValidUserIdAndToken() throws Exception {
+    void getUserDetailsWithValidUserIdAndToken_shouldReturn200() throws Exception {
         //GIVEN
         var response = this.registerValidUser();
         var token = this.getTokenFromResponse(response);
@@ -50,7 +50,7 @@ class UserControllerTest {
     }
 
     @Test
-    void getUserDetailsWithInvalidUserIdAndValidToken() throws Exception {
+    void getUserDetailsWithInvalidUserIdAndValidToken_shouldReturn401() throws Exception {
         //GIVEN
         var response = this.registerValidUser();
         var token = this.getTokenFromResponse(response);
@@ -65,7 +65,7 @@ class UserControllerTest {
     }
 
     @Test
-    void getUserDetailsWithInvalidUserIdAndInvalidToken() throws Exception {
+    void getUserDetailsWithInvalidUserIdAndInvalidToken_shouldReturn400() throws Exception {
         //GIVEN
         this.registerValidUser();
 
@@ -79,7 +79,7 @@ class UserControllerTest {
     }
 
     @Test
-    void changeUserDetailsWithValidUserIdAndValidToken() throws Exception {
+    void changeUserDetailsWithValidUserIdAndValidToken_shouldReturn200() throws Exception {
         //GIVEN
         var response = this.registerValidUser();
         var token = this.getTokenFromResponse(response);
@@ -88,19 +88,20 @@ class UserControllerTest {
         mvc.perform(
                         put("/user/api/v1/users/1/details")
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .content("{\n" +
-                                        "    \"name\": \"Test\",\n" +
-                                        "    \"surname\": \"Testowy\",\n" +
-                                        "    \"email\": \"test@test.pl\",\n" +
-                                        "    \"password\": \"Test\"\n" +
-                                        "}")
+                                .content("""
+                                        {
+                                            "name": "Test",
+                                            "surname": "Testowy",
+                                            "email": "test@test.pl",
+                                            "password": "Test"
+                                        }""")
                                 .header("Authorization", token))
                 //THEN
                 .andExpect(status().isOk());
     }
 
     @Test
-    void changeUserDetailsWithInvalidUserIdAndValidToken() throws Exception {
+    void changeUserDetailsWithInvalidUserIdAndValidToken_shouldReturn401() throws Exception {
         //GIVEN
         var response = this.registerValidUser();
         var token = this.getTokenFromResponse(response);
@@ -109,40 +110,41 @@ class UserControllerTest {
         mvc.perform(
                         put("/user/api/v1/users/10/details")
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .content("{\n" +
-                                        "    \"name\": \"Test\",\n" +
-                                        "    \"surname\": \"Testowy\",\n" +
-                                        "    \"email\": \"test@test.pl\",\n" +
-                                        "    \"password\": \"Test\"\n" +
-                                        "}")
+                                .content("""
+                                        {
+                                            "name": "Test",
+                                            "surname": "Testowy",
+                                            "email": "test@test.pl",
+                                            "password": "Test"
+                                        }""")
                                 .header("Authorization", token))
                 //THEN
                 .andExpect(status().isUnauthorized());
     }
 
     @Test
-    void changeUserDetailsWithInvalidUserIdAndInvalidToken() throws Exception {
+    void changeUserDetailsWithInvalidUserIdAndInvalidToken_shouldReturn400() throws Exception {
         //GIVEN
-        var response = this.registerValidUser();
-        var token = this.getTokenFromResponse(response);
+        this.registerValidUser();
 
         //WHEN
         mvc.perform(
                         put("/user/api/v1/users/10/details")
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .content("{\n" +
-                                        "    \"name\": \"Test\",\n" +
-                                        "    \"surname\": \"Testowy\",\n" +
-                                        "    \"email\": \"test@test.pl\",\n" +
-                                        "    \"password\": \"Test\"\n" +
-                                        "}")
+                                .content("""
+                                        {
+                                            "name": "Test",
+                                            "surname": "Testowy",
+                                            "email": "test@test.pl",
+                                            "password": "Test"
+                                        }""")
                                 .header("Authorization", "sfsf"))
                 //THEN
                 .andExpect(status().isBadRequest());
     }
 
     @Test
-    void inactivateAccountWithValidUserIdAndValidToken() throws Exception {
+    void inactivateAccountWithValidUserIdAndValidToken_shouldReturn204() throws Exception {
         //GIVEN
         var response = this.registerValidUser();
         var token = this.getTokenFromResponse(response);
@@ -156,7 +158,7 @@ class UserControllerTest {
     }
 
     @Test
-    void inactivateAccountWithInvalidUserIdAndValidToken() throws Exception {
+    void inactivateAccountWithInvalidUserIdAndValidToken_shouldReturn401() throws Exception {
         //GIVEN
         var response = this.registerValidUser();
         var token = this.getTokenFromResponse(response);
@@ -170,10 +172,9 @@ class UserControllerTest {
     }
 
     @Test
-    void inactivateAccountWithInvalidUserIdAndInvalidToken() throws Exception {
+    void inactivateAccountWithInvalidUserIdAndInvalidToken_shouldReturn400() throws Exception {
         //GIVEN
-        var response = this.registerValidUser();
-        var token = this.getTokenFromResponse(response);
+        this.registerValidUser();
 
         //WHEN
         mvc.perform(
@@ -183,17 +184,59 @@ class UserControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
+    @Test
+    void deleteUserWithValidUserIdAndValidToken_shouldReturn204() throws Exception {
+        //GIVEN
+        var response = this.registerValidUser();
+        var token = this.getTokenFromResponse(response);
+
+        //WHEN
+        mvc.perform(
+                        delete("/user/api/v1/users/1")
+                                .header("Authorization", token))
+                //THEN
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    void deleteUserWithInvalidUserIdAndValidToken_shouldReturn401() throws Exception {
+        //GIVEN
+        var response = this.registerValidUser();
+        var token = this.getTokenFromResponse(response);
+
+        //WHEN
+        mvc.perform(
+                        delete("/user/api/v1/users/194")
+                                .header("Authorization", token))
+                //THEN
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void deleteUserWithInvalidUserIdAndInvalidToken_shouldReturn401() throws Exception {
+        //GIVEN
+        this.registerValidUser();
+
+        //WHEN
+        mvc.perform(
+                        delete("/user/api/v1/users/194")
+                                .header("Authorization", "sdsd"))
+                //THEN
+                .andExpect(status().isBadRequest());
+    }
+
     private ResultActions registerValidUser() throws Exception {
         return mvc.perform(
                 post("/user/api/v1/auth/register")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\n" +
-                                "    \"name\": \"Test\",\n" +
-                                "    \"surname\": \"Testowy\",\n" +
-                                "    \"email\": \"test@test.pl\",\n" +
-                                "    \"isActive\": true,\n" +
-                                "    \"password\": \"Test\"\n" +
-                                "}"));
+                        .content("""
+                                {
+                                    "name": "Test",
+                                    "surname": "Testowy",
+                                    "email": "test@test.pl",
+                                    "isActive": true,
+                                    "password": "Test"
+                                }"""));
     }
 
     private UUID getTokenFromResponse(ResultActions resultActions) throws UnsupportedEncodingException {

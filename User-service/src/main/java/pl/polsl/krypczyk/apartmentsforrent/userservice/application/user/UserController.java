@@ -8,6 +8,7 @@ import pl.polsl.krypczyk.apartmentsforrent.userservice.application.userdetails.r
 import pl.polsl.krypczyk.apartmentsforrent.userservice.application.userdetails.response.GetUserDetailsResponse;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.authorization.AuthorizationService;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.user.UserService;
+import pl.polsl.krypczyk.apartmentsforrent.userservice.infrastructure.annotation.uuid;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -21,9 +22,17 @@ public class UserController {
     private final UserService userService;
     private final AuthorizationService authorizationService;
 
+    @DeleteMapping("users/{userId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void DeleteUser(@PathVariable("userId") @NotNull Long userId,
+                           @RequestHeader("Authorization") @uuid UUID accessToken){
+        this.authorizationService.authorizeUser(userId, accessToken);
+        this.userService.deleteUser(userId);
+    }
+
     @GetMapping("users/{userId}/details")
     public GetUserDetailsResponse getUserDetails(@PathVariable("userId") @NotNull Long userId,
-                                                 @RequestHeader("Authorization") UUID accessToken) {
+                                                 @RequestHeader("Authorization") @uuid UUID accessToken) {
         this.authorizationService.authorizeUser(userId, accessToken);
         return this.userService.getUserDetails(userId);
     }
@@ -31,7 +40,7 @@ public class UserController {
     @PutMapping("users/{userId}/details")
     public ChangeUserDetailsResponse changeUserDetails(@RequestBody @Valid ChangeUserDetailsRequest changeUserDetailsRequest,
                                                        @PathVariable("userId") @NotNull Long userId,
-                                                       @RequestHeader("Authorization") UUID accessToken) {
+                                                       @RequestHeader("Authorization") @uuid UUID accessToken) {
         this.authorizationService.authorizeUser(userId, accessToken);
         return this.userService.changeUserDetails(changeUserDetailsRequest, userId);
     }
@@ -39,7 +48,7 @@ public class UserController {
     @PostMapping("users/{userId}/inactivate")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void inactivateAccount(@PathVariable("userId") @NotNull Long userId,
-                                  @RequestHeader("Authorization") UUID accessToken) {
+                                  @RequestHeader("Authorization") @uuid UUID accessToken) {
         this.authorizationService.authorizeUser(userId, accessToken);
         this.userService.inactivateAccount(userId);
     }
