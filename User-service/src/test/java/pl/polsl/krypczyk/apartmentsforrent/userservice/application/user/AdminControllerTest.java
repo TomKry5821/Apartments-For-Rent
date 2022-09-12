@@ -14,6 +14,7 @@ import java.util.UUID;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -54,6 +55,33 @@ class AdminControllerTest {
         //WHEN
         mvc.perform(
                         delete("/user/api/v1/admin/users/194")
+                                .header("Authorization", "sdsd"))
+                //THEN
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void getAllUsersWithInvalidUserIdAndValidToken_shouldReturn401() throws Exception {
+        //GIVEN
+        this.registerValidUser();
+        var token = UUID.fromString("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa");
+
+        //WHEN
+        mvc.perform(
+                        get("/user/api/v1/admin/users")
+                                .header("Authorization", token))
+                //THEN
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void getAllUsersWithInvalidUserIdAndInvalidToken_shouldReturn401() throws Exception {
+        //GIVEN
+        this.registerValidUser();
+
+        //WHEN
+        mvc.perform(
+                        get("/user/api/v1/admin/users")
                                 .header("Authorization", "sdsd"))
                 //THEN
                 .andExpect(status().isBadRequest());
