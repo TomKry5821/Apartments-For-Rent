@@ -65,20 +65,6 @@ class UserControllerTest {
     }
 
     @Test
-    void getUserDetailsWithInvalidUserIdAndInvalidToken_shouldReturn400() throws Exception {
-        //GIVEN
-        this.registerValidUser();
-
-        //WHEN
-        mvc.perform(
-                        get("/user/api/v1/users/10/details")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .header("Authorization", "sddsdd"))
-                //THEN
-                .andExpect(status().isBadRequest());
-    }
-
-    @Test
     void changeUserDetailsWithValidUserIdAndValidToken_shouldReturn200() throws Exception {
         //GIVEN
         var response = this.registerValidUser();
@@ -180,33 +166,6 @@ class UserControllerTest {
         mvc.perform(
                         post("/user/api/v1/users/192/inactivate")
                                 .header("Authorization", "sdds"))
-                //THEN
-                .andExpect(status().isBadRequest());
-    }
-
-    @Test
-    void deleteUserWithInvalidUserIdAndValidToken_shouldReturn401() throws Exception {
-        //GIVEN
-        this.registerValidUser();
-        var token = UUID.fromString("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa");
-
-        //WHEN
-        mvc.perform(
-                        delete("/user/api/v1/admin/users/194")
-                                .header("Authorization", token))
-                //THEN
-                .andExpect(status().isUnauthorized());
-    }
-
-    @Test
-    void deleteUserWithInvalidUserIdAndInvalidToken_shouldReturn401() throws Exception {
-        //GIVEN
-        this.registerValidUser();
-
-        //WHEN
-        mvc.perform(
-                        delete("/user/api/v1/admin/users/194")
-                                .header("Authorization", "sdsd"))
                 //THEN
                 .andExpect(status().isBadRequest());
     }

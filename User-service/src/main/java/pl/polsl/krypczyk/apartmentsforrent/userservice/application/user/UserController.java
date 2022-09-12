@@ -22,14 +22,6 @@ public class UserController {
     private final UserService userService;
     private final AuthorizationService authorizationService;
 
-    @DeleteMapping("admin/users/{userId}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void DeleteUser(@PathVariable("userId") @NotNull Long userId,
-                           @RequestHeader("Authorization") @uuid UUID accessToken){
-        this.authorizationService.authorizeAdmin(accessToken);
-        this.userService.deleteUser(userId);
-    }
-
     @GetMapping("users/{userId}/details")
     public GetUserDetailsResponse getUserDetails(@PathVariable("userId") @NotNull Long userId,
                                                  @RequestHeader("Authorization") @uuid UUID accessToken) {
