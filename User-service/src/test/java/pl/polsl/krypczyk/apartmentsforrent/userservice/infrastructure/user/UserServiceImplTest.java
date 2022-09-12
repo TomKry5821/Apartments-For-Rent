@@ -174,31 +174,6 @@ class UserServiceImplTest {
                 this.userService.inactivateAccount(userId));
     }
 
-    @Test
-    void deleteUserWithValidUserId() {
-        //GIVEN
-        var user = this.createInactiveUser();
-        var response = this.authorizationService.registerNewUser(user);
-        var userId = response.getId();
-
-        //WHEN
-        this.userService.deleteUser(userId);
-        //THEN
-        Assertions.assertDoesNotThrow(UserNotFoundException::new);
-    }
-
-    @Test
-    void deleteUserWithInvalidUserId() {
-        //GIVEN
-        this.createInactiveUser();
-        var userId = INVALID_USER_ID;
-
-
-        //WHEN AND THEN
-        Assertions.assertThrows(UserNotFoundException.class, () ->
-                this.userService.deleteUser(userId));
-    }
-
     private CreateUserRequest createValidUser() {
         return pl.polsl.krypczyk.apartmentsforrent.userservice.application.user.request.CreateUserRequest.builder()
                 .surname(VALID_USER_SURNAME)

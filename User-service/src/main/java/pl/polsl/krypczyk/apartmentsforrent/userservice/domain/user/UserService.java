@@ -8,7 +8,6 @@ public interface UserService {
 
     GetUserDetailsResponse getUserDetails(Long userId);
     ChangeUserDetailsResponse changeUserDetails(ChangeUserDetailsRequest changeUserDetailsRequest, Long userId);
-    void deleteUser(Long userId);
     void deleteDbContent();
     void inactivateAccount(Long userId);
 }
