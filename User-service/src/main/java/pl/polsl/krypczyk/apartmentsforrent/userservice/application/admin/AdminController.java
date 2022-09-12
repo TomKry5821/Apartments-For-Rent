@@ -4,10 +4,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.admin.AdminService;
+import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.admin.response.GetAllUsersResponse;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.authorization.AuthorizationService;
+import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.user.UserEntity;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.infrastructure.annotation.uuid;
 
 import javax.validation.constraints.NotNull;
+import java.util.Collection;
 import java.util.UUID;
 
 @RestController
@@ -17,6 +20,12 @@ public class AdminController {
 
     private final AdminService adminService;
     private final AuthorizationService authorizationService;
+
+    @GetMapping("/users")
+    public GetAllUsersResponse getAllUsers(@RequestHeader("Authorization") @uuid UUID accessToken) {
+        this.authorizationService.authorizeAdmin(accessToken);
+        return this.adminService.getAllUsers();
+    }
 
     @DeleteMapping("/users/{userId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)

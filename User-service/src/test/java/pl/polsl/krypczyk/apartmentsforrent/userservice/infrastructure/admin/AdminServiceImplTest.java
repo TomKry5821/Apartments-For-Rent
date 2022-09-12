@@ -6,11 +6,13 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.application.user.request.CreateUserRequest;
+import pl.polsl.krypczyk.apartmentsforrent.userservice.application.user.response.CreateUserResponse;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.admin.AdminService;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.authorization.AuthorizationService;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.user.exception.UserNotFoundException;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @SpringBootTest
 class AdminServiceImplTest {
@@ -60,8 +62,31 @@ class AdminServiceImplTest {
                 this.adminService.deleteUser(userId));
     }
 
+    @Test
+    void getAllUsersWithNotEmptyUsersList(){
+        //GIVEN
+        var user = this.createValidUser();
+        this.authorizationService.registerNewUser(user);
+
+        //WHEN
+        var response = this.adminService.getAllUsers();
+
+        //THEN
+        Assertions.assertFalse(response.getUsers().isEmpty());
+    }
+
+    @Test
+    void getAllUsersWithEmptyUsersList(){
+        //GIVEN
+        this.deleteDbContent();
+        //WHEN
+        var response = this.adminService.getAllUsers();
+
+        //THEN
+        Assertions.assertTrue(response.getUsers().isEmpty());    }
+
     private CreateUserRequest createValidUser() {
-        return pl.polsl.krypczyk.apartmentsforrent.userservice.application.user.request.CreateUserRequest.builder()
+        return CreateUserRequest.builder()
                 .surname(VALID_USER_SURNAME)
                 .password(VALID_USER_PASSWORD)
                 .name(VALID_USER_NAME)
