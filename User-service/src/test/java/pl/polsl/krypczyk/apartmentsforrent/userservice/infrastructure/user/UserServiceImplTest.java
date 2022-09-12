@@ -10,7 +10,7 @@ import pl.polsl.krypczyk.apartmentsforrent.userservice.application.userdetails.r
 import pl.polsl.krypczyk.apartmentsforrent.userservice.application.userdetails.response.ChangeUserDetailsResponse;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.application.userdetails.response.GetUserDetailsResponse;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.authorization.AuthorizationService;
-import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.authorization.exception.AccountNotActiveException;
+import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.authorization.exception.InactiveAccountException;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.authorization.exception.UnauthorizedUserException;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.user.UserService;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.user.exception.InvalidUserDetailsException;
@@ -75,7 +75,7 @@ class UserServiceImplTest {
         var userId = response.getId();
 
         //WHEN AND THEN
-        Assertions.assertThrows(AccountNotActiveException.class, () ->
+        Assertions.assertThrows(InactiveAccountException.class, () ->
                 this.userService.getUserDetails(userId));
     }
 
@@ -131,7 +131,7 @@ class UserServiceImplTest {
         var changeUserDetailsRequest = this.createValidChangeUserDetailsRequest();
 
         //WHEN AND THEN
-        Assertions.assertThrows(AccountNotActiveException.class, () ->
+        Assertions.assertThrows(InactiveAccountException.class, () ->
                 this.userService.changeUserDetails(changeUserDetailsRequest, userId));
     }
 
@@ -170,7 +170,7 @@ class UserServiceImplTest {
         var userId = response.getId();
 
         // WHEN AND THEN
-        Assertions.assertThrows(AccountNotActiveException.class, () ->
+        Assertions.assertThrows(InactiveAccountException.class, () ->
                 this.userService.inactivateAccount(userId));
     }
 

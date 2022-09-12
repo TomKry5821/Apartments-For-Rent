@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.application.userdetails.request.ChangeUserDetailsRequest;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.application.userdetails.response.ChangeUserDetailsResponse;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.application.userdetails.response.GetUserDetailsResponse;
-import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.authorization.exception.AccountNotActiveException;
+import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.authorization.exception.InactiveAccountException;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.user.UserMapper;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.user.UserRepository;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.user.UserService;
@@ -34,7 +34,7 @@ public class UserServiceImpl implements UserService {
 
         var userDetails = user.getUserDetailsEntity();
         if (this.isAccountActive(userDetails))
-            throw new AccountNotActiveException();
+            throw new InactiveAccountException();
 
         var userDetailsDTO = userMapper.UserDetailsEntityToUserDetailsDTO(userDetails);
         return userDetailsDTO;
@@ -51,7 +51,7 @@ public class UserServiceImpl implements UserService {
         var userDetails = user.getUserDetailsEntity();
 
         if (this.isAccountActive(userDetails))
-            throw new AccountNotActiveException();
+            throw new InactiveAccountException();
 
         this.changeAndSaveUserDetails(userDetails, changeUserDetailsRequest);
         var changeUserDetailsResponse = this.userMapper.ChangeUserDetailsRequestToChangeUserDetailsResponse(changeUserDetailsRequest);
@@ -83,7 +83,7 @@ public class UserServiceImpl implements UserService {
 
         var userDetails = user.getUserDetailsEntity();
         if (this.isAccountActive(userDetails))
-            throw new AccountNotActiveException();
+            throw new InactiveAccountException();
 
         userDetails.setIsActive(false);
         this.userDetailsRepository.save(userDetails);

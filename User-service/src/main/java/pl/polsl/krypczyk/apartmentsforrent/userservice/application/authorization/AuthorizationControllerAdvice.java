@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
-import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.authorization.exception.AccountNotActiveException;
+import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.authorization.exception.InactiveAccountException;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.authorization.exception.BadCredentialsException;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.authorization.exception.UnauthorizedUserException;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.user.exception.UserAlreadyExistsException;
@@ -36,10 +36,10 @@ public class AuthorizationControllerAdvice {
         return e.getMessage();
     }
 
-    @ExceptionHandler(AccountNotActiveException.class)
+    @ExceptionHandler(InactiveAccountException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
-    public String handleException(AccountNotActiveException e){
+    public String handleException(InactiveAccountException e){
         return e.getMessage();
     }
 
