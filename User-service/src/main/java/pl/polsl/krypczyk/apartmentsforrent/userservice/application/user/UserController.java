@@ -26,7 +26,7 @@ public class UserController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void DeleteUser(@PathVariable("userId") @NotNull Long userId,
                            @RequestHeader("Authorization") @uuid UUID accessToken){
-        this.authorizationService.authorizeUser(userId, accessToken);
+        this.authorizationService.authorizeAdmin(accessToken);
         this.userService.deleteUser(userId);
     }
 
