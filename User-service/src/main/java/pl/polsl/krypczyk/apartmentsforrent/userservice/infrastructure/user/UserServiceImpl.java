@@ -36,8 +36,7 @@ public class UserServiceImpl implements UserService {
         if (this.isAccountActive(userDetails))
             throw new InactiveAccountException();
 
-        var userDetailsDTO = userMapper.UserDetailsEntityToUserDetailsDTO(userDetails);
-        return userDetailsDTO;
+        return userMapper.UserDetailsEntityToUserDetailsDTO(userDetails);
     }
 
     @Override
@@ -54,8 +53,7 @@ public class UserServiceImpl implements UserService {
             throw new InactiveAccountException();
 
         this.changeAndSaveUserDetails(userDetails, changeUserDetailsRequest);
-        var changeUserDetailsResponse = this.userMapper.ChangeUserDetailsRequestToChangeUserDetailsResponse(changeUserDetailsRequest);
-        return changeUserDetailsResponse;
+        return this.userMapper.ChangeUserDetailsRequestToChangeUserDetailsResponse(changeUserDetailsRequest);
     }
 
     private void changeAndSaveUserDetails(UserDetailsEntity userDetailsEntity, ChangeUserDetailsRequest changeUserDetailsRequest) {
