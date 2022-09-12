@@ -6,6 +6,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.gateway.route.RouteLocator;
 import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
 import org.springframework.context.annotation.Bean;
+import pl.polsl.krypczyk.apartmentsforrent.gateway.filter.AdminRoleAuthGatewayFilterFactory;
 import pl.polsl.krypczyk.apartmentsforrent.gateway.filter.UserRoleAuthGatewayFilterFactory;
 
 @SpringBootApplication
@@ -13,11 +14,17 @@ import pl.polsl.krypczyk.apartmentsforrent.gateway.filter.UserRoleAuthGatewayFil
 public class GatewayApplication {
 
     private final UserRoleAuthGatewayFilterFactory userRoleAuthGatewayFilterFactory;
+    private final AdminRoleAuthGatewayFilterFactory adminRoleAuthGatewayFilterFactory;
 
     @Bean
     public RouteLocator customRouteLocator(RouteLocatorBuilder builder) {
 
         return builder.routes()
+                .route(r -> r
+                        .path("/user/api/v1/admin/**")
+                        .filters(f ->
+                                f.filter(adminRoleAuthGatewayFilterFactory.apply(new AdminRoleAuthGatewayFilterFactory.Config())))
+                        .uri("http://User:8081"))
                 .route(r -> r
                         .path("/user/api/v1/**")
                         .filters(f ->
