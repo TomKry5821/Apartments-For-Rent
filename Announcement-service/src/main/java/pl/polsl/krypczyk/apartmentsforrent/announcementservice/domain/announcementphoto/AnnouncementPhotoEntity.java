@@ -17,7 +17,7 @@ import javax.persistence.*;
 public class AnnouncementPhotoEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false)
+    @Column(name = "ID", nullable = false)
     private Long id;
 
     @Column(name = "PHOTO_PATH", nullable = false)
