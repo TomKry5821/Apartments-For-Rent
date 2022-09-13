@@ -3,11 +3,14 @@ package pl.polsl.krypczyk.apartmentsforrent.userservice.application.admin;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import pl.polsl.krypczyk.apartmentsforrent.userservice.application.userdetails.request.ChangeUserDetailsRequest;
+import pl.polsl.krypczyk.apartmentsforrent.userservice.application.userdetails.response.ChangeUserDetailsResponse;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.admin.AdminService;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.application.admin.response.GetAllUsersResponse;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.authorization.AuthorizationService;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.infrastructure.annotation.uuid;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.UUID;
 
@@ -23,6 +26,14 @@ public class AdminController {
     public GetAllUsersResponse getAllUsers(@RequestHeader("Authorization") @uuid UUID accessToken) {
         this.authorizationService.authorizeAdmin(accessToken);
         return this.adminService.getAllUsers();
+    }
+
+    @PutMapping("users/{userId}/details")
+    public ChangeUserDetailsResponse changeUserDetails(@RequestBody @Valid ChangeUserDetailsRequest changeUserDetailsRequest,
+                                                       @PathVariable("userId") @NotNull Long userId,
+                                                       @RequestHeader("Authorization") @uuid UUID accessToken) {
+        this.authorizationService.authorizeAdmin(accessToken);
+        return this.adminService.changeUserDetails(changeUserDetailsRequest, userId);
     }
 
     @DeleteMapping("/users/{userId}")
