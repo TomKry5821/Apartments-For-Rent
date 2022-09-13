@@ -1,4 +1,4 @@
-package pl.polsl.krypczyk.apartmentsforrent.userservice.domain.admin.dto;
+package pl.polsl.krypczyk.apartmentsforrent.userservice.application.admin.dto;
 
 import lombok.Builder;
 import java.time.LocalDateTime;
