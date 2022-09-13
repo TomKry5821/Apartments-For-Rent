@@ -54,6 +54,11 @@ public class AuthorizationControllerAdvice {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
     public String handleException(MethodArgumentNotValidException e){
-        return e.getFieldErrors().toString();
+        var errorMessage = new StringBuilder();
+        for(var error : e.getFieldErrors()){
+            errorMessage.append("Invalid ").append(error.getField()).append("\n");
+        }
+
+        return errorMessage.toString();
     }
 }
