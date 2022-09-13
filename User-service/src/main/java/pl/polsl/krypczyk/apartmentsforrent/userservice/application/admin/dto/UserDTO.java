@@ -1,11 +1,14 @@
 package pl.polsl.krypczyk.apartmentsforrent.userservice.application.admin.dto;
 
 import lombok.Builder;
+import lombok.Data;
+
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.UUID;
 
 @Builder
+@Data
 public class UserDTO {
 
     private Long id;
