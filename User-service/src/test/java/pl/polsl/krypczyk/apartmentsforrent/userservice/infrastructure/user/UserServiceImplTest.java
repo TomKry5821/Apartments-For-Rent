@@ -97,6 +97,21 @@ class UserServiceImplTest {
     }
 
     @Test
+    void changeUserDetailsWithValidUserId() {
+        //GIVEN
+        var user = this.createValidUser();
+        var response = this.authorizationService.registerNewUser(user);
+        var userId = response.getId();
+        var changeUserDetailsRequest = this.createValidChangeUserDetailsRequest();
+
+        //WHEN
+        this.userService.changeUserDetails(changeUserDetailsRequest, userId);
+        //WHEN AND THEN
+        Assertions.assertDoesNotThrow(UserNotFoundException::new);
+        Assertions.assertDoesNotThrow(InactiveAccountException::new);
+    }
+
+    @Test
     void changeUserDetailsWithInvalidUserId() {
         //GIVEN
         var user = this.createValidUser();
