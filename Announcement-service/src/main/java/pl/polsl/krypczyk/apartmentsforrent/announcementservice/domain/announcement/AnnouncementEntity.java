@@ -1,10 +1,10 @@
-package pl.polsl.krypczyk.apartmentsforrent.announcementservice.announcement;
+package pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import pl.polsl.krypczyk.apartmentsforrent.announcementservice.announcementdetails.AnnouncementDetailsEntity;
+import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcementdetails.AnnouncementDetailsEntity;
 
 import javax.persistence.*;
 

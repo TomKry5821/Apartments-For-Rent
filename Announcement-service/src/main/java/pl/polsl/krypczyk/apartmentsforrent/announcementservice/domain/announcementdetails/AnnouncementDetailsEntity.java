@@ -1,4 +1,4 @@
-package pl.polsl.krypczyk.apartmentsforrent.announcementservice.announcementdetails;
+package pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcementdetails;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
