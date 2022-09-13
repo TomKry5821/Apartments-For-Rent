@@ -99,6 +99,8 @@ public class AuthorizationServiceImpl implements AuthorizationService {
             throw new BadCredentialsException();
 
         var userDetails = retrieveUserDetailsByEmailAndPassword(userLoginRequest.getEmail(), userLoginRequest.getPassword());
+        if(!isAccountActive(userDetails))
+            throw new InactiveAccountException();
 
         var user = this.userRepository.findUserEntityByUserDetailsEntity(userDetails);
         var userAuthorization = user.getUserAuthorizationEntity();
