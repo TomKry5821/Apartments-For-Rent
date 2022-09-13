@@ -1,6 +1,7 @@
 package pl.polsl.krypczyk.apartmentsforrent.userservice.application.user;
 
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -12,9 +13,9 @@ import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.authorization.Auth
 
 import java.util.UUID;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -31,6 +32,11 @@ class AdminControllerTest {
     @AfterEach
     void deleteDbContent() {
         this.authorizationService.deleteDbContent();
+    }
+
+    @BeforeEach
+    void addAdmin(){
+
     }
 
     @Test
@@ -83,6 +89,49 @@ class AdminControllerTest {
         mvc.perform(
                         get("/user/api/v1/admin/users")
                                 .header("Authorization", "sdsd"))
+                //THEN
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void changeUserDetailsWithInvalidUserIdAndValidToken_shouldReturn401() throws Exception {
+        //GIVEN
+        this.registerValidUser();
+        var token = UUID.fromString("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa");
+
+        //WHEN
+        mvc.perform(
+                        put("/user/api/v1/admin/users/10/details")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content("""
+                                        {
+                                            "name": "Test",
+                                            "surname": "Testowy",
+                                            "email": "test@test.pl",
+                                            "password": "Test"
+                                        }""")
+                                .header("Authorization", token))
+                //THEN
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void changeUserDetailsWithInvalidUserIdAndInvalidToken_shouldReturn400() throws Exception {
+        //GIVEN
+        this.registerValidUser();
+
+        //WHEN
+        mvc.perform(
+                        put("/user/api/v1/admin/users/10/details")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content("""
+                                        {
+                                            "name": "Test",
+                                            "surname": "Testowy",
+                                            "email": "test@test.pl",
+                                            "password": "Test"
+                                        }""")
+                                .header("Authorization", "sfsf"))
                 //THEN
                 .andExpect(status().isBadRequest());
     }
