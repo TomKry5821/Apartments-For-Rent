@@ -32,15 +32,6 @@ public class AdminServiceImpl implements AdminService {
     private final UserMapper userMapper = Mappers.getMapper(UserMapper.class);
 
     @Override
-    public void deleteUser(Long userId) {
-        var user = this.userRepository.findUserEntityById(userId);
-        if (Objects.isNull(user))
-            throw new UserNotFoundException();
-
-        this.userRepository.delete(user);
-    }
-
-    @Override
     public GetAllUsersResponse getAllUsers() {
         var users = this.userRepository.findAll();
         Collection<UserDTO> userDTOS = new ArrayList<>();
@@ -50,6 +41,15 @@ public class AdminServiceImpl implements AdminService {
         getAllUsersResponse.setUsers(userDTOS);
 
         return getAllUsersResponse;
+    }
+
+    @Override
+    public void deleteUser(Long userId) {
+        var user = this.userRepository.findUserEntityById(userId);
+        if (Objects.isNull(user))
+            throw new UserNotFoundException();
+
+        this.userRepository.delete(user);
     }
 
     @Override
@@ -89,7 +89,6 @@ public class AdminServiceImpl implements AdminService {
     private Boolean isAccountActive(UserDetailsEntity userDetails) {
         return userDetails.getIsActive().equals(false);
     }
-
 
     private UserDTO buildUserDTO(UserEntity user) {
         return UserDTO.builder()

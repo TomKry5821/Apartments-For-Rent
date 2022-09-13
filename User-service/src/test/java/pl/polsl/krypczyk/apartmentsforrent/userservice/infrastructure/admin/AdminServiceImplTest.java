@@ -37,6 +37,30 @@ class AdminServiceImplTest {
         this.adminService.deleteDbContent();
     }
 
+    @Test
+    void getAllUsersWithNotEmptyUsersList() {
+        //GIVEN
+        var user = this.createValidUser();
+        this.authorizationService.registerNewUser(user);
+
+        //WHEN
+        var response = this.adminService.getAllUsers();
+
+        //THEN
+        Assertions.assertFalse(response.getUsers().isEmpty());
+    }
+
+    @Test
+    void getAllUsersWithEmptyUsersList() {
+        //GIVEN
+        this.deleteDbContent();
+        //WHEN
+        var response = this.adminService.getAllUsers();
+
+        //THEN
+        Assertions.assertTrue(response.getUsers().isEmpty());
+    }
+
 
     @Test
     void deleteUserWithValidUserId() {
@@ -61,30 +85,6 @@ class AdminServiceImplTest {
         //WHEN AND THEN
         Assertions.assertThrows(UserNotFoundException.class, () ->
                 this.adminService.deleteUser(userId));
-    }
-
-    @Test
-    void getAllUsersWithNotEmptyUsersList() {
-        //GIVEN
-        var user = this.createValidUser();
-        this.authorizationService.registerNewUser(user);
-
-        //WHEN
-        var response = this.adminService.getAllUsers();
-
-        //THEN
-        Assertions.assertFalse(response.getUsers().isEmpty());
-    }
-
-    @Test
-    void getAllUsersWithEmptyUsersList() {
-        //GIVEN
-        this.deleteDbContent();
-        //WHEN
-        var response = this.adminService.getAllUsers();
-
-        //THEN
-        Assertions.assertTrue(response.getUsers().isEmpty());
     }
 
     @Test

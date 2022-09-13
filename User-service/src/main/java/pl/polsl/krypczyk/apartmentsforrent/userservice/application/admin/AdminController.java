@@ -28,19 +28,19 @@ public class AdminController {
         return this.adminService.getAllUsers();
     }
 
-    @PutMapping("users/{userId}/details")
-    public ChangeUserDetailsResponse changeUserDetails(@RequestBody @Valid ChangeUserDetailsRequest changeUserDetailsRequest,
-                                                       @PathVariable("userId") @NotNull Long userId,
-                                                       @RequestHeader("Authorization") @uuid UUID accessToken) {
-        this.authorizationService.authorizeAdmin(accessToken);
-        return this.adminService.changeUserDetails(changeUserDetailsRequest, userId);
-    }
-
     @DeleteMapping("/users/{userId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void DeleteUser(@PathVariable("userId") @NotNull Long userId,
                            @RequestHeader("Authorization") @uuid UUID accessToken) {
         this.authorizationService.authorizeAdmin(accessToken);
         this.adminService.deleteUser(userId);
+    }
+
+    @PutMapping("users/{userId}/details")
+    public ChangeUserDetailsResponse changeUserDetails(@RequestBody @Valid ChangeUserDetailsRequest changeUserDetailsRequest,
+                                                       @PathVariable("userId") @NotNull Long userId,
+                                                       @RequestHeader("Authorization") @uuid UUID accessToken) {
+        this.authorizationService.authorizeAdmin(accessToken);
+        return this.adminService.changeUserDetails(changeUserDetailsRequest, userId);
     }
 }

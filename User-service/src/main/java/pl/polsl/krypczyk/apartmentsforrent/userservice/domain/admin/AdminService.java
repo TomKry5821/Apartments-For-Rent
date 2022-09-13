@@ -5,8 +5,9 @@ import pl.polsl.krypczyk.apartmentsforrent.userservice.application.userdetails.r
 import pl.polsl.krypczyk.apartmentsforrent.userservice.application.userdetails.response.ChangeUserDetailsResponse;
 
 public interface AdminService {
+    GetAllUsersResponse getAllUsers();
     void deleteUser(Long userId);
     ChangeUserDetailsResponse changeUserDetails(ChangeUserDetailsRequest changeUserDetailsRequest, Long userId);
     void deleteDbContent();
-    GetAllUsersResponse getAllUsers();
+
 }

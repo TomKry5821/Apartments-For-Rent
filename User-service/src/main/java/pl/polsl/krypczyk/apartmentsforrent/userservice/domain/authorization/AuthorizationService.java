@@ -10,14 +10,9 @@ import java.util.UUID;
 public interface AuthorizationService {
 
     CreateUserResponse registerNewUser(CreateUserRequest createUserRequest);
-
     LoginUserResponse loginUser(UserLoginRequest userLoginRequest);
-
     void logoutUser(Long userId);
-
-    void authorizeAdmin(UUID accessToken);
-
-    void deleteDbContent();
-
     void authorizeUser(Long userId, UUID accessToken);
+    void authorizeAdmin(UUID accessToken);
+    void deleteDbContent();
 }
