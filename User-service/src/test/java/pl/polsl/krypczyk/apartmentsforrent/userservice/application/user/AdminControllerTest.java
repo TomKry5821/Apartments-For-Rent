@@ -33,11 +33,6 @@ class AdminControllerTest {
         this.authorizationService.deleteDbContent();
     }
 
-    @BeforeEach
-    void addAdmin(){
-
-    }
-
     @Test
     void deleteUserWithInvalidUserIdAndValidToken_shouldReturn401() throws Exception {
         //GIVEN

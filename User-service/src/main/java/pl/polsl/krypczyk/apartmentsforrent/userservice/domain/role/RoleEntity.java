@@ -3,7 +3,6 @@ package pl.polsl.krypczyk.apartmentsforrent.userservice.domain.role;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-
 import javax.persistence.*;
 
 @Getter

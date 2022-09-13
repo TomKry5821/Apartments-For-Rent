@@ -30,6 +30,7 @@ class UserServiceImplTest {
     private final LocalDateTime USER_CREATION_DATE = null;
     private final Long INVALID_USER_ID = 12334343L;
 
+
     @Autowired
     private UserService userService;
     @Autowired
