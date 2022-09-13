@@ -3,6 +3,7 @@ package pl.polsl.krypczyk.apartmentsforrent.userservice.infrastructure.user;
 import lombok.RequiredArgsConstructor;
 import org.mapstruct.factory.Mappers;
 import org.springframework.stereotype.Service;
+import pl.polsl.krypczyk.apartmentsforrent.userservice.application.authorization.AES;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.application.userdetails.request.ChangeUserDetailsRequest;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.application.userdetails.response.ChangeUserDetailsResponse;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.application.userdetails.response.GetUserDetailsResponse;
@@ -36,7 +37,9 @@ public class UserServiceImpl implements UserService {
         if (this.isAccountActive(userDetails))
             throw new InactiveAccountException();
 
-        return userMapper.UserDetailsEntityToUserDetailsDTO(userDetails);
+        var getUserDetailsResponse = userMapper.UserDetailsEntityToUserDetailsDTO(userDetails);
+        getUserDetailsResponse.setPassword(AES.decrypt(userDetails.getPassword()));
+        return getUserDetailsResponse;
     }
 
     @Override
@@ -67,8 +70,10 @@ public class UserServiceImpl implements UserService {
         if (!Objects.isNull(email))
             userDetailsEntity.setEmail(email);
         var password = changeUserDetailsRequest.getPassword();
-        if (!Objects.isNull(password))
+        if (!Objects.isNull(password)) {
+            password = AES.encrypt(password);
             userDetailsEntity.setPassword(password);
+        }
 
         this.userDetailsRepository.save(userDetailsEntity);
     }

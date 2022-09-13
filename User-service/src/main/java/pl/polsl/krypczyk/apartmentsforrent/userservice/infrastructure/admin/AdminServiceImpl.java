@@ -3,6 +3,7 @@ package pl.polsl.krypczyk.apartmentsforrent.userservice.infrastructure.admin;
 import lombok.RequiredArgsConstructor;
 import org.mapstruct.factory.Mappers;
 import org.springframework.stereotype.Service;
+import pl.polsl.krypczyk.apartmentsforrent.userservice.application.authorization.AES;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.application.userdetails.request.ChangeUserDetailsRequest;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.application.userdetails.response.ChangeUserDetailsResponse;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.admin.AdminService;
@@ -80,8 +81,10 @@ public class AdminServiceImpl implements AdminService {
         if (!Objects.isNull(email))
             userDetailsEntity.setEmail(email);
         var password = changeUserDetailsRequest.getPassword();
-        if (!Objects.isNull(password))
+        if (!Objects.isNull(password)) {
+            password = AES.encrypt(password);
             userDetailsEntity.setPassword(password);
+        }
 
         this.userDetailsRepository.save(userDetailsEntity);
     }
@@ -96,7 +99,7 @@ public class AdminServiceImpl implements AdminService {
                 .name(user.getUserDetailsEntity().getName())
                 .surname(user.getUserDetailsEntity().getSurname())
                 .email(user.getUserDetailsEntity().getEmail())
-                .password(user.getUserDetailsEntity().getPassword())
+                .password(AES.decrypt(user.getUserDetailsEntity().getPassword()))
                 .creationDate(user.getUserDetailsEntity().getCreationDate())
                 .isActive(user.getUserDetailsEntity().getIsActive())
                 .accessToken(user.getUserAuthorizationEntity().getToken())

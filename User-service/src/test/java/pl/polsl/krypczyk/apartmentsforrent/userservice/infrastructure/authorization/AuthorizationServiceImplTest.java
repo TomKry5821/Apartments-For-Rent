@@ -72,7 +72,9 @@ class AuthorizationServiceImplTest {
         this.authorizationService.registerNewUser(createUserRequest);
 
         //WHEN
-        UserLoginRequest userLoginRequest = new UserLoginRequest(VALID_USER_EMAIL, VALID_USER_PASSWORD);
+        UserLoginRequest userLoginRequest = new UserLoginRequest();
+        userLoginRequest.setEmail(VALID_USER_EMAIL);
+        userLoginRequest.setPassword(VALID_USER_PASSWORD);
         this.authorizationService.loginUser(userLoginRequest);
 
         //THEN
@@ -100,7 +102,9 @@ class AuthorizationServiceImplTest {
         this.authorizationService.registerNewUser(createUserRequest);
 
         //WHEN
-        UserLoginRequest userLoginRequest = new UserLoginRequest("wrong@mail.com", "wrongpassword");
+        UserLoginRequest userLoginRequest = new UserLoginRequest();
+        userLoginRequest.setEmail("wrong@mail.com");
+        userLoginRequest.setPassword("wrongpassword");
 
         //THEN
         Assertions.assertThrows(UserNotFoundException.class, () ->

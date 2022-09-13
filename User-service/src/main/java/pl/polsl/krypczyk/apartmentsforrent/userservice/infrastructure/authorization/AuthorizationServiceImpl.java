@@ -3,6 +3,7 @@ package pl.polsl.krypczyk.apartmentsforrent.userservice.infrastructure.authoriza
 import lombok.RequiredArgsConstructor;
 import org.mapstruct.factory.Mappers;
 import org.springframework.stereotype.Service;
+import pl.polsl.krypczyk.apartmentsforrent.userservice.application.authorization.AES;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.application.user.request.CreateUserRequest;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.application.user.request.UserLoginRequest;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.application.user.response.CreateUserResponse;
@@ -79,6 +80,7 @@ public class AuthorizationServiceImpl implements AuthorizationService {
     private UserDetailsEntity createAndSaveUserDetails(CreateUserRequest createUserRequest) {
         var userDetails = this.userMapper.userDetailsDTOToUserDetailsEntity(createUserRequest);
         userDetails.setCreationDate(LocalDateTime.now());
+        userDetails.setPassword(AES.encrypt(userDetails.getPassword()));
         this.userDetailsRepository.save(userDetails);
         return userDetails;
     }
@@ -98,6 +100,7 @@ public class AuthorizationServiceImpl implements AuthorizationService {
         if (Objects.isNull(userLoginRequest))
             throw new BadCredentialsException();
 
+        userLoginRequest.setPassword(AES.encrypt(userLoginRequest.getPassword()));
         var userDetails = retrieveUserDetailsByEmailAndPassword(userLoginRequest.getEmail(), userLoginRequest.getPassword());
         if(this.isAccountInactive(userDetails))
             throw new InactiveAccountException();
