@@ -62,9 +62,6 @@ public class AdminServiceImpl implements AdminService {
             throw new UserNotFoundException();
         var userDetails = user.getUserDetailsEntity();
 
-        if (this.isAccountActive(userDetails))
-            throw new InactiveAccountException();
-
         this.changeAndSaveUserDetails(userDetails, changeUserDetailsRequest);
         return this.userMapper.ChangeUserDetailsRequestToChangeUserDetailsResponse(changeUserDetailsRequest);
     }
