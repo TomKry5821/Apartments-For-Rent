@@ -1,13 +1,13 @@
-package pl.polsl.krypczyk.apartmentsforrent.userservice.domain.user;
+package pl.polsl.krypczyk.apartmentsforrent.userservice.domain.admin;
 
+import pl.polsl.krypczyk.apartmentsforrent.userservice.application.admin.response.GetAllUsersResponse;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.application.userdetails.request.ChangeUserDetailsRequest;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.application.userdetails.response.ChangeUserDetailsResponse;
-import pl.polsl.krypczyk.apartmentsforrent.userservice.application.userdetails.response.GetUserDetailsResponse;
 
-public interface UserService {
-
-    GetUserDetailsResponse getUserDetails(Long userId);
+public interface AdminService {
+    GetAllUsersResponse getAllUsers();
+    void deleteUser(Long userId);
     ChangeUserDetailsResponse changeUserDetails(ChangeUserDetailsRequest changeUserDetailsRequest, Long userId);
     void deleteDbContent();
-    void inactivateAccount(Long userId);
+
 }

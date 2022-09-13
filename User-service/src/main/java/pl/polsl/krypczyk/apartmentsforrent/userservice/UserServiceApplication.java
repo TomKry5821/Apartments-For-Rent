@@ -4,6 +4,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import pl.polsl.krypczyk.apartmentsforrent.userservice.application.authorization.AES;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.role.RoleEntity;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.role.RoleRepository;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.user.UserEntity;
@@ -47,7 +48,7 @@ public class UserServiceApplication {
         userDetails.setEmail("admin@admin.com");
         userDetails.setName("Admin");
         userDetails.setSurname("Admin");
-        userDetails.setPassword("Admin");
+        userDetails.setPassword(AES.encrypt("Admin"));
         userDetails.setIsActive(true);
 
         return userDetails;

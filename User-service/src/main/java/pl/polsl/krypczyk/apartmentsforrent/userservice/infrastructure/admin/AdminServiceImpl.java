@@ -1,4 +1,4 @@
-package pl.polsl.krypczyk.apartmentsforrent.userservice.infrastructure.user;
+package pl.polsl.krypczyk.apartmentsforrent.userservice.infrastructure.admin;
 
 import lombok.RequiredArgsConstructor;
 import org.mapstruct.factory.Mappers;
@@ -6,40 +6,51 @@ import org.springframework.stereotype.Service;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.application.authorization.AES;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.application.userdetails.request.ChangeUserDetailsRequest;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.application.userdetails.response.ChangeUserDetailsResponse;
-import pl.polsl.krypczyk.apartmentsforrent.userservice.application.userdetails.response.GetUserDetailsResponse;
+import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.admin.AdminService;
+import pl.polsl.krypczyk.apartmentsforrent.userservice.application.admin.dto.UserDTO;
+import pl.polsl.krypczyk.apartmentsforrent.userservice.application.admin.response.GetAllUsersResponse;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.authorization.exception.InactiveAccountException;
+import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.role.RoleEntity;
+import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.user.UserEntity;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.user.UserMapper;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.user.UserRepository;
-import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.user.UserService;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.user.exception.InvalidUserDetailsException;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.user.exception.UserNotFoundException;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.userdetails.UserDetailsEntity;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.userdetails.UserDetailsRepository;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Objects;
-
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class UserServiceImpl implements UserService {
+public class AdminServiceImpl implements AdminService {
 
     private final UserRepository userRepository;
     private final UserDetailsRepository userDetailsRepository;
     private final UserMapper userMapper = Mappers.getMapper(UserMapper.class);
 
     @Override
-    public GetUserDetailsResponse getUserDetails(Long userId) {
+    public GetAllUsersResponse getAllUsers() {
+        var users = this.userRepository.findAll();
+        Collection<UserDTO> userDTOS = new ArrayList<>();
+        users.forEach(u -> userDTOS.add(this.buildUserDTO(u)));
+
+        var getAllUsersResponse = new GetAllUsersResponse();
+        getAllUsersResponse.setUsers(userDTOS);
+
+        return getAllUsersResponse;
+    }
+
+    @Override
+    public void deleteUser(Long userId) {
         var user = this.userRepository.findUserEntityById(userId);
         if (Objects.isNull(user))
             throw new UserNotFoundException();
 
-        var userDetails = user.getUserDetailsEntity();
-        if (this.isAccountActive(userDetails))
-            throw new InactiveAccountException();
-
-        var getUserDetailsResponse = userMapper.UserDetailsEntityToUserDetailsDTO(userDetails);
-        getUserDetailsResponse.setPassword(AES.decrypt(userDetails.getPassword()));
-        return getUserDetailsResponse;
+        this.userRepository.delete(user);
     }
 
     @Override
@@ -50,9 +61,9 @@ public class UserServiceImpl implements UserService {
         var user = this.userRepository.findUserEntityById(userId);
         if (Objects.isNull(user))
             throw new UserNotFoundException();
-        var userDetails = user.getUserDetailsEntity();
 
-        if (this.isAccountActive(userDetails))
+        var userDetails = user.getUserDetailsEntity();
+        if(this.isAccountInactive(userDetails))
             throw new InactiveAccountException();
 
         this.changeAndSaveUserDetails(userDetails, changeUserDetailsRequest);
@@ -78,22 +89,25 @@ public class UserServiceImpl implements UserService {
         this.userDetailsRepository.save(userDetailsEntity);
     }
 
-    @Override
-    public void inactivateAccount(Long userId){
-        var user = this.userRepository.findUserEntityById(userId);
-        if (Objects.isNull(user))
-            throw new UserNotFoundException();
-
-        var userDetails = user.getUserDetailsEntity();
-        if (this.isAccountActive(userDetails))
-            throw new InactiveAccountException();
-
-        userDetails.setIsActive(false);
-        this.userDetailsRepository.save(userDetails);
+    private Boolean isAccountInactive(UserDetailsEntity userDetails) {
+        return userDetails.getIsActive().equals(false);
     }
 
-    private Boolean isAccountActive(UserDetailsEntity userDetails) {
-        return userDetails.getIsActive().equals(false);
+    private UserDTO buildUserDTO(UserEntity user) {
+        return UserDTO.builder()
+                .id(user.getId())
+                .name(user.getUserDetailsEntity().getName())
+                .surname(user.getUserDetailsEntity().getSurname())
+                .email(user.getUserDetailsEntity().getEmail())
+                .password(AES.decrypt(user.getUserDetailsEntity().getPassword()))
+                .creationDate(user.getUserDetailsEntity().getCreationDate())
+                .isActive(user.getUserDetailsEntity().getIsActive())
+                .accessToken(user.getUserAuthorizationEntity().getToken())
+                .roles(user.getUserAuthorizationEntity().getRoles()
+                        .stream()
+                        .map(RoleEntity::getName)
+                        .collect(Collectors.toList()))
+                .build();
     }
 
     ////////////////////////////////////////////////
@@ -101,4 +115,5 @@ public class UserServiceImpl implements UserService {
     public void deleteDbContent() {
         this.userRepository.deleteAll();
     }
+
 }

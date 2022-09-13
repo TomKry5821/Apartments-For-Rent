@@ -11,8 +11,8 @@ import javax.validation.constraints.NotNull;
 public class UserLoginRequest {
 
     @Email(message = "Invalid e-mail")
-    private final String email;
+    private String email;
 
     @NotEmpty(message = "Invalid password")
-    private final String password;
+    private String password;
 }

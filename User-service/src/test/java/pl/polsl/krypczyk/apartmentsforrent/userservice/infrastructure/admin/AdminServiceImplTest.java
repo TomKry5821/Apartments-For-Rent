@@ -1,4 +1,4 @@
-package pl.polsl.krypczyk.apartmentsforrent.userservice.infrastructure.user;
+package pl.polsl.krypczyk.apartmentsforrent.userservice.infrastructure.admin;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
@@ -7,19 +7,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.application.user.request.CreateUserRequest;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.application.userdetails.request.ChangeUserDetailsRequest;
-import pl.polsl.krypczyk.apartmentsforrent.userservice.application.userdetails.response.ChangeUserDetailsResponse;
-import pl.polsl.krypczyk.apartmentsforrent.userservice.application.userdetails.response.GetUserDetailsResponse;
+import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.admin.AdminService;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.authorization.AuthorizationService;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.authorization.exception.InactiveAccountException;
-import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.authorization.exception.UnauthorizedUserException;
-import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.user.UserService;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.user.exception.InvalidUserDetailsException;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.user.exception.UserNotFoundException;
 
 import java.time.LocalDateTime;
 
 @SpringBootTest
-class UserServiceImplTest {
+class AdminServiceImplTest {
 
     private final String VALID_USER_SURNAME = "surname";
     private final String VALID_USER_PASSWORD = "password";
@@ -28,73 +25,66 @@ class UserServiceImplTest {
     private final boolean VALID_USER_IS_ACTIVE = true;
     private final boolean INACTIVE_USER_IS_ACTIVE = false;
     private final LocalDateTime USER_CREATION_DATE = null;
-    private final Long INVALID_USER_ID = 12334343L;
-
+    private final Long INVALID_USER_ID = 12L;
 
     @Autowired
-    private UserService userService;
+    private AdminService adminService;
     @Autowired
     private AuthorizationService authorizationService;
 
     @AfterEach
     void deleteDbContent() {
-        this.userService.deleteDbContent();
+        this.adminService.deleteDbContent();
     }
 
     @Test
-    void getUserDetailsWithValidUserId() {
+    void getAllUsersWithNotEmptyUsersList() {
+        //GIVEN
+        var user = this.createValidUser();
+        this.authorizationService.registerNewUser(user);
+
+        //WHEN
+        var response = this.adminService.getAllUsers();
+
+        //THEN
+        Assertions.assertFalse(response.getUsers().isEmpty());
+    }
+
+    @Test
+    void getAllUsersWithEmptyUsersList() {
+        //GIVEN
+        this.deleteDbContent();
+        //WHEN
+        var response = this.adminService.getAllUsers();
+
+        //THEN
+        Assertions.assertTrue(response.getUsers().isEmpty());
+    }
+
+
+    @Test
+    void deleteUserWithValidUserId() {
         //GIVEN
         var user = this.createValidUser();
         var response = this.authorizationService.registerNewUser(user);
         var userId = response.getId();
-        var userDetailsDTO = this.createValidUserDetailsDTO();
 
         //WHEN
-        var expected = this.userService.getUserDetails(userId);
-        expected.setCreationDate(USER_CREATION_DATE);
-
+        this.adminService.deleteUser(userId);
         //THEN
-        Assertions.assertEquals(expected, userDetailsDTO);
-        Assertions.assertDoesNotThrow(UserServiceImplTest::new);
+        Assertions.assertDoesNotThrow(UserNotFoundException::new);
     }
 
     @Test
-    void getUserDetailsWithInvalidUserId() {
+    void deleteUserWithInvalidUserId() {
         //GIVEN
+        this.createValidUser();
         var userId = INVALID_USER_ID;
 
-        //THEN
-        Assertions.assertThrows(UserNotFoundException.class, () ->
-                this.userService.getUserDetails(userId));
-    }
-
-    @Test
-    void getUserDetailsWithInactiveUser() {
-        //GIVEN
-        var inactiveUser = this.createInactiveUser();
-        var response = this.authorizationService.registerNewUser(inactiveUser);
-        var userId = response.getId();
 
         //WHEN AND THEN
-        Assertions.assertThrows(InactiveAccountException.class, () ->
-                this.userService.getUserDetails(userId));
-    }
-
-    @Test
-    void changeUserDetailsWithValidUserDetails() {
-        //GIVEN
-        var user = this.createValidUser();
-        var response = this.authorizationService.registerNewUser(user);
-        var userId = response.getId();
-        var changeUserDetailsResponse = this.createValidChangeUserDetailsResponse();
-        var changeUserDetailsRequest = this.createValidChangeUserDetailsRequest();
-
-        //WHEN
-        var expected = this.userService.changeUserDetails(changeUserDetailsRequest, userId);
-
-        //THEN
-        Assertions.assertEquals(expected, changeUserDetailsResponse);
-        Assertions.assertDoesNotThrow(UserNotFoundException::new);
+        Assertions.assertThrows(UserNotFoundException.class, () ->
+                this.adminService.deleteUser(userId));
     }
 
     @Test
@@ -106,7 +96,7 @@ class UserServiceImplTest {
         var changeUserDetailsRequest = this.createValidChangeUserDetailsRequest();
 
         //WHEN
-        this.userService.changeUserDetails(changeUserDetailsRequest, userId);
+        this.adminService.changeUserDetails(changeUserDetailsRequest, userId);
         //WHEN AND THEN
         Assertions.assertDoesNotThrow(UserNotFoundException::new);
         Assertions.assertDoesNotThrow(InactiveAccountException::new);
@@ -122,7 +112,7 @@ class UserServiceImplTest {
 
         //WHEN AND THEN
         Assertions.assertThrows(UserNotFoundException.class, () ->
-                this.userService.changeUserDetails(changeUserDetailsRequest, userId));
+                this.adminService.changeUserDetails(changeUserDetailsRequest, userId));
     }
 
     @Test
@@ -135,7 +125,7 @@ class UserServiceImplTest {
 
         //WHEN AND THEN
         Assertions.assertThrows(InvalidUserDetailsException.class, () ->
-                this.userService.changeUserDetails(changeUserDetailsRequest, userId));
+                this.adminService.changeUserDetails(changeUserDetailsRequest, userId));
     }
 
     @Test
@@ -148,50 +138,11 @@ class UserServiceImplTest {
 
         //WHEN AND THEN
         Assertions.assertThrows(InactiveAccountException.class, () ->
-                this.userService.changeUserDetails(changeUserDetailsRequest, userId));
-    }
-
-    @Test
-    void inactivateAccountWithValidUserId() {
-        //GIVEN
-        var user = this.createValidUser();
-        var response = this.authorizationService.registerNewUser(user);
-        var userId = response.getId();
-
-        //WHEN
-        this.userService.inactivateAccount(userId);
-
-        //THEN
-        Assertions.assertDoesNotThrow(UserNotFoundException::new);
-        Assertions.assertDoesNotThrow(UnauthorizedUserException::new);
-    }
-
-    @Test
-    void inactivateAccountWithInvalidUserId() {
-        //GIVEN
-        var user = this.createValidUser();
-        this.authorizationService.registerNewUser(user);
-        var userId = INVALID_USER_ID;
-
-        // WHEN AND THEN
-        Assertions.assertThrows(UserNotFoundException.class, () ->
-                this.userService.inactivateAccount(userId));
-    }
-
-    @Test
-    void inactivateInactiveAccount() {
-        //GIVEN
-        var user = this.createInactiveUser();
-        var response = this.authorizationService.registerNewUser(user);
-        var userId = response.getId();
-
-        // WHEN AND THEN
-        Assertions.assertThrows(InactiveAccountException.class, () ->
-                this.userService.inactivateAccount(userId));
+                this.adminService.changeUserDetails(changeUserDetailsRequest, userId));
     }
 
     private CreateUserRequest createValidUser() {
-        return pl.polsl.krypczyk.apartmentsforrent.userservice.application.user.request.CreateUserRequest.builder()
+        return CreateUserRequest.builder()
                 .surname(VALID_USER_SURNAME)
                 .password(VALID_USER_PASSWORD)
                 .name(VALID_USER_NAME)
@@ -210,15 +161,6 @@ class UserServiceImplTest {
                 .build();
     }
 
-    private ChangeUserDetailsResponse createValidChangeUserDetailsResponse() {
-        return ChangeUserDetailsResponse.builder()
-                .surname(VALID_USER_SURNAME)
-                .password(VALID_USER_PASSWORD)
-                .name(VALID_USER_NAME)
-                .email(VALID_USER_EMAIL)
-                .build();
-    }
-
     private ChangeUserDetailsRequest createValidChangeUserDetailsRequest() {
         return ChangeUserDetailsRequest.builder()
                 .surname(VALID_USER_SURNAME)
@@ -228,15 +170,4 @@ class UserServiceImplTest {
                 .build();
     }
 
-    private GetUserDetailsResponse createValidUserDetailsDTO() {
-        return GetUserDetailsResponse
-                .builder()
-                .name(VALID_USER_NAME)
-                .surname(VALID_USER_SURNAME)
-                .password(VALID_USER_PASSWORD)
-                .email(VALID_USER_EMAIL)
-                .isActive(VALID_USER_IS_ACTIVE)
-                .creationDate(USER_CREATION_DATE)
-                .build();
-    }
 }

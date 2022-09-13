@@ -11,7 +11,6 @@ import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.userdetails.UserDe
 public interface UserMapper {
 
     UserDetailsEntity userDetailsDTOToUserDetailsEntity(CreateUserRequest createUserRequest);
-    CreateUserRequest userDetailsEntityToCreateUserRequestDTO(UserDetailsEntity userDetailsEntity);
     GetUserDetailsResponse UserDetailsEntityToUserDetailsDTO(UserDetailsEntity userDetailsEntity);
     ChangeUserDetailsResponse ChangeUserDetailsRequestToChangeUserDetailsResponse(ChangeUserDetailsRequest changeUserDetailsRequest);
 
