@@ -24,7 +24,7 @@ public class AnnouncementEntity {
     @Column(name = "USER_ID", nullable = false)
     private Long userId;
 
-    @OneToOne(orphanRemoval = true, optional = false)
+    @OneToOne(orphanRemoval = true, optional = false, fetch = FetchType.EAGER)
     @JoinColumn(name = "ANNOUNCEMENT_DETAILS_ID", referencedColumnName = "ID")
     private AnnouncementDetailsEntity announcementDetailsEntity;
 

@@ -23,9 +23,4 @@ public class AnnouncementPhotoEntity {
     @Column(name = "PHOTO_PATH", nullable = false)
     private String photoPath;
 
-    @ManyToOne(targetEntity = AnnouncementDetailsEntity.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "ANNOUNCEMENT_DETAILS_ID", referencedColumnName = "ID")
-    @ToString.Exclude
-    private AnnouncementDetailsEntity announcementDetailsEntity;
-
 }

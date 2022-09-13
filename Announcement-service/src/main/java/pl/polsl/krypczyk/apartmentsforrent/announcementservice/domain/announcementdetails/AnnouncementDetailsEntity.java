@@ -4,11 +4,13 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.adressdetails.AddressDetailsEntity;
+import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcementphoto.AnnouncementPhotoEntity;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
-import java.nio.file.Path;
 import java.time.LocalDate;
+import java.util.Collection;
 
 @Getter
 @Setter
@@ -43,6 +45,14 @@ public class AnnouncementDetailsEntity {
 
     @Column(name = "CONTENT", nullable = false)
     private String content;
+
+    @OneToOne(orphanRemoval = true, fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "ADDRESS_DETAILS_ID", referencedColumnName = "ID")
+    AddressDetailsEntity addressDetailsEntity;
+
+    @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true)
+    @ToString.Exclude
+    Collection<AnnouncementPhotoEntity> announcementPhotos;
 
 
 }
