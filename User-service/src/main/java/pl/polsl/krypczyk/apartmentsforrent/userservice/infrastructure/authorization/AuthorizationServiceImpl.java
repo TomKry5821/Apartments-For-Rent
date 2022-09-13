@@ -99,7 +99,7 @@ public class AuthorizationServiceImpl implements AuthorizationService {
             throw new BadCredentialsException();
 
         var userDetails = retrieveUserDetailsByEmailAndPassword(userLoginRequest.getEmail(), userLoginRequest.getPassword());
-        if(!isAccountActive(userDetails))
+        if(this.isAccountInactive(userDetails))
             throw new InactiveAccountException();
 
         var user = this.userRepository.findUserEntityByUserDetailsEntity(userDetails);
@@ -126,13 +126,14 @@ public class AuthorizationServiceImpl implements AuthorizationService {
     @Override
     public void logoutUser(Long userId) {
         var user = this.findUserByUserId(userId);
-        if (this.isAccountActive(user.getUserDetailsEntity()))
+        var userDetails = user.getUserDetailsEntity();
+        if (this.isAccountInactive(userDetails))
             throw new InactiveAccountException();
         var userAuthorization = user.getUserAuthorizationEntity();
         this.resetUserAccessToken(userAuthorization);
     }
 
-    private Boolean isAccountActive(UserDetailsEntity userDetails) {
+    private Boolean isAccountInactive(UserDetailsEntity userDetails) {
         return userDetails.getIsActive().equals(false);
     }
 

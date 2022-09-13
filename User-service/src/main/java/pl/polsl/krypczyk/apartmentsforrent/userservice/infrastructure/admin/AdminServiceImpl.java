@@ -60,7 +60,10 @@ public class AdminServiceImpl implements AdminService {
         var user = this.userRepository.findUserEntityById(userId);
         if (Objects.isNull(user))
             throw new UserNotFoundException();
+
         var userDetails = user.getUserDetailsEntity();
+        if(this.isAccountInactive(userDetails))
+            throw new InactiveAccountException();
 
         this.changeAndSaveUserDetails(userDetails, changeUserDetailsRequest);
         return this.userMapper.ChangeUserDetailsRequestToChangeUserDetailsResponse(changeUserDetailsRequest);
@@ -83,7 +86,7 @@ public class AdminServiceImpl implements AdminService {
         this.userDetailsRepository.save(userDetailsEntity);
     }
 
-    private Boolean isAccountActive(UserDetailsEntity userDetails) {
+    private Boolean isAccountInactive(UserDetailsEntity userDetails) {
         return userDetails.getIsActive().equals(false);
     }
 
