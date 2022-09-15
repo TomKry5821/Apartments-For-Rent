@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.adressdetails.AddressDetailsEntity;
-import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcementphoto.AnnouncementPhotoEntity;
+import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcementcontent.AnnouncementContentEntity;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -50,7 +50,7 @@ public class AnnouncementDetailsEntity {
 
     @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true)
     @ToString.Exclude
-    Collection<AnnouncementPhotoEntity> announcementPhotos;
+    Collection<AnnouncementContentEntity> announcementContent;
 
 
 }
