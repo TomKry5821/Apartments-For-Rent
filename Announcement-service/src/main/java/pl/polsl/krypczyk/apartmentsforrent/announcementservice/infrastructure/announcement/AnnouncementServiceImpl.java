@@ -38,8 +38,6 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     @Override
     public Collection<AnnouncementDTO> getAllAnnouncements() {
         var announcements = this.announcementRepository.findAll();
-        if (announcements.isEmpty())
-            return Collections.emptyList();
 
         Collection<AnnouncementDTO> announcementDTOS = new ArrayList<>();
         announcements.forEach(a -> announcementDTOS.add(this.createAnnouncementDTO(a)));
