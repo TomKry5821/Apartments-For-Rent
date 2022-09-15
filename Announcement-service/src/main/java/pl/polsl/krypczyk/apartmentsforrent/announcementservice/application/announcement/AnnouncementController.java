@@ -1,12 +1,13 @@
 package pl.polsl.krypczyk.apartmentsforrent.announcementservice.application.announcement;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.AnnouncementService;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.dto.AnnouncementDTO;
+import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.request.CreateAnnouncementRequest;
+import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.response.CreateAnnouncementResponse;
 
+import javax.validation.Valid;
 import java.util.Collection;
 
 @RestController
@@ -16,9 +17,14 @@ public class AnnouncementController {
 
     private final AnnouncementService announcementService;
 
-    @GetMapping("/announcements")
+    @GetMapping("/public/announcements")
     public Collection<AnnouncementDTO> getAllAnnouncements() {
         return this.announcementService.getAllAnnouncements();
+    }
+
+    @PostMapping("/announcements")
+    public CreateAnnouncementResponse createAnnouncement(@RequestBody @Valid CreateAnnouncementRequest createAnnouncementRequest){
+        return this.announcementService.createAnnouncement(createAnnouncementRequest);
     }
 
 }
