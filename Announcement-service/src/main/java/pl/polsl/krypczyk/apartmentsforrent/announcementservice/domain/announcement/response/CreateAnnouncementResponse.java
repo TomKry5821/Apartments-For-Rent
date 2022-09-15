@@ -1,0 +1,44 @@
+package pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.response;
+
+
+import lombok.Data;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.Collection;
+
+@Data
+public class CreateAnnouncementResponse {
+
+    private Long userId;
+
+    private String title;
+
+    private String mainPhotoPath;
+
+    private Integer roomsNumber;
+
+    private LocalDate rentalTerm;
+
+    private BigDecimal caution;
+
+    private BigDecimal rentalAmount;
+
+    private String content;
+
+    private Collection<String> photoPaths;
+
+    private String district;
+
+    private String city;
+
+    private String zipCode;
+
+    private String street;
+
+    private String buildingNumber;
+
+    private Integer localNumber;
+
+    private LocalDate creationDate;
+}
