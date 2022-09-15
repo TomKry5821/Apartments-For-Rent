@@ -48,9 +48,10 @@ public class AnnouncementDetailsEntity {
     @ToString.Exclude
     AddressDetailsEntity addressDetailsEntity;
 
-    @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true)
+    @OneToOne(fetch = FetchType.LAZY, orphanRemoval = true, optional = false)
+    @JoinColumn(name = "ANNOUNCEMENT_CONTENT_ID", referencedColumnName = "ID")
     @ToString.Exclude
-    Collection<AnnouncementContentEntity> announcementContent;
+    AnnouncementContentEntity announcementContent;
 
 
 }
