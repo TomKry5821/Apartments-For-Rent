@@ -4,5 +4,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface AnnouncementPhotoRepository extends JpaRepository<AnnouncementPhotoEntity, Long> {
+public interface AnnouncementContentRepository extends JpaRepository<AnnouncementContentEntity, Long> {
 }
