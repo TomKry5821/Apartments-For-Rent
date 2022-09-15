@@ -43,11 +43,9 @@ public class AnnouncementDetailsEntity {
     @Column(name = "RENTAL_AMOUNT", nullable = false)
     private BigDecimal rentalAmount;
 
-    @Column(name = "CONTENT", nullable = false)
-    private String content;
-
     @OneToOne(orphanRemoval = true, fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "ADDRESS_DETAILS_ID", referencedColumnName = "ID")
+    @ToString.Exclude
     AddressDetailsEntity addressDetailsEntity;
 
     @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true)

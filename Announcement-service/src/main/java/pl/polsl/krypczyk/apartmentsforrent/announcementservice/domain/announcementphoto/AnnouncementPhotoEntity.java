@@ -20,6 +20,9 @@ public class AnnouncementPhotoEntity {
     @Column(name = "ID", nullable = false)
     private Long id;
 
+    @Column(name = "CONTENT", nullable = false)
+    private String content;
+
     @Column(name = "PHOTO_PATH", nullable = false)
     private String photoPath;
 
