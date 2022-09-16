@@ -35,40 +35,37 @@ class UserControllerTest {
     }
 
     @Test
-    void testGetUserDetails_WithValidUserIdAndToken_shouldReturn200() throws Exception {
+    void testGetUserDetails_WithValidUserIdAndRequesterId_shouldReturn200() throws Exception {
         //GIVEN
-        var response = this.registerValidUser();
-        var token = this.getTokenFromResponse(response);
+        this.registerValidUser();
 
         //WHEN
         mvc.perform(
                         get("/user/api/v1/users/2/details")
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .header("Authorization", token))
+                                .header("requester-user-id", 2))
                 //THEN
                 .andExpect(status().isOk());
     }
 
     @Test
-    void testGetUserDetails_WithInvalidUserIdAndValidToken_shouldReturn401() throws Exception {
+    void testGetUserDetails_WithInvalidUserIdAndValidRequesterId_shouldReturn401() throws Exception {
         //GIVEN
-        var response = this.registerValidUser();
-        var token = this.getTokenFromResponse(response);
+        this.registerValidUser();
 
         //WHEN
         mvc.perform(
                         get("/user/api/v1/users/100/details")
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .header("Authorization", token))
+                                .header("requester-user-id", 2))
                 //THEN
                 .andExpect(status().isUnauthorized());
     }
 
     @Test
-    void testChangeUserDetails_WithValidUserIdAndValidToken_shouldReturn200() throws Exception {
+    void testChangeUserDetails_WithValidUserIdAndValidRequesterId_shouldReturn200() throws Exception {
         //GIVEN
-        var response = this.registerValidUser();
-        var token = this.getTokenFromResponse(response);
+        this.registerValidUser();
 
         //WHEN
         mvc.perform(
@@ -81,16 +78,15 @@ class UserControllerTest {
                                             "email": "test@test.pl",
                                             "password": "Test"
                                         }""")
-                                .header("Authorization", token))
+                                .header("requester-user-id", 2))
                 //THEN
                 .andExpect(status().isOk());
     }
 
     @Test
-    void testChangeUserDetails_WithInvalidUserIdAndValidToken_shouldReturn401() throws Exception {
+    void testChangeUserDetails_WithInvalidUserIdAndValidRequesterId_shouldReturn401() throws Exception {
         //GIVEN
-        var response = this.registerValidUser();
-        var token = this.getTokenFromResponse(response);
+        this.registerValidUser();
 
         //WHEN
         mvc.perform(
@@ -103,13 +99,13 @@ class UserControllerTest {
                                             "email": "test@test.pl",
                                             "password": "Test"
                                         }""")
-                                .header("Authorization", token))
+                                .header("requester-user-id", 2))
                 //THEN
                 .andExpect(status().isUnauthorized());
     }
 
     @Test
-    void testChangeUserDetails_WithInvalidUserIdAndInvalidToken_shouldReturn400() throws Exception {
+    void testChangeUserDetails_WithInvalidUserIdAndInvalidRequesterId_shouldReturn400() throws Exception {
         //GIVEN
         this.registerValidUser();
 
@@ -130,35 +126,33 @@ class UserControllerTest {
     }
 
     @Test
-    void testInactivateAccount_WithValidUserIdAndValidToken_shouldReturn204() throws Exception {
+    void testInactivateAccount_WithValidUserIdAndValidRequesterId_shouldReturn204() throws Exception {
         //GIVEN
-        var response = this.registerValidUser();
-        var token = this.getTokenFromResponse(response);
+        this.registerValidUser();
 
         //WHEN
         mvc.perform(
                         post("/user/api/v1/users/2/inactivate")
-                                .header("Authorization", token))
+                                .header("requester-user-id", 2))
                 //THEN
                 .andExpect(status().isNoContent());
     }
 
     @Test
-    void testInactivateAccount_WithInvalidUserIdAndValidToken_shouldReturn401() throws Exception {
+    void testInactivateAccount_WithInvalidUserIdAndValidRequesterId_shouldReturn401() throws Exception {
         //GIVEN
-        var response = this.registerValidUser();
-        var token = this.getTokenFromResponse(response);
+        this.registerValidUser();
 
         //WHEN
         mvc.perform(
                         post("/user/api/v1/users/192/inactivate")
-                                .header("Authorization", token))
+                                .header("requester-user-id", 2))
                 //THEN
                 .andExpect(status().isUnauthorized());
     }
 
     @Test
-    void testInactivateAccount_WithInvalidUserIdAndInvalidToken_shouldReturn400() throws Exception {
+    void testInactivateAccount_WithInvalidUserIdAndInvalidRequesterId_shouldReturn400() throws Exception {
         //GIVEN
         this.registerValidUser();
 
