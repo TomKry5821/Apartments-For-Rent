@@ -89,4 +89,50 @@ class AnnouncementControllerTest {
                                 .header("Authorization", UUID.randomUUID()))
                 .andExpect(status().isBadRequest());
     }
+
+    @Test
+    void getAnnouncementWithAllDetailsWithInvalidAnnouncementId_ShouldReturn400() throws Exception {
+        mvc.perform(
+                        get("/announcement/api/v1/public/announcements/10")
+                                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void getAnnouncementWithAllDetailsWithValidAnnouncementId_ShouldReturn200() throws Exception {
+        this.createAnnouncement();
+
+        mvc.perform(
+                        get("/announcement/api/v1/public/announcements/1")
+                                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+    }
+
+    private void createAnnouncement() throws Exception {
+        mvc.perform(
+                        post("/announcement/api/v1/announcements")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content("""
+                                        {
+                                           "userId":1,
+                                           "title":"Title",
+                                           "mainPhotoPath":"Main/photo/path",
+                                           "roomsNumber":3,
+                                           "rentalTerm":"2022-12-03",
+                                           "caution":1000.00,
+                                           "rentalAmount":1000.00,
+                                           "content":"Content",
+                                           "photoPaths":[
+                                              "path/1",
+                                              "path/2"
+                                           ],
+                                           "district":"District",
+                                           "city":"City",
+                                           "zipCode":"44-240",
+                                           "street":"Street",
+                                           "buildingNumber":"1A",
+                                           "localNumber":3
+                                        }""")
+                                .header("Authorization", UUID.randomUUID()));
+    }
 }
