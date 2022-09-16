@@ -34,21 +34,19 @@ class AdminControllerTest {
     }
 
     @Test
-    void testDeleteUser_WithInvalidUserIdAndValidToken_shouldReturn401() throws Exception {
+    void testDeleteUser_WithInvalidUserIdAndValidRequesterId_shouldReturn401() throws Exception {
         //GIVEN
         this.registerValidUser();
-        var token = UUID.fromString("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa");
-
         //WHEN
         mvc.perform(
                         delete("/user/api/v1/admin/users/194")
-                                .header("Authorization", token))
+                                .header("requester-user-id", 2L))
                 //THEN
                 .andExpect(status().isUnauthorized());
     }
 
     @Test
-    void testDeleteUser_WithInvalidUserIdAndInvalidToken_shouldReturn401() throws Exception {
+    void testDeleteUser_WithInvalidUserIdAndInvalidRequesterId_shouldReturn401() throws Exception {
         //GIVEN
         this.registerValidUser();
 
@@ -61,21 +59,19 @@ class AdminControllerTest {
     }
 
     @Test
-    void testGetAllUsers_WithInvalidUserIdAndValidToken_shouldReturn401() throws Exception {
+    void testGetAllUsers_WithInvalidUserIdAndValidRequesterId_shouldReturn401() throws Exception {
         //GIVEN
         this.registerValidUser();
-        var token = UUID.fromString("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa");
-
         //WHEN
         mvc.perform(
                         get("/user/api/v1/admin/users")
-                                .header("Authorization", token))
+                                .header("requester-user-id", 2L))
                 //THEN
                 .andExpect(status().isUnauthorized());
     }
 
     @Test
-    void testGetAllUsers_WithInvalidUserIdAndInvalidToken_shouldReturn401() throws Exception {
+    void testGetAllUsers_WithInvalidUserIdAndInvalidRequesterId_shouldReturn401() throws Exception {
         //GIVEN
         this.registerValidUser();
 
@@ -88,11 +84,9 @@ class AdminControllerTest {
     }
 
     @Test
-    void testChangeUserDetails_WithInvalidUserIdAndValidToken_shouldReturn401() throws Exception {
+    void testChangeUserDetails_WithInvalidUserIdAndValidRequesterId_shouldReturn401() throws Exception {
         //GIVEN
         this.registerValidUser();
-        var token = UUID.fromString("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa");
-
         //WHEN
         mvc.perform(
                         put("/user/api/v1/admin/users/10/details")
@@ -104,13 +98,13 @@ class AdminControllerTest {
                                             "email": "test@test.pl",
                                             "password": "Test"
                                         }""")
-                                .header("Authorization", token))
+                                .header("requester-user-id", 2L))
                 //THEN
                 .andExpect(status().isUnauthorized());
     }
 
     @Test
-    void testChangeUserDetails_WithInvalidUserIdAndInvalidToken_shouldReturn400() throws Exception {
+    void testChangeUserDetails_WithInvalidUserIdAndInvalidRequesterId_shouldReturn400() throws Exception {
         //GIVEN
         this.registerValidUser();
 
