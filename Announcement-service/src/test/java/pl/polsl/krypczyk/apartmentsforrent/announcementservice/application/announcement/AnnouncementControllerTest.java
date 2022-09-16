@@ -23,7 +23,7 @@ class AnnouncementControllerTest {
     private MockMvc mvc;
 
     @Test
-    void getAllAnnouncements_shouldReturn200() throws Exception {
+    void testGetAllAnnouncements_shouldReturn200() throws Exception {
         mvc.perform(
                         get("/announcement/api/v1/public/announcements")
                                 .contentType(MediaType.APPLICATION_JSON))
@@ -31,7 +31,7 @@ class AnnouncementControllerTest {
     }
 
     @Test
-    void createAnnouncementWithValidBody_ShouldReturn200() throws Exception {
+    void testAddNewAnnouncement_WithValidBody_ShouldReturn200() throws Exception {
         mvc.perform(
                         post("/announcement/api/v1/announcements")
                                 .contentType(MediaType.APPLICATION_JSON)
@@ -61,7 +61,7 @@ class AnnouncementControllerTest {
     }
 
     @Test
-    void createAnnouncementWithInvalidBody_ShouldReturn400() throws Exception {
+    void testAddNewAnnouncement_WithInvalidBody_ShouldReturn400() throws Exception {
         mvc.perform(
                         post("/announcement/api/v1/announcements")
                                 .contentType(MediaType.APPLICATION_JSON)
@@ -91,7 +91,7 @@ class AnnouncementControllerTest {
     }
 
     @Test
-    void getAnnouncementWithAllDetailsWithInvalidAnnouncementId_ShouldReturn400() throws Exception {
+    void testGetAnnouncement_WithAllDetailsWithInvalidAnnouncementId_ShouldReturn400() throws Exception {
         mvc.perform(
                         get("/announcement/api/v1/public/announcements/10")
                                 .contentType(MediaType.APPLICATION_JSON))
@@ -99,7 +99,7 @@ class AnnouncementControllerTest {
     }
 
     @Test
-    void getAnnouncementWithAllDetailsWithValidAnnouncementId_ShouldReturn200() throws Exception {
+    void testGetAnnouncement_WithAllDetailsWithValidAnnouncementId_ShouldReturn200() throws Exception {
         this.createAnnouncement();
 
         mvc.perform(

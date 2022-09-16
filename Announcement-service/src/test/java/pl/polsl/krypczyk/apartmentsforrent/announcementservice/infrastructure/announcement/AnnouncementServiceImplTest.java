@@ -36,7 +36,7 @@ class AnnouncementServiceImplTest {
     }
 
     @Test
-    void getAllActiveAnnouncementsWithEmptyDatabase() {
+    void testGetAllActiveAnnouncements_WithEmptyDatabase() {
         //GIVEN
         Collection<AnnouncementDTO> announcementDTOS = new ArrayList<>();
 
@@ -48,7 +48,7 @@ class AnnouncementServiceImplTest {
     }
 
     @Test
-    void getAllActiveAnnouncementsWithNotEmptyDatabase() {
+    void testGetAllActiveAnnouncements_WithNotEmptyDatabase() {
         //GIVEN
         this.announcementService.addNewAnnouncement(this.validAnnouncementRequest());
 
@@ -60,7 +60,7 @@ class AnnouncementServiceImplTest {
     }
 
     @Test
-    void createAnnouncement() {
+    void testAddNewAnnouncement() {
         //GIVEN
         var request = validAnnouncementRequest();
         var response = validAnnouncementResponse();
@@ -76,7 +76,7 @@ class AnnouncementServiceImplTest {
     }
 
     @Test
-    void getAnnouncementWithAllDetailsWithValidAnnouncementId() {
+    void testGetAnnouncementWithAllDetails_WithValidAnnouncementId() {
         //GIVEN
         var request = validAnnouncementRequest();
         var getAnnouncementDetailsResponse = validGetAnnouncementWithAllDetailsResponse();
@@ -93,7 +93,7 @@ class AnnouncementServiceImplTest {
     }
 
     @Test
-    void getAnnouncementWithAllDetailsWithInvalidAnnouncementId() {
+    void testGetAnnouncementWithAllDetails_WithInvalidAnnouncementId() {
         //GIVEN
         var request = validAnnouncementRequest();
         this.announcementService.addNewAnnouncement(request);
