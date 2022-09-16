@@ -12,6 +12,6 @@ public interface AnnouncementService {
 
     GetAnnouncementWithAllDetailsResponse getAnnouncementWithAllDetails(Long announcementId);
 
-    CreateAnnouncementResponse createAnnouncement(CreateAnnouncementRequest createAnnouncementRequest);
+    CreateAnnouncementResponse addNewAnnouncement(CreateAnnouncementRequest createAnnouncementRequest);
 
 }

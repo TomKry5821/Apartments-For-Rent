@@ -58,7 +58,17 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     }
 
     @Override
-    public CreateAnnouncementResponse createAnnouncement(CreateAnnouncementRequest createAnnouncementRequest) {
+    public CreateAnnouncementResponse addNewAnnouncement(CreateAnnouncementRequest createAnnouncementRequest) {
+        var announcement = this.createAndSaveAnnouncement(createAnnouncementRequest);
+
+        var response = this.announcementMapper.createAnnouncementRequestToCreateAnnouncementResponse(createAnnouncementRequest);
+        response.setCreationDate(announcement.getCreationDate());
+        response.setIsClosed(announcement.getIsClosed());
+
+        return response;
+    }
+
+    private AnnouncementEntity createAndSaveAnnouncement(CreateAnnouncementRequest createAnnouncementRequest){
         var announcement = new AnnouncementEntity();
 
         announcement.setUserId(createAnnouncementRequest.getUserId());
@@ -67,11 +77,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
         announcement.setIsClosed(false);
         this.announcementRepository.save(announcement);
 
-        var response = this.announcementMapper.createAnnouncementRequestToCreateAnnouncementResponse(createAnnouncementRequest);
-        response.setCreationDate(announcement.getCreationDate());
-        response.setIsClosed(announcement.getIsClosed());
-
-        return response;
+        return announcement;
     }
 
     private AnnouncementDetailsEntity createAnnouncementDetailsEntity(CreateAnnouncementRequest createAnnouncementRequest) {

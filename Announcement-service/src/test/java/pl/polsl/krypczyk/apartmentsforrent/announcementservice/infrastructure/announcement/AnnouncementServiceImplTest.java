@@ -50,7 +50,7 @@ class AnnouncementServiceImplTest {
     @Test
     void getAllActiveAnnouncementsWithNotEmptyDatabase() {
         //GIVEN
-        this.announcementService.createAnnouncement(this.validAnnouncementRequest());
+        this.announcementService.addNewAnnouncement(this.validAnnouncementRequest());
 
         //WHEN
         var expected = this.announcementService.getAllActiveAnnouncements();
@@ -66,7 +66,7 @@ class AnnouncementServiceImplTest {
         var response = validAnnouncementResponse();
 
         //WHEN
-        var expected = this.announcementService.createAnnouncement(request);
+        var expected = this.announcementService.addNewAnnouncement(request);
         expected.setCreationDate(null);
         expected.setRentalTerm(null);
 
@@ -80,7 +80,7 @@ class AnnouncementServiceImplTest {
         //GIVEN
         var request = validAnnouncementRequest();
         var getAnnouncementDetailsResponse = validGetAnnouncementWithAllDetailsResponse();
-        this.announcementService.createAnnouncement(request);
+        this.announcementService.addNewAnnouncement(request);
         var id = this.announcementRepository.findAll().get(0).getId();
 
         //WHEN
@@ -96,7 +96,7 @@ class AnnouncementServiceImplTest {
     void getAnnouncementWithAllDetailsWithInvalidAnnouncementId() {
         //GIVEN
         var request = validAnnouncementRequest();
-        this.announcementService.createAnnouncement(request);
+        this.announcementService.addNewAnnouncement(request);
 
         //WHEN AND THEN
         Assertions.assertThrows(AnnouncementNotFoundException.class, () ->

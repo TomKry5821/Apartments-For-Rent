@@ -30,8 +30,8 @@ public class AnnouncementController {
     }
 
     @PostMapping("/announcements")
-    public CreateAnnouncementResponse createAnnouncement(@RequestBody @Valid CreateAnnouncementRequest createAnnouncementRequest){
-        return this.announcementService.createAnnouncement(createAnnouncementRequest);
+    public CreateAnnouncementResponse addNewAnnouncement(@RequestBody @Valid CreateAnnouncementRequest createAnnouncementRequest){
+        return this.announcementService.addNewAnnouncement(createAnnouncementRequest);
     }
 
 
