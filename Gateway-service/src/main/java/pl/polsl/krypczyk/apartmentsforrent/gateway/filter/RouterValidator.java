@@ -12,7 +12,7 @@ public class RouterValidator {
             "user/api/v1/auth/register",
             "user/api/v1/auth/login",
             "announcement/api/v1/public/announcements",
-            "announcement/api/v1/public/announcement/{id}"
+            "announcement/api/v1/public/announcements/"
     );
 
     public Boolean isSecured(ServerHttpRequest serverHttpRequest) {
