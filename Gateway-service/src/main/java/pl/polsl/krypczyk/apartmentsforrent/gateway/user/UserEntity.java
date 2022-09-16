@@ -4,7 +4,6 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import pl.polsl.krypczyk.apartmentsforrent.gateway.role.RoleEntity;
 import pl.polsl.krypczyk.apartmentsforrent.gateway.userauthorization.UserAuthorizationEntity;
 import pl.polsl.krypczyk.apartmentsforrent.gateway.userdetails.UserDetailsEntity;
 
