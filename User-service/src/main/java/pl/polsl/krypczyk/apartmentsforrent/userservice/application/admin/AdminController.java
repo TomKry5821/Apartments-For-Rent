@@ -23,24 +23,24 @@ public class AdminController {
     private final AuthorizationService authorizationService;
 
     @GetMapping("/users")
-    public GetAllUsersResponse getAllUsers(@RequestHeader("Authorization") @uuid UUID accessToken) {
-        this.authorizationService.authorizeAdmin(accessToken);
+    public GetAllUsersResponse getAllUsers(@RequestHeader("requester-user-id") @NotNull Long requesterId) {
+        this.authorizationService.authorizeAdmin(requesterId);
         return this.adminService.getAllUsers();
     }
 
     @DeleteMapping("/users/{userId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void DeleteUser(@PathVariable("userId") @NotNull Long userId,
-                           @RequestHeader("Authorization") @uuid UUID accessToken) {
-        this.authorizationService.authorizeAdmin(accessToken);
+                           @RequestHeader("requester-user-id") @NotNull Long requesterId) {
+        this.authorizationService.authorizeAdmin(requesterId);
         this.adminService.deleteUser(userId);
     }
 
     @PutMapping("users/{userId}/details")
     public ChangeUserDetailsResponse changeUserDetails(@RequestBody @Valid ChangeUserDetailsRequest changeUserDetailsRequest,
                                                        @PathVariable("userId") @NotNull Long userId,
-                                                       @RequestHeader("Authorization") @uuid UUID accessToken) {
-        this.authorizationService.authorizeAdmin(accessToken);
+                                                       @RequestHeader("requester-user-id") @NotNull Long requesterId) {
+        this.authorizationService.authorizeAdmin(requesterId);
         return this.adminService.changeUserDetails(changeUserDetailsRequest, userId);
     }
 }

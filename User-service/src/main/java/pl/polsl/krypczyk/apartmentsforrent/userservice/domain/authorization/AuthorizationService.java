@@ -13,6 +13,6 @@ public interface AuthorizationService {
     LoginUserResponse loginUser(UserLoginRequest userLoginRequest);
     void logoutUser(Long userId);
     void authorizeUser(Long userId, Long requesterId);
-    void authorizeAdmin(UUID accessToken);
+    void authorizeAdmin(Long requesterId);
     void deleteDbContent();
 }

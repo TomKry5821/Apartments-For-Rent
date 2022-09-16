@@ -161,13 +161,11 @@ public class AuthorizationServiceImpl implements AuthorizationService {
     }
 
     @Override
-    public void authorizeAdmin(UUID accessToken) {
-        var userAuthorization = this.userAuthorizationRepository.findUserAuthorizationEntityByToken(accessToken);
-        var user = this.userRepository.findUserEntityByUserAuthorizationEntity(userAuthorization);
-        if (Objects.isNull(user) ||
-                user.getUserAuthorizationEntity().getRoles()
-                        .stream()
-                        .noneMatch(r -> r.getName().equals("ROLE_ADMIN")))
+    public void authorizeAdmin(Long requesterId) {
+        var user = this.userRepository.findUserEntityById(requesterId);
+        if (user.getUserAuthorizationEntity().getRoles()
+                .stream()
+                .noneMatch(r -> r.getName().equals("ROLE_ADMIN")))
             throw new UnauthorizedUserException();
     }
 
