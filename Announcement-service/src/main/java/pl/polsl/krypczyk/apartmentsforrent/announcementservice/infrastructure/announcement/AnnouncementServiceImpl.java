@@ -69,6 +69,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
 
         var response = this.announcementMapper.createAnnouncementRequestToCreateAnnouncementResponse(createAnnouncementRequest);
         response.setCreationDate(announcement.getCreationDate());
+        response.setIsClosed(announcement.getIsClosed());
 
         return response;
     }
