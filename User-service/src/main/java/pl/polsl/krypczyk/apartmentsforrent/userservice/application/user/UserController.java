@@ -24,24 +24,24 @@ public class UserController {
 
     @GetMapping("users/{userId}/details")
     public GetUserDetailsResponse getUserDetails(@PathVariable("userId") @NotNull Long userId,
-                                                 @RequestHeader("Authorization") @uuid UUID accessToken) {
-        this.authorizationService.authorizeUser(userId, accessToken);
+                                                 @RequestHeader("requester-user-id") @NotNull Long requesterId) {
+        this.authorizationService.authorizeUser(userId, requesterId);
         return this.userService.getUserDetails(userId);
     }
 
     @PutMapping("users/{userId}/details")
     public ChangeUserDetailsResponse changeUserDetails(@RequestBody @Valid ChangeUserDetailsRequest changeUserDetailsRequest,
                                                        @PathVariable("userId") @NotNull Long userId,
-                                                       @RequestHeader("Authorization") @uuid UUID accessToken) {
-        this.authorizationService.authorizeUser(userId, accessToken);
+                                                       @RequestHeader("requester-user-id") @NotNull Long requesterId) {
+        this.authorizationService.authorizeUser(userId, requesterId);
         return this.userService.changeUserDetails(changeUserDetailsRequest, userId);
     }
 
     @PostMapping("users/{userId}/inactivate")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void inactivateAccount(@PathVariable("userId") @NotNull Long userId,
-                                  @RequestHeader("Authorization") @uuid UUID accessToken) {
-        this.authorizationService.authorizeUser(userId, accessToken);
+                                  @RequestHeader("requester-user-id") @NotNull Long requesterId) {
+        this.authorizationService.authorizeUser(userId, requesterId);
         this.userService.inactivateAccount(userId);
     }
 }

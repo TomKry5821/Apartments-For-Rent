@@ -11,6 +11,7 @@ import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.authorization.Auth
 import pl.polsl.krypczyk.apartmentsforrent.userservice.infrastructure.annotation.uuid;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import java.util.UUID;
 
 @RestController
@@ -35,8 +36,8 @@ public class AuthorizationController {
     @PostMapping("{userId}/logout")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void logoutUser(@PathVariable("userId") Long userId,
-                           @RequestHeader("Authorization") @uuid UUID accessToken){
-        this.authorizationService.authorizeUser(userId, accessToken);
+                           @RequestHeader("requester-user-id") @NotNull Long requesterId) {
+        this.authorizationService.authorizeUser(userId, requesterId);
         this.authorizationService.logoutUser(userId);
     }
 

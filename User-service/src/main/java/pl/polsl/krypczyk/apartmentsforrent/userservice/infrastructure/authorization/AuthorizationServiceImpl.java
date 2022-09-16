@@ -154,10 +154,9 @@ public class AuthorizationServiceImpl implements AuthorizationService {
     }
 
     @Override
-    public void authorizeUser(Long userId, UUID accessToken) {
+    public void authorizeUser(Long userId, Long requesterId) {
         var user = this.userRepository.findUserEntityById(userId);
-        if (Objects.isNull(user) ||
-                !user.getUserAuthorizationEntity().getToken().equals(accessToken))
+        if (Objects.isNull(user) || !userId.equals(requesterId))
             throw new UnauthorizedUserException();
     }
 

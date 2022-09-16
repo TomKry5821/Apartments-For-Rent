@@ -12,7 +12,7 @@ public interface AuthorizationService {
     CreateUserResponse registerNewUser(CreateUserRequest createUserRequest);
     LoginUserResponse loginUser(UserLoginRequest userLoginRequest);
     void logoutUser(Long userId);
-    void authorizeUser(Long userId, UUID accessToken);
+    void authorizeUser(Long userId, Long requesterId);
     void authorizeAdmin(UUID accessToken);
     void deleteDbContent();
 }
