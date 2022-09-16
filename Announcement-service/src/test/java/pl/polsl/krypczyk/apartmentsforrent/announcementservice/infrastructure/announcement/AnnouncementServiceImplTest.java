@@ -9,8 +9,8 @@ import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announceme
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.AnnouncementService;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.dto.AnnouncementDTO;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.excpetion.AnnouncementNotFoundException;
-import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.request.CreateAnnouncementRequest;
-import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.response.CreateAnnouncementResponse;
+import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.request.AddNewAnnouncementRequest;
+import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.response.AddNewAnnouncementResponse;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.response.GetAnnouncementWithAllDetailsResponse;
 
 import java.math.BigDecimal;
@@ -103,8 +103,8 @@ class AnnouncementServiceImplTest {
                 this.announcementService.getAnnouncementWithAllDetails(0L));
     }
 
-    private CreateAnnouncementRequest validAnnouncementRequest() {
-        var createAnnouncementRequest = new CreateAnnouncementRequest();
+    private AddNewAnnouncementRequest validAnnouncementRequest() {
+        var createAnnouncementRequest = new AddNewAnnouncementRequest();
         createAnnouncementRequest.setCity("City");
         createAnnouncementRequest.setCaution(BigDecimal.valueOf(10.55));
         createAnnouncementRequest.setContent("Content");
@@ -124,8 +124,8 @@ class AnnouncementServiceImplTest {
         return createAnnouncementRequest;
     }
 
-    private CreateAnnouncementResponse validAnnouncementResponse() {
-        var createAnnouncementResponse = new CreateAnnouncementResponse();
+    private AddNewAnnouncementResponse validAnnouncementResponse() {
+        var createAnnouncementResponse = new AddNewAnnouncementResponse();
         createAnnouncementResponse.setCity("City");
         createAnnouncementResponse.setCaution(BigDecimal.valueOf(10.55));
         createAnnouncementResponse.setContent("Content");
