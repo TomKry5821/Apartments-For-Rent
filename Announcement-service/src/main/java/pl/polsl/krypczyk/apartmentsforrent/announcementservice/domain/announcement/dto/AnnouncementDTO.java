@@ -14,4 +14,6 @@ public class AnnouncementDTO {
     private LocalDate creationDate;
 
     private AnnouncementDetailsDTO announcementDetailsDTO;
+
+    private Boolean isClosed;
 }
