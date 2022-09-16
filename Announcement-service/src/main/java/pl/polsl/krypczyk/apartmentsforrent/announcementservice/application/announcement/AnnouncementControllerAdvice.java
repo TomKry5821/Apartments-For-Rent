@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.excpetion.AnnouncementNotFoundException;
 
 @ControllerAdvice
 public class AnnouncementControllerAdvice {
@@ -20,5 +21,12 @@ public class AnnouncementControllerAdvice {
         }
 
         return errorMessage.toString();
+    }
+
+    @ExceptionHandler(AnnouncementNotFoundException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseBody
+    public String handleException(AnnouncementNotFoundException e) {
+        return e.getMessage();
     }
 }
