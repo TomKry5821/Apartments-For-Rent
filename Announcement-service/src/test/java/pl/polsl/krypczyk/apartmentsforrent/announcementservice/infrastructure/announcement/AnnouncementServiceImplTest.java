@@ -36,24 +36,24 @@ class AnnouncementServiceImplTest {
     }
 
     @Test
-    void getAllAnnouncementsWithEmptyDatabase() {
+    void getAllActiveAnnouncementsWithEmptyDatabase() {
         //GIVEN
         Collection<AnnouncementDTO> announcementDTOS = new ArrayList<>();
 
         //WHEN
-        var expected = this.announcementService.getAllAnnouncements();
+        var expected = this.announcementService.getAllActiveAnnouncements();
 
         //THEN
         assertEquals(expected, announcementDTOS);
     }
 
     @Test
-    void getAllAnnouncementsWithNotEmptyDatabase() {
+    void getAllActiveAnnouncementsWithNotEmptyDatabase() {
         //GIVEN
         this.announcementService.createAnnouncement(this.validAnnouncementRequest());
 
         //WHEN
-        var expected = this.announcementService.getAllAnnouncements();
+        var expected = this.announcementService.getAllActiveAnnouncements();
 
         //THEN
         assertFalse(expected.isEmpty());
@@ -165,6 +165,7 @@ class AnnouncementServiceImplTest {
                 .rentalTerm(null)
                 .userId(1L)
                 .creationDate(null)
+                .isClosed(false)
                 .build();
     }
 
