@@ -8,7 +8,7 @@ import java.time.LocalDate;
 import java.util.Collection;
 
 @Data
-public class CreateAnnouncementResponse {
+public class AddNewAnnouncementResponse {
 
     private Long userId;
 

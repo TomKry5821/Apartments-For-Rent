@@ -8,7 +8,7 @@ import java.time.LocalDate;
 import java.util.Collection;
 
 @Data
-public class CreateAnnouncementRequest {
+public class AddNewAnnouncementRequest {
 
     @NotNull(message = "Invalid user id")
     @Min(value = 1, message = "User id cannot be lower than 1")
