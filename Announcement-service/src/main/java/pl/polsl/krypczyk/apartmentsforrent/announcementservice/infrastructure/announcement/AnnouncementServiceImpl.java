@@ -3,6 +3,7 @@ package pl.polsl.krypczyk.apartmentsforrent.announcementservice.infrastructure.a
 import lombok.RequiredArgsConstructor;
 import org.mapstruct.factory.Mappers;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.adressdetails.AddressDetailsEntity;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.adressdetails.AddressDetailsRepository;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.AnnouncementEntity;
@@ -10,8 +11,10 @@ import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announceme
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.AnnouncementRepository;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.AnnouncementService;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.dto.AnnouncementDTO;
+import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.excpetion.AnnouncementNotFoundException;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.request.CreateAnnouncementRequest;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.response.CreateAnnouncementResponse;
+import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.response.GetAnnouncementWithAllDetailsResponse;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcementcontent.AnnouncementContentEntity;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcementcontent.AnnouncementContentRepository;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcementcontent.PhotoPathEntity;
@@ -23,9 +26,11 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class AnnouncementServiceImpl implements AnnouncementService {
 
     private final AnnouncementRepository announcementRepository;
@@ -63,7 +68,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
         announcement.setCreationDate(LocalDate.now());
         this.announcementRepository.save(announcement);
 
-        var response =  this.announcementMapper.createAnnouncementRequestToCreateAnnouncementResponse(createAnnouncementRequest);
+        var response = this.announcementMapper.createAnnouncementRequestToCreateAnnouncementResponse(createAnnouncementRequest);
         response.setCreationDate(announcement.getCreationDate());
 
         return response;
@@ -109,6 +114,45 @@ public class AnnouncementServiceImpl implements AnnouncementService {
         addressDetails.setLocalNumber(createAnnouncementRequest.getLocalNumber());
 
         return this.addressDetailsRepository.save(addressDetails);
+    }
+
+    @Override
+    public GetAnnouncementWithAllDetailsResponse getAnnouncementWithAllDetails(Long announcementId) {
+        var announcement = this.announcementRepository.findById(announcementId);
+        if (announcement.isEmpty())
+            throw new AnnouncementNotFoundException();
+
+        return this.buildResponse(announcement.get());
+    }
+
+    private GetAnnouncementWithAllDetailsResponse buildResponse(AnnouncementEntity announcement) {
+        var announcementDetails = announcement.getAnnouncementDetailsEntity();
+        var addressDetails = announcementDetails.getAddressDetailsEntity();
+        var announcementContent = announcementDetails.getAnnouncementContent();
+        var photoPaths = announcementContent.getPhotoPaths();
+
+        return GetAnnouncementWithAllDetailsResponse
+                .builder()
+                .creationDate(announcement.getCreationDate())
+                .userId(announcement.getUserId())
+                .title(announcementDetails.getTitle())
+                .mainPhotoPath(announcementDetails.getMainPhotoPath())
+                .roomsNumber(announcementDetails.getRoomsNumber())
+                .rentalTerm(announcementDetails.getRentalTerm())
+                .caution(announcementDetails.getCaution())
+                .rentalAmount(announcementDetails.getRentalAmount())
+                .city(addressDetails.getCity())
+                .street(addressDetails.getStreet())
+                .district(addressDetails.getDistrict())
+                .zipCode(addressDetails.getZipCode())
+                .buildingNumber(addressDetails.getBuildingNumber())
+                .localNumber(addressDetails.getLocalNumber())
+                .content(announcementContent.getContent())
+                .photoPaths(photoPaths
+                        .stream()
+                        .map(PhotoPathEntity::getPhotoPath)
+                        .collect(Collectors.toList()))
+                .build();
     }
 
 }

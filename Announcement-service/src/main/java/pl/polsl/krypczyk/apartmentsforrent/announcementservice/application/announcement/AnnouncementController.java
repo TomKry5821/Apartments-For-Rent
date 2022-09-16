@@ -6,8 +6,10 @@ import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announceme
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.dto.AnnouncementDTO;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.request.CreateAnnouncementRequest;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.response.CreateAnnouncementResponse;
+import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.response.GetAnnouncementWithAllDetailsResponse;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import java.util.Collection;
 
 @RestController
@@ -22,9 +24,15 @@ public class AnnouncementController {
         return this.announcementService.getAllAnnouncements();
     }
 
+    @GetMapping("/public/announcements/{announcementId}")
+    public GetAnnouncementWithAllDetailsResponse getAnnouncementWithAllDetails(@NotNull @PathVariable("announcementId") Long announcementId){
+        return this.announcementService.getAnnouncementWithAllDetails(announcementId);
+    }
+
     @PostMapping("/announcements")
     public CreateAnnouncementResponse createAnnouncement(@RequestBody @Valid CreateAnnouncementRequest createAnnouncementRequest){
         return this.announcementService.createAnnouncement(createAnnouncementRequest);
     }
+
 
 }
