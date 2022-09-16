@@ -140,14 +140,12 @@ class AuthorizationControllerTest {
     @Test
     void testLogoutUser_WithValidId_ShouldReturn204() throws Exception {
         //GIVEN
-        var response = this.registerValidUser();
-        var token = this.getTokenFromResponse(response);
-
+        this.registerValidUser();
         //WHEN
         mvc.perform(
                         post("/user/api/v1/auth/2/logout")
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .header("Authorization", token))
+                                .header("requester-user-id", 2))
                 //THEN
                 .andExpect(status().isNoContent());
 
