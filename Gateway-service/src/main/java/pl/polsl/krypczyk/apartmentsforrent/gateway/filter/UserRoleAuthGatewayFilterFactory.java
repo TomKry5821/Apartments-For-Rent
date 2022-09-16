@@ -46,7 +46,7 @@ public class UserRoleAuthGatewayFilterFactory extends AbstractGatewayFilterFacto
                 return setUnauthorizedResponse(response);
             request = exchange.getRequest()
                     .mutate()
-                    .header("requestor-user-id", userRoles.getUserId().toString())
+                    .header("requester-user-id", userRoles.getUserId().toString())
                     .build();
             exchange = exchange.mutate().request(request).build();
             return chain.filter(exchange);
