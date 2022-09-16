@@ -8,7 +8,7 @@ import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announceme
 import java.util.Collection;
 
 public interface AnnouncementService {
-    Collection<AnnouncementDTO> getAllAnnouncements();
+    Collection<AnnouncementDTO> getAllActiveAnnouncements();
 
     GetAnnouncementWithAllDetailsResponse getAnnouncementWithAllDetails(Long announcementId);
 

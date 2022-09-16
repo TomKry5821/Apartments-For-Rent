@@ -20,8 +20,8 @@ public class AnnouncementController {
     private final AnnouncementService announcementService;
 
     @GetMapping("/public/announcements")
-    public Collection<AnnouncementDTO> getAllAnnouncements() {
-        return this.announcementService.getAllAnnouncements();
+    public Collection<AnnouncementDTO> getAllActiveAnnouncements() {
+        return this.announcementService.getAllActiveAnnouncements();
     }
 
     @GetMapping("/public/announcements/{announcementId}")

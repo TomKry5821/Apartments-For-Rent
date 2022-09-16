@@ -25,7 +25,6 @@ import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announceme
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.stream.Collectors;
 
 @Service
@@ -41,12 +40,11 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     private final AnnouncementMapper announcementMapper = Mappers.getMapper(AnnouncementMapper.class);
 
     @Override
-    public Collection<AnnouncementDTO> getAllAnnouncements() {
-        var announcements = this.announcementRepository.findAll();
+    public Collection<AnnouncementDTO> getAllActiveAnnouncements() {
+        var announcements = this.announcementRepository.findAnnouncementEntitiesByIsClosed(false);
 
         Collection<AnnouncementDTO> announcementDTOS = new ArrayList<>();
         announcements.forEach(a -> announcementDTOS.add(this.createAnnouncementDTO(a)));
-
         return announcementDTOS;
     }
 
@@ -66,6 +64,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
         announcement.setUserId(createAnnouncementRequest.getUserId());
         announcement.setAnnouncementDetailsEntity(this.createAnnouncementDetailsEntity(createAnnouncementRequest));
         announcement.setCreationDate(LocalDate.now());
+        announcement.setIsClosed(false);
         this.announcementRepository.save(announcement);
 
         var response = this.announcementMapper.createAnnouncementRequestToCreateAnnouncementResponse(createAnnouncementRequest);
@@ -135,6 +134,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
                 .builder()
                 .creationDate(announcement.getCreationDate())
                 .userId(announcement.getUserId())
+                .isClosed(announcement.getIsClosed())
                 .title(announcementDetails.getTitle())
                 .mainPhotoPath(announcementDetails.getMainPhotoPath())
                 .roomsNumber(announcementDetails.getRoomsNumber())
