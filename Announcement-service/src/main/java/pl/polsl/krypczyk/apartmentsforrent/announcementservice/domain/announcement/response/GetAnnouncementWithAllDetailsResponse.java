@@ -42,4 +42,6 @@ public class GetAnnouncementWithAllDetailsResponse {
 
     private LocalDate creationDate;
 
+    private Boolean isClosed;
+
 }

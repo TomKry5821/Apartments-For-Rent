@@ -41,4 +41,6 @@ public class CreateAnnouncementResponse {
     private Integer localNumber;
 
     private LocalDate creationDate;
+
+    private Boolean isClosed;
 }

@@ -28,6 +28,9 @@ public class AnnouncementEntity {
     @Column(name = "CREATION_DATE", nullable = false)
     private LocalDate creationDate;
 
+    @Column(name = "IS_CLOSED", nullable = false)
+    private Boolean isClosed;
+
     @OneToOne(orphanRemoval = true, optional = false, fetch = FetchType.EAGER)
     @JoinColumn(name = "ANNOUNCEMENT_DETAILS_ID", referencedColumnName = "ID")
     private AnnouncementDetailsEntity announcementDetailsEntity;
