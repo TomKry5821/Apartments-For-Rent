@@ -142,6 +142,7 @@ class AnnouncementServiceImplTest {
         createAnnouncementResponse.setRentalTerm(null);
         createAnnouncementResponse.setUserId(1L);
         createAnnouncementResponse.setCreationDate(null);
+        createAnnouncementResponse.setIsClosed(false);
 
         return createAnnouncementResponse;
     }

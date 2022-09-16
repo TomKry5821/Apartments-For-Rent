@@ -31,7 +31,7 @@ class AuthorizationServiceImplTest {
     }
 
     @Test
-    void registerNewUserWithValidUserInformation() {
+    void testRegisterNewUser_WithValidUserInformation() {
         //GIVEN
         CreateUserRequest createUserRequest = createValidUser();
 
@@ -43,7 +43,7 @@ class AuthorizationServiceImplTest {
     }
 
     @Test
-    void registerAlreadyExistingUser() {
+    void testRegister_AlreadyExistingUser() {
         //GIVEN
         CreateUserRequest createUserRequest = createValidUser();
 
@@ -56,7 +56,7 @@ class AuthorizationServiceImplTest {
     }
 
     @Test
-    void registerNewUserWithInvalidNullUserInformation() {
+    void testRegisterNewUser_WithInvalidNullUserInformation() {
         //GIVEN
         CreateUserRequest createUserRequest = null;
 
@@ -66,7 +66,7 @@ class AuthorizationServiceImplTest {
     }
 
     @Test
-    void loginUserWithValidCredentials() {
+    void testLoginUser_WithValidCredentials() {
         //GIVEN
         CreateUserRequest createUserRequest = createValidUser();
         this.authorizationService.registerNewUser(createUserRequest);
@@ -82,7 +82,7 @@ class AuthorizationServiceImplTest {
     }
 
     @Test
-    void loginUserWithNullCredentials() {
+    void testLoginUser_WithNullCredentials() {
         //GIVEN
         CreateUserRequest createUserRequest = createValidUser();
         this.authorizationService.registerNewUser(createUserRequest);
@@ -96,7 +96,7 @@ class AuthorizationServiceImplTest {
     }
 
     @Test
-    void loginUserThatDoesNotExists() {
+    void testLoginUser_ThatDoesNotExists() {
         //GIVEN
         CreateUserRequest createUserRequest = createValidUser();
         this.authorizationService.registerNewUser(createUserRequest);
@@ -112,7 +112,7 @@ class AuthorizationServiceImplTest {
     }
 
     @Test
-    void logoutUserThatExists() {
+    void testLogoutUser_ThatExists() {
         //GIVEN
         CreateUserRequest createUserRequest = this.createValidUser();
         var createUserResponse = this.authorizationService.registerNewUser(createUserRequest);
@@ -125,7 +125,7 @@ class AuthorizationServiceImplTest {
     }
 
     @Test
-    void logoutUserThatDoesNotExists() {
+    void testLogoutUser_ThatDoesNotExists() {
         //GIVEN
         CreateUserRequest createUserRequest = this.createValidUser();
         this.authorizationService.registerNewUser(createUserRequest);

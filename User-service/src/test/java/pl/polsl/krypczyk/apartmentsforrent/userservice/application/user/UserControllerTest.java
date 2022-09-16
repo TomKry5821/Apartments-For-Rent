@@ -35,7 +35,7 @@ class UserControllerTest {
     }
 
     @Test
-    void getUserDetailsWithValidUserIdAndToken_shouldReturn200() throws Exception {
+    void testGetUserDetails_WithValidUserIdAndToken_shouldReturn200() throws Exception {
         //GIVEN
         var response = this.registerValidUser();
         var token = this.getTokenFromResponse(response);
@@ -50,7 +50,7 @@ class UserControllerTest {
     }
 
     @Test
-    void getUserDetailsWithInvalidUserIdAndValidToken_shouldReturn401() throws Exception {
+    void testGetUserDetails_WithInvalidUserIdAndValidToken_shouldReturn401() throws Exception {
         //GIVEN
         var response = this.registerValidUser();
         var token = this.getTokenFromResponse(response);
@@ -65,7 +65,7 @@ class UserControllerTest {
     }
 
     @Test
-    void changeUserDetailsWithValidUserIdAndValidToken_shouldReturn200() throws Exception {
+    void testChangeUserDetails_WithValidUserIdAndValidToken_shouldReturn200() throws Exception {
         //GIVEN
         var response = this.registerValidUser();
         var token = this.getTokenFromResponse(response);
@@ -87,7 +87,7 @@ class UserControllerTest {
     }
 
     @Test
-    void changeUserDetailsWithInvalidUserIdAndValidToken_shouldReturn401() throws Exception {
+    void testChangeUserDetails_WithInvalidUserIdAndValidToken_shouldReturn401() throws Exception {
         //GIVEN
         var response = this.registerValidUser();
         var token = this.getTokenFromResponse(response);
@@ -109,7 +109,7 @@ class UserControllerTest {
     }
 
     @Test
-    void changeUserDetailsWithInvalidUserIdAndInvalidToken_shouldReturn400() throws Exception {
+    void testChangeUserDetails_WithInvalidUserIdAndInvalidToken_shouldReturn400() throws Exception {
         //GIVEN
         this.registerValidUser();
 
@@ -130,7 +130,7 @@ class UserControllerTest {
     }
 
     @Test
-    void inactivateAccountWithValidUserIdAndValidToken_shouldReturn204() throws Exception {
+    void testInactivateAccount_WithValidUserIdAndValidToken_shouldReturn204() throws Exception {
         //GIVEN
         var response = this.registerValidUser();
         var token = this.getTokenFromResponse(response);
@@ -144,7 +144,7 @@ class UserControllerTest {
     }
 
     @Test
-    void inactivateAccountWithInvalidUserIdAndValidToken_shouldReturn401() throws Exception {
+    void testInactivateAccount_WithInvalidUserIdAndValidToken_shouldReturn401() throws Exception {
         //GIVEN
         var response = this.registerValidUser();
         var token = this.getTokenFromResponse(response);
@@ -158,7 +158,7 @@ class UserControllerTest {
     }
 
     @Test
-    void inactivateAccountWithInvalidUserIdAndInvalidToken_shouldReturn400() throws Exception {
+    void testInactivateAccount_WithInvalidUserIdAndInvalidToken_shouldReturn400() throws Exception {
         //GIVEN
         this.registerValidUser();
 

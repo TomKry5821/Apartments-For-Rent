@@ -2,17 +2,13 @@ package pl.polsl.krypczyk.apartmentsforrent.userservice.application.authorizatio
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.springframework.jdbc.support.MetaDataAccessException;
-import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.authorization.exception.InactiveAccountException;
 
 import java.util.Objects;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class AESTest {
 
     @Test
-    void encryptPasswordWithValidData() {
+    void testEncryptPassword_WithValidData() {
         //GIVEN
         var encryptedPassword = "H6LsgM/nxKwv+1yR3wlLxg==";
         var password = "Admin";
@@ -21,11 +17,11 @@ class AESTest {
         var expected = AES.encrypt(password);
 
         //THEN
-        Assertions.assertTrue(expected.equals(encryptedPassword));
+        Assertions.assertEquals(expected, encryptedPassword);
     }
 
     @Test
-    void encryptPasswordWitInvalidData() {
+    void testEncryptPassword_WitInvalidData() {
         //GIVEN
         String password = null;
 
@@ -37,7 +33,7 @@ class AESTest {
     }
 
     @Test
-    void decryptPasswordWithValidData() {
+    void testDecryptPassword_WithValidData() {
         //GIVEN
         var encryptedPassword = "H6LsgM/nxKwv+1yR3wlLxg==";
         var password = "Admin";
@@ -46,11 +42,11 @@ class AESTest {
         var expected = AES.decrypt(encryptedPassword);
 
         //THEN
-        Assertions.assertTrue(expected.equals(password));
+        Assertions.assertEquals(expected, password);
     }
 
     @Test
-    void decryptPasswordWithInvalidData() {
+    void testDecryptPassword_WithInvalidData() {
         //GIVEN
         String password = null;
 

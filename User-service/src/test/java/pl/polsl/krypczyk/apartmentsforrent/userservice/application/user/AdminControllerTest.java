@@ -34,7 +34,7 @@ class AdminControllerTest {
     }
 
     @Test
-    void deleteUserWithInvalidUserIdAndValidToken_shouldReturn401() throws Exception {
+    void testDeleteUser_WithInvalidUserIdAndValidToken_shouldReturn401() throws Exception {
         //GIVEN
         this.registerValidUser();
         var token = UUID.fromString("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa");
@@ -48,7 +48,7 @@ class AdminControllerTest {
     }
 
     @Test
-    void deleteUserWithInvalidUserIdAndInvalidToken_shouldReturn401() throws Exception {
+    void testDeleteUser_WithInvalidUserIdAndInvalidToken_shouldReturn401() throws Exception {
         //GIVEN
         this.registerValidUser();
 
@@ -61,7 +61,7 @@ class AdminControllerTest {
     }
 
     @Test
-    void getAllUsersWithInvalidUserIdAndValidToken_shouldReturn401() throws Exception {
+    void testGetAllUsers_WithInvalidUserIdAndValidToken_shouldReturn401() throws Exception {
         //GIVEN
         this.registerValidUser();
         var token = UUID.fromString("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa");
@@ -75,7 +75,7 @@ class AdminControllerTest {
     }
 
     @Test
-    void getAllUsersWithInvalidUserIdAndInvalidToken_shouldReturn401() throws Exception {
+    void testGetAllUsers_WithInvalidUserIdAndInvalidToken_shouldReturn401() throws Exception {
         //GIVEN
         this.registerValidUser();
 
@@ -88,7 +88,7 @@ class AdminControllerTest {
     }
 
     @Test
-    void changeUserDetailsWithInvalidUserIdAndValidToken_shouldReturn401() throws Exception {
+    void testChangeUserDetails_WithInvalidUserIdAndValidToken_shouldReturn401() throws Exception {
         //GIVEN
         this.registerValidUser();
         var token = UUID.fromString("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa");
@@ -110,7 +110,7 @@ class AdminControllerTest {
     }
 
     @Test
-    void changeUserDetailsWithInvalidUserIdAndInvalidToken_shouldReturn400() throws Exception {
+    void testChangeUserDetails_WithInvalidUserIdAndInvalidToken_shouldReturn400() throws Exception {
         //GIVEN
         this.registerValidUser();
 

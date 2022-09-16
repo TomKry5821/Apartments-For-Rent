@@ -42,7 +42,7 @@ class UserServiceImplTest {
     }
 
     @Test
-    void getUserDetailsWithValidUserId() {
+    void testGetUserDetails_WithValidUserId() {
         //GIVEN
         var user = this.createValidUser();
         var response = this.authorizationService.registerNewUser(user);
@@ -59,7 +59,7 @@ class UserServiceImplTest {
     }
 
     @Test
-    void getUserDetailsWithInvalidUserId() {
+    void testGetUserDetails_WithInvalidUserId() {
         //GIVEN
         var userId = INVALID_USER_ID;
 
@@ -69,7 +69,7 @@ class UserServiceImplTest {
     }
 
     @Test
-    void getUserDetailsWithInactiveUser() {
+    void testGetUserDetails_WithInactiveUser() {
         //GIVEN
         var inactiveUser = this.createInactiveUser();
         var response = this.authorizationService.registerNewUser(inactiveUser);
@@ -81,7 +81,7 @@ class UserServiceImplTest {
     }
 
     @Test
-    void changeUserDetailsWithValidUserDetails() {
+    void testChangeUserDetails_WithValidUserDetails() {
         //GIVEN
         var user = this.createValidUser();
         var response = this.authorizationService.registerNewUser(user);
@@ -98,7 +98,7 @@ class UserServiceImplTest {
     }
 
     @Test
-    void changeUserDetailsWithValidUserId() {
+    void testChangeUserDetails_WithValidUserId() {
         //GIVEN
         var user = this.createValidUser();
         var response = this.authorizationService.registerNewUser(user);
@@ -113,7 +113,7 @@ class UserServiceImplTest {
     }
 
     @Test
-    void changeUserDetailsWithInvalidUserId() {
+    void testChangeUserDetails_WithInvalidUserId() {
         //GIVEN
         var user = this.createValidUser();
         this.authorizationService.registerNewUser(user);
@@ -126,7 +126,7 @@ class UserServiceImplTest {
     }
 
     @Test
-    void changeUserDetailsWithNullUserDetails() {
+    void testChangeUserDetails_WithNullUserDetails() {
         //GIVEN
         var inactiveUser = this.createInactiveUser();
         var response = this.authorizationService.registerNewUser(inactiveUser);
@@ -139,7 +139,7 @@ class UserServiceImplTest {
     }
 
     @Test
-    void changeUserDetailsWithInactiveUser() {
+    void testChangeUserDetails_WithInactiveUser() {
         //GIVEN
         var inactiveUser = this.createInactiveUser();
         var response = this.authorizationService.registerNewUser(inactiveUser);
@@ -152,7 +152,7 @@ class UserServiceImplTest {
     }
 
     @Test
-    void inactivateAccountWithValidUserId() {
+    void testInactivateAccount_WithValidUserId() {
         //GIVEN
         var user = this.createValidUser();
         var response = this.authorizationService.registerNewUser(user);
@@ -167,7 +167,7 @@ class UserServiceImplTest {
     }
 
     @Test
-    void inactivateAccountWithInvalidUserId() {
+    void testInactivateAccount_WithInvalidUserId() {
         //GIVEN
         var user = this.createValidUser();
         this.authorizationService.registerNewUser(user);
@@ -179,7 +179,7 @@ class UserServiceImplTest {
     }
 
     @Test
-    void inactivateInactiveAccount() {
+    void testInactivate_InactiveAccount() {
         //GIVEN
         var user = this.createInactiveUser();
         var response = this.authorizationService.registerNewUser(user);
