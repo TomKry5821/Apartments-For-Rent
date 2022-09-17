@@ -32,8 +32,9 @@ public class AnnouncementController {
     }
 
     @PostMapping("/announcements")
-    public AddNewAnnouncementResponse addNewAnnouncement(@RequestBody @Valid AddNewAnnouncementRequest addNewAnnouncementRequest) {
-        return this.announcementService.addNewAnnouncement(addNewAnnouncementRequest);
+    public AddNewAnnouncementResponse addNewAnnouncement(@RequestBody @Valid AddNewAnnouncementRequest addNewAnnouncementRequest,
+                                                         @RequestHeader("requester-user-id") @NotNull Long requesterId) {
+        return this.announcementService.addNewAnnouncement(addNewAnnouncementRequest, requesterId);
     }
 
     @PutMapping("/announcements/{announcementId}")
