@@ -3,16 +3,15 @@ package pl.polsl.krypczyk.apartmentsforrent.userservice.application.admin;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import pl.polsl.krypczyk.apartmentsforrent.userservice.application.admin.dto.UserDTO;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.application.userdetails.request.ChangeUserDetailsRequest;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.application.userdetails.response.ChangeUserDetailsResponse;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.admin.AdminService;
-import pl.polsl.krypczyk.apartmentsforrent.userservice.application.admin.response.GetAllUsersResponse;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.authorization.AuthorizationService;
-import pl.polsl.krypczyk.apartmentsforrent.userservice.infrastructure.annotation.uuid;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import java.util.UUID;
+import java.util.Collection;
 
 @RestController
 @RequestMapping("user/api/v1/admin")
@@ -23,7 +22,7 @@ public class AdminController {
     private final AuthorizationService authorizationService;
 
     @GetMapping("/users")
-    public GetAllUsersResponse getAllUsers(@RequestHeader("requester-user-id") @NotNull Long requesterId) {
+    public Collection<UserDTO> getAllUsers(@RequestHeader("requester-user-id") @NotNull Long requesterId) {
         this.authorizationService.authorizeAdmin(requesterId);
         return this.adminService.getAllUsers();
     }

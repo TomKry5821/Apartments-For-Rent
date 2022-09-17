@@ -8,7 +8,6 @@ import pl.polsl.krypczyk.apartmentsforrent.userservice.application.userdetails.r
 import pl.polsl.krypczyk.apartmentsforrent.userservice.application.userdetails.response.ChangeUserDetailsResponse;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.admin.AdminService;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.application.admin.dto.UserDTO;
-import pl.polsl.krypczyk.apartmentsforrent.userservice.application.admin.response.GetAllUsersResponse;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.authorization.exception.InactiveAccountException;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.role.RoleEntity;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.user.UserEntity;
@@ -33,15 +32,12 @@ public class AdminServiceImpl implements AdminService {
     private final UserMapper userMapper = Mappers.getMapper(UserMapper.class);
 
     @Override
-    public GetAllUsersResponse getAllUsers() {
+    public Collection<UserDTO> getAllUsers() {
         var users = this.userRepository.findAll();
         Collection<UserDTO> userDTOS = new ArrayList<>();
         users.forEach(u -> userDTOS.add(this.buildUserDTO(u)));
 
-        var getAllUsersResponse = new GetAllUsersResponse();
-        getAllUsersResponse.setUsers(userDTOS);
-
-        return getAllUsersResponse;
+        return userDTOS;
     }
 
     @Override
