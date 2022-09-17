@@ -10,8 +10,10 @@ import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announceme
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.dto.AnnouncementDTO;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.excpetion.AnnouncementNotFoundException;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.request.AddNewAnnouncementRequest;
+import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.request.UpdateAnnouncementRequest;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.response.AddNewAnnouncementResponse;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.response.GetAnnouncementWithAllDetailsResponse;
+import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.response.UpdateAnnouncementResponse;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -103,6 +105,31 @@ class AnnouncementServiceImplTest {
                 this.announcementService.getAnnouncementWithAllDetails(0L));
     }
 
+    @Test
+    void testUpdateAnnouncement_WithValidRequestBodyAndUserId() {
+        //GIVEN
+        var request = validUpdateAnnouncementRequest();
+        this.announcementService.addNewAnnouncement(validAnnouncementRequest());
+        var response = validUpdateAnnouncementResponse();
+
+        //WHEN
+        var expected = this.announcementService.updateAnnouncement(request, 4L, 1L);
+
+        //THEN
+        Assertions.assertEquals(expected, response);
+    }
+
+    @Test
+    void testUpdateAnnouncement_WithInvalidUserId() {
+        //GIVEN
+        var request = validUpdateAnnouncementRequest();
+        this.announcementService.addNewAnnouncement(validAnnouncementRequest());
+
+        //WHEN AND THEN
+        Assertions.assertThrows(AnnouncementNotFoundException.class, () ->
+                this.announcementService.updateAnnouncement(request, 1L, 1L));
+    }
+
     private AddNewAnnouncementRequest validAnnouncementRequest() {
         var createAnnouncementRequest = new AddNewAnnouncementRequest();
         createAnnouncementRequest.setCity("City");
@@ -167,6 +194,46 @@ class AnnouncementServiceImplTest {
                 .userId(1L)
                 .creationDate(null)
                 .isClosed(false)
+                .build();
+    }
+
+    private UpdateAnnouncementRequest validUpdateAnnouncementRequest() {
+        return UpdateAnnouncementRequest
+                .builder()
+                .city("City")
+                .caution(BigDecimal.valueOf(10.55))
+                .content("Content")
+                .district("District")
+                .localNumber(1)
+                .buildingNumber("1A")
+                .street("Street")
+                .title("Title")
+                .photoPaths(List.of("test", "test2"))
+                .mainPhotoPath("path")
+                .rentalAmount(BigDecimal.valueOf(10.55))
+                .roomsNumber(1)
+                .zipCode("11-111")
+                .rentalTerm(null)
+                .build();
+    }
+
+    private UpdateAnnouncementResponse validUpdateAnnouncementResponse() {
+        return UpdateAnnouncementResponse
+                .builder()
+                .city("City")
+                .caution(BigDecimal.valueOf(10.55))
+                .content("Content")
+                .district("District")
+                .localNumber(1)
+                .buildingNumber("1A")
+                .street("Street")
+                .title("Title")
+                .photoPaths(List.of("test", "test2"))
+                .mainPhotoPath("path")
+                .rentalAmount(BigDecimal.valueOf(10.55))
+                .roomsNumber(1)
+                .zipCode("11-111")
+                .rentalTerm(null)
                 .build();
     }
 

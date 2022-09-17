@@ -12,6 +12,7 @@ import java.util.UUID;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -108,31 +109,96 @@ class AnnouncementControllerTest {
                 .andExpect(status().isOk());
     }
 
-    private void createAnnouncement() throws Exception {
+    @Test
+    void testUpdateAnnouncement_WithValidBodyAndValidUserId_ShouldReturn200() throws Exception {
+        this.createAnnouncement();
+
         mvc.perform(
-                        post("/announcement/api/v1/announcements")
+                        put("/announcement/api/v1/announcements/1")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content("""
                                         {
-                                           "userId":1,
-                                           "title":"Title",
-                                           "mainPhotoPath":"Main/photo/path",
-                                           "roomsNumber":3,
-                                           "rentalTerm":"2022-12-03",
-                                           "caution":1000.00,
-                                           "rentalAmount":1000.00,
-                                           "content":"Content",
-                                           "photoPaths":[
-                                              "path/1",
-                                              "path/2"
-                                           ],
-                                           "district":"District",
-                                           "city":"City",
-                                           "zipCode":"44-240",
-                                           "street":"Street",
-                                           "buildingNumber":"1A",
-                                           "localNumber":3
-                                        }""")
-                                .header("Authorization", UUID.randomUUID()));
+                                                 "title":"Title",
+                                                 "mainPhotoPath":"Main/photo/path",
+                                                 "roomsNumber":3,
+                                                 "rentalTerm":"2022-12-03",
+                                                 "caution":1000.00,
+                                                 "rentalAmount":1000.00,
+                                                 "content":"Content",
+                                                 "photoPaths":[
+                                                 "path/1",
+                                                 "path/2"
+                                                 ],
+                                                 "district":"District",
+                                                 "city":"City",
+                                                 "zipCode":"44-240",
+                                                 "street":"Street",
+                                                 "buildingNumber":"1A",
+                                                 "localNumber":3
+                                                 }""")
+                                .header("requester-user-id",1L))
+                .andExpect(status().isOk());
     }
+
+    @Test
+    void testUpdateAnnouncement_WithInvalidBodyAndValidUserId_ShouldReturn400() throws Exception {
+        this.createAnnouncement();
+
+        mvc.perform(
+                        put("/announcement/api/v1/announcements/1")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content("""
+                                        {
+                                                 "title":"Title",
+                                                 "mainPhotoPath":"Main/photo/path",
+                                                 "roomsNumber":0,
+                                                 "rentalTerm":"2022-12-03",
+                                                 "caution":1000.00,
+                                                 "rentalAmount":1000.00,
+                                                 "content":"Content",
+                                                 "photoPaths":[
+                                                 "path/1",
+                                                 "path/2"
+                                                 ],
+                                                 "district":null,
+                                                 "city":"City",
+                                                 "zipCode":"44-240",
+                                                 "street":"Street",
+                                                 "buildingNumber":"1A",
+                                                 "localNumber":3
+                                                 }""")
+                                .header("requester-user-id",1L))
+                .andExpect(status().isBadRequest());
+    }
+
+    private void createAnnouncement() throws Exception {
+        mvc.perform(
+                post("/announcement/api/v1/announcements")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                   "userId":1,
+                                   "title":"Title",
+                                   "mainPhotoPath":"Main/photo/path",
+                                   "roomsNumber":3,
+                                   "rentalTerm":"2022-12-03",
+                                   "caution":1000.00,
+                                   "rentalAmount":1000.00,
+                                   "content":"Content",
+                                   "photoPaths":[
+                                      "path/1",
+                                      "path/2"
+                                   ],
+                                   "district":"District",
+                                   "city":"City",
+                                   "zipCode":"44-240",
+                                   "street":"Street",
+                                   "buildingNumber":"1A",
+                                   "localNumber":3
+                                }""")
+                        .header("Authorization", UUID.randomUUID()));
+    }
+
 }
+
+
