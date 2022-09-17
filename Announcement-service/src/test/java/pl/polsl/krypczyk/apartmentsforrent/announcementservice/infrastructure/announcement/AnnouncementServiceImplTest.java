@@ -115,7 +115,7 @@ class AnnouncementServiceImplTest {
         var response = validUpdateAnnouncementResponse();
 
         //WHEN
-        var expected = this.announcementService.updateAnnouncement(request, 4L, 1L);
+        var expected = this.announcementService.updateAnnouncement(request, 6L, 1L);
 
         //THEN
         Assertions.assertEquals(expected, response);
@@ -131,6 +131,32 @@ class AnnouncementServiceImplTest {
         //WHEN AND THEN
         Assertions.assertThrows(AnnouncementNotFoundException.class, () ->
                 this.announcementService.updateAnnouncement(request, 1L, 1L));
+    }
+
+    @Test
+    void testCloseAnnouncement_WithValidUserId() {
+        //GIVEN
+        var request = validUpdateAnnouncementRequest();
+        var addRequest = validAnnouncementRequest();
+        this.announcementService.addNewAnnouncement(addRequest, addRequest.getUserId());
+
+        //WHEN
+        this.announcementService.closeAnnouncement(1L, 1L);
+
+        //THEN
+        Assertions.assertDoesNotThrow(AnnouncementNotFoundException::new);
+    }
+
+    @Test
+    void testCloseAnnouncement_WithInvalidUserId() {
+        //GIVEN
+        var request = validUpdateAnnouncementRequest();
+        var addRequest = validAnnouncementRequest();
+        this.announcementService.addNewAnnouncement(addRequest, addRequest.getUserId());
+
+        //WHEN AND THEN
+        Assertions.assertThrows(AnnouncementNotFoundException.class, () ->
+                this.announcementService.closeAnnouncement(1L, 2L));
     }
 
     private AddNewAnnouncementRequest validAnnouncementRequest() {

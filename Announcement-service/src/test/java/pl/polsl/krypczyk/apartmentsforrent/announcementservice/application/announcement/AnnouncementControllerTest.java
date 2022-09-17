@@ -170,6 +170,28 @@ class AnnouncementControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
+    @Test
+    void testCloseAnnouncement_WithValidUserId_ShouldReturn204() throws Exception {
+        this.createAnnouncement();
+
+        mvc.perform(
+                        post("/announcement/api/v1/announcements/1/close")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .header("requester-user-id",1L))
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    void testCloseAnnouncement_WithInvalidUserId_ShouldReturn400() throws Exception {
+        this.createAnnouncement();
+
+        mvc.perform(
+                        post("/announcement/api/v1/announcements/10/close")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .header("requester-user-id",1L))
+                .andExpect(status().isBadRequest());
+    }
+
     private void createAnnouncement() throws Exception {
         mvc.perform(
                 post("/announcement/api/v1/announcements")
