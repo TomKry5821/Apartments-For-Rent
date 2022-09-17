@@ -2,7 +2,17 @@ package pl.polsl.krypczyk.apartmentsforrent.announcementservice.application.anno
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
+
+
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.AnnouncementService;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.dto.AnnouncementDTO;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.request.AddNewAnnouncementRequest;
@@ -48,7 +58,7 @@ public class AnnouncementController {
     @PostMapping("/announcements/{announcementId}/close")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void closeAnnouncement(@PathVariable("announcementId") @NotNull Long announcementId,
-                                  @RequestHeader("requester-user-id") @NotNull Long requesterId){
+                                  @RequestHeader("requester-user-id") @NotNull Long requesterId) {
         this.announcementService.closeAnnouncement(announcementId, requesterId);
     }
 
