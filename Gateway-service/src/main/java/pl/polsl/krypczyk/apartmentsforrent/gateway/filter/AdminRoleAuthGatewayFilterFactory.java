@@ -48,6 +48,11 @@ public class AdminRoleAuthGatewayFilterFactory extends AbstractGatewayFilterFact
             if(!userRoles.getRoles().contains("ROLE_ADMIN")){
                 return setUnauthorizedResponse(response);
             }
+            request = exchange.getRequest()
+                    .mutate()
+                    .header("requester-user-id", userRoles.getUserId().toString())
+                    .build();
+            exchange = exchange.mutate().request(request).build();
             return chain.filter(exchange);
         };
     }
