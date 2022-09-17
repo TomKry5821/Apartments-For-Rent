@@ -1,9 +1,11 @@
 package pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement;
 
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.dto.AnnouncementDTO;
-import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.request.CreateAnnouncementRequest;
-import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.response.CreateAnnouncementResponse;
+import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.request.AddNewAnnouncementRequest;
+import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.request.UpdateAnnouncementRequest;
+import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.response.AddNewAnnouncementResponse;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.response.GetAnnouncementWithAllDetailsResponse;
+import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.response.UpdateAnnouncementResponse;
 
 import java.util.Collection;
 
@@ -12,6 +14,10 @@ public interface AnnouncementService {
 
     GetAnnouncementWithAllDetailsResponse getAnnouncementWithAllDetails(Long announcementId);
 
-    CreateAnnouncementResponse addNewAnnouncement(CreateAnnouncementRequest createAnnouncementRequest);
+    AddNewAnnouncementResponse addNewAnnouncement(AddNewAnnouncementRequest addNewAnnouncementRequest);
+
+    UpdateAnnouncementResponse updateAnnouncement(UpdateAnnouncementRequest updateAnnouncementRequest,
+                                                  Long announcementId,
+                                                  Long requesterId);
 
 }
