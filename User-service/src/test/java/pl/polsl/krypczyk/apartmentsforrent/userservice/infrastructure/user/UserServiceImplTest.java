@@ -10,6 +10,7 @@ import pl.polsl.krypczyk.apartmentsforrent.userservice.application.userdetails.r
 import pl.polsl.krypczyk.apartmentsforrent.userservice.application.userdetails.response.ChangeUserDetailsResponse;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.application.userdetails.response.GetUserDetailsResponse;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.authorization.AuthorizationService;
+import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.authorization.exception.BadCredentialsException;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.authorization.exception.InactiveAccountException;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.authorization.exception.UnauthorizedUserException;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.user.UserRepository;
@@ -47,7 +48,7 @@ class UserServiceImplTest {
     }
 
     @Test
-    void testGetUserDetails_WithValidUserId() {
+    void testGetUserDetails_WithValidUserId() throws UserAlreadyExistsException, BadCredentialsException, UserNotFoundException, InactiveAccountException {
         //GIVEN
         var user = this.createValidUser();
         var response = this.authorizationService.registerNewUser(user);
@@ -74,7 +75,7 @@ class UserServiceImplTest {
     }
 
     @Test
-    void testGetUserDetails_WithInactiveUser() {
+    void testGetUserDetails_WithInactiveUser() throws UserAlreadyExistsException, BadCredentialsException {
         //GIVEN
         var inactiveUser = this.createInactiveUser();
         var response = this.authorizationService.registerNewUser(inactiveUser);
@@ -86,7 +87,7 @@ class UserServiceImplTest {
     }
 
     @Test
-    void testChangeUserDetails_WithValidUserDetails() {
+    void testChangeUserDetails_WithValidUserDetails() throws UserAlreadyExistsException, BadCredentialsException, UserNotFoundException, InactiveAccountException, InvalidUserDetailsException {
         //GIVEN
         var user = this.createValidUser();
         var response = this.authorizationService.registerNewUser(user);
@@ -103,7 +104,7 @@ class UserServiceImplTest {
     }
 
     @Test
-    void testChangeUserDetails_WithExistingEmail(){
+    void testChangeUserDetails_WithExistingEmail() throws UserAlreadyExistsException, BadCredentialsException {
         //GIVEN
         var user = this.createValidUser();
         var response = this.authorizationService.registerNewUser(user);
@@ -117,7 +118,7 @@ class UserServiceImplTest {
     }
 
     @Test
-    void testChangeUserDetails_WithValidUserId() {
+    void testChangeUserDetails_WithValidUserId() throws UserAlreadyExistsException, BadCredentialsException, UserNotFoundException, InactiveAccountException, InvalidUserDetailsException {
         //GIVEN
         var user = this.createValidUser();
         var response = this.authorizationService.registerNewUser(user);
@@ -132,7 +133,7 @@ class UserServiceImplTest {
     }
 
     @Test
-    void testChangeUserDetails_WithInvalidUserId() {
+    void testChangeUserDetails_WithInvalidUserId() throws UserAlreadyExistsException, BadCredentialsException {
         //GIVEN
         var user = this.createValidUser();
         this.authorizationService.registerNewUser(user);
@@ -145,7 +146,7 @@ class UserServiceImplTest {
     }
 
     @Test
-    void testChangeUserDetails_WithNullUserDetails() {
+    void testChangeUserDetails_WithNullUserDetails() throws UserAlreadyExistsException, BadCredentialsException {
         //GIVEN
         var inactiveUser = this.createInactiveUser();
         var response = this.authorizationService.registerNewUser(inactiveUser);
@@ -158,7 +159,7 @@ class UserServiceImplTest {
     }
 
     @Test
-    void testChangeUserDetails_WithInactiveUser() {
+    void testChangeUserDetails_WithInactiveUser() throws UserAlreadyExistsException, BadCredentialsException {
         //GIVEN
         var inactiveUser = this.createInactiveUser();
         var response = this.authorizationService.registerNewUser(inactiveUser);
@@ -171,7 +172,7 @@ class UserServiceImplTest {
     }
 
     @Test
-    void testInactivateAccount_WithValidUserId() {
+    void testInactivateAccount_WithValidUserId() throws UserAlreadyExistsException, BadCredentialsException, UserNotFoundException, InactiveAccountException {
         //GIVEN
         var user = this.createValidUser();
         var response = this.authorizationService.registerNewUser(user);
@@ -186,7 +187,7 @@ class UserServiceImplTest {
     }
 
     @Test
-    void testInactivateAccount_WithInvalidUserId() {
+    void testInactivateAccount_WithInvalidUserId() throws UserAlreadyExistsException, BadCredentialsException {
         //GIVEN
         var user = this.createValidUser();
         this.authorizationService.registerNewUser(user);
@@ -198,7 +199,7 @@ class UserServiceImplTest {
     }
 
     @Test
-    void testInactivate_InactiveAccount() {
+    void testInactivate_InactiveAccount() throws UserAlreadyExistsException, BadCredentialsException {
         //GIVEN
         var user = this.createInactiveUser();
         var response = this.authorizationService.registerNewUser(user);

@@ -9,9 +9,11 @@ import pl.polsl.krypczyk.apartmentsforrent.userservice.application.user.request.
 import pl.polsl.krypczyk.apartmentsforrent.userservice.application.userdetails.request.ChangeUserDetailsRequest;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.admin.AdminService;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.authorization.AuthorizationService;
+import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.authorization.exception.BadCredentialsException;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.authorization.exception.InactiveAccountException;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.user.UserRepository;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.user.exception.InvalidUserDetailsException;
+import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.user.exception.UserAlreadyExistsException;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.user.exception.UserNotFoundException;
 
 @SpringBootTest
@@ -39,7 +41,7 @@ class AdminServiceImplTest {
     }
 
     @Test
-    void testGetAllUsers_WithNotEmptyUsersList() {
+    void testGetAllUsers_WithNotEmptyUsersList() throws UserAlreadyExistsException, BadCredentialsException {
         //GIVEN
         var user = this.createValidUser();
         this.authorizationService.registerNewUser(user);
@@ -64,7 +66,7 @@ class AdminServiceImplTest {
 
 
     @Test
-    void testDeleteUser_WithValidUserId() {
+    void testDeleteUser_WithValidUserId() throws UserNotFoundException, UserAlreadyExistsException, BadCredentialsException {
         //GIVEN
         var user = this.createValidUser();
         var response = this.authorizationService.registerNewUser(user);
@@ -89,7 +91,7 @@ class AdminServiceImplTest {
     }
 
     @Test
-    void testChangeUserDetails_WithValidUserId() {
+    void testChangeUserDetails_WithValidUserId() throws UserAlreadyExistsException, BadCredentialsException, UserNotFoundException, InactiveAccountException, InvalidUserDetailsException {
         //GIVEN
         var user = this.createValidUser();
         var response = this.authorizationService.registerNewUser(user);
@@ -104,7 +106,7 @@ class AdminServiceImplTest {
     }
 
     @Test
-    void testChangeUserDetails_WithInvalidUserId() {
+    void testChangeUserDetails_WithInvalidUserId() throws UserAlreadyExistsException, BadCredentialsException {
         //GIVEN
         var user = this.createValidUser();
         this.authorizationService.registerNewUser(user);
@@ -117,7 +119,7 @@ class AdminServiceImplTest {
     }
 
     @Test
-    void testChangeUserDetails_WithNullUserDetails() {
+    void testChangeUserDetails_WithNullUserDetails() throws UserAlreadyExistsException, BadCredentialsException {
         //GIVEN
         var inactiveUser = this.createInactiveUser();
         var response = this.authorizationService.registerNewUser(inactiveUser);
@@ -130,7 +132,7 @@ class AdminServiceImplTest {
     }
 
     @Test
-    void testChangeUserDetails_WithInactiveUser() {
+    void testChangeUserDetails_WithInactiveUser() throws UserAlreadyExistsException, BadCredentialsException {
         //GIVEN
         var inactiveUser = this.createInactiveUser();
         var response = this.authorizationService.registerNewUser(inactiveUser);

@@ -15,6 +15,9 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.AnnouncementService;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.dto.AnnouncementDTO;
+import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.excpetion.AnnouncementNotFoundException;
+import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.excpetion.ClosedAnnouncementException;
+import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.excpetion.InvalidUserIdException;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.request.AddNewAnnouncementRequest;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.request.UpdateAnnouncementRequest;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.response.AddNewAnnouncementResponse;
@@ -38,27 +41,27 @@ public class AnnouncementController {
     }
 
     @GetMapping("/public/announcements/{announcementId}")
-    public GetAnnouncementWithAllDetailsResponse getAnnouncementWithAllDetails(@NotNull @PathVariable("announcementId") Long announcementId) {
+    public GetAnnouncementWithAllDetailsResponse getAnnouncementWithAllDetails(@NotNull @PathVariable("announcementId") Long announcementId) throws AnnouncementNotFoundException {
         return this.announcementService.getAnnouncementWithAllDetails(announcementId);
     }
 
     @PostMapping("/announcements")
     public AddNewAnnouncementResponse addNewAnnouncement(@RequestBody @Valid AddNewAnnouncementRequest addNewAnnouncementRequest,
-                                                         @RequestHeader("requester-user-id") @NotNull Long requesterId) {
+                                                         @RequestHeader("requester-user-id") @NotNull Long requesterId) throws InvalidUserIdException {
         return this.announcementService.addNewAnnouncement(addNewAnnouncementRequest, requesterId);
     }
 
     @PutMapping("/announcements/{announcementId}")
     public UpdateAnnouncementResponse updateAnnouncement(@RequestBody @Valid UpdateAnnouncementRequest updateAnnouncementRequest,
                                                          @PathVariable("announcementId") @NotNull Long announcementId,
-                                                         @RequestHeader("requester-user-id") @NotNull Long requesterId) {
+                                                         @RequestHeader("requester-user-id") @NotNull Long requesterId) throws AnnouncementNotFoundException, ClosedAnnouncementException {
         return this.announcementService.updateAnnouncement(updateAnnouncementRequest, announcementId, requesterId);
     }
 
     @PostMapping("/announcements/{announcementId}/close")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void closeAnnouncement(@PathVariable("announcementId") @NotNull Long announcementId,
-                                  @RequestHeader("requester-user-id") @NotNull Long requesterId) {
+                                  @RequestHeader("requester-user-id") @NotNull Long requesterId) throws AnnouncementNotFoundException {
         this.announcementService.closeAnnouncement(announcementId, requesterId);
     }
 

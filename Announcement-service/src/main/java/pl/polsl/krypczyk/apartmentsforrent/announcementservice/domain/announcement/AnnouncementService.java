@@ -1,6 +1,9 @@
 package pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement;
 
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.dto.AnnouncementDTO;
+import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.excpetion.AnnouncementNotFoundException;
+import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.excpetion.ClosedAnnouncementException;
+import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.excpetion.InvalidUserIdException;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.request.AddNewAnnouncementRequest;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.request.UpdateAnnouncementRequest;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.response.AddNewAnnouncementResponse;
@@ -12,15 +15,15 @@ import java.util.Collection;
 public interface AnnouncementService {
     Collection<AnnouncementDTO> getAllActiveAnnouncements();
 
-    GetAnnouncementWithAllDetailsResponse getAnnouncementWithAllDetails(Long announcementId);
+    GetAnnouncementWithAllDetailsResponse getAnnouncementWithAllDetails(Long announcementId) throws AnnouncementNotFoundException;
 
     AddNewAnnouncementResponse addNewAnnouncement(AddNewAnnouncementRequest addNewAnnouncementRequest,
-                                                  Long requesterId);
+                                                  Long requesterId) throws InvalidUserIdException;
 
     UpdateAnnouncementResponse updateAnnouncement(UpdateAnnouncementRequest updateAnnouncementRequest,
                                                   Long announcementId,
-                                                  Long requesterId);
+                                                  Long requesterId) throws AnnouncementNotFoundException, ClosedAnnouncementException;
 
-    void closeAnnouncement(Long announcementId, Long requesterId);
+    void closeAnnouncement(Long announcementId, Long requesterId) throws AnnouncementNotFoundException;
 
 }

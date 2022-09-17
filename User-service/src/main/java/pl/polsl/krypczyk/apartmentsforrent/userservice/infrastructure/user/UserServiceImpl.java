@@ -29,7 +29,7 @@ public class UserServiceImpl implements UserService {
     private final UserMapper userMapper = Mappers.getMapper(UserMapper.class);
 
     @Override
-    public GetUserDetailsResponse getUserDetails(Long userId) {
+    public GetUserDetailsResponse getUserDetails(Long userId) throws UserNotFoundException, InactiveAccountException {
         var user = this.userRepository.findUserEntityById(userId);
         if (Objects.isNull(user))
             throw new UserNotFoundException();
@@ -44,7 +44,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ChangeUserDetailsResponse changeUserDetails(ChangeUserDetailsRequest changeUserDetailsRequest, Long userId) {
+    public ChangeUserDetailsResponse changeUserDetails(ChangeUserDetailsRequest changeUserDetailsRequest, Long userId) throws InvalidUserDetailsException, UserNotFoundException, InactiveAccountException, UserAlreadyExistsException {
         if (Objects.isNull(changeUserDetailsRequest) || Objects.isNull(userId) || userId < 1)
             throw new InvalidUserDetailsException();
 
@@ -60,7 +60,7 @@ public class UserServiceImpl implements UserService {
         return this.userMapper.ChangeUserDetailsRequestToChangeUserDetailsResponse(changeUserDetailsRequest);
     }
 
-    private void changeAndSaveUserDetails(UserDetailsEntity userDetailsEntity, ChangeUserDetailsRequest changeUserDetailsRequest) {
+    private void changeAndSaveUserDetails(UserDetailsEntity userDetailsEntity, ChangeUserDetailsRequest changeUserDetailsRequest) throws UserAlreadyExistsException {
         var name = changeUserDetailsRequest.getName();
         if (!Objects.isNull(name))
             userDetailsEntity.setName(name);
@@ -69,7 +69,7 @@ public class UserServiceImpl implements UserService {
             userDetailsEntity.setSurname(surname);
         var email = changeUserDetailsRequest.getEmail();
         if (!Objects.isNull(email)) {
-            if(this.userDetailsRepository.existsByEmail(email))
+            if (this.userDetailsRepository.existsByEmail(email))
                 throw new UserAlreadyExistsException();
             userDetailsEntity.setEmail(email);
         }
@@ -83,7 +83,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void inactivateAccount(Long userId){
+    public void inactivateAccount(Long userId) throws UserNotFoundException, InactiveAccountException {
         var user = this.userRepository.findUserEntityById(userId);
         if (Objects.isNull(user))
             throw new UserNotFoundException();

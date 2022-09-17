@@ -64,8 +64,8 @@ public class AnnouncementServiceImpl implements AnnouncementService {
 
     @Override
     public AddNewAnnouncementResponse addNewAnnouncement(AddNewAnnouncementRequest addNewAnnouncementRequest,
-                                                         Long requesterId) {
-        if(!this.isUserIdValid(addNewAnnouncementRequest.getUserId(), requesterId))
+                                                         Long requesterId) throws InvalidUserIdException {
+        if (!this.isUserIdValid(addNewAnnouncementRequest.getUserId(), requesterId))
             throw new InvalidUserIdException();
 
         var announcement = this.createAndSaveAnnouncement(addNewAnnouncementRequest);
@@ -131,7 +131,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     }
 
     @Override
-    public GetAnnouncementWithAllDetailsResponse getAnnouncementWithAllDetails(Long announcementId) {
+    public GetAnnouncementWithAllDetailsResponse getAnnouncementWithAllDetails(Long announcementId) throws AnnouncementNotFoundException {
         var announcement = this.announcementRepository.findById(announcementId);
         if (announcement.isEmpty())
             throw new AnnouncementNotFoundException();
@@ -173,11 +173,11 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     @Override
     public UpdateAnnouncementResponse updateAnnouncement(UpdateAnnouncementRequest updateAnnouncementRequest,
                                                          Long announcementId,
-                                                         Long requesterId) {
+                                                         Long requesterId) throws AnnouncementNotFoundException, ClosedAnnouncementException {
         var announcement = this.announcementRepository.findById(announcementId);
         if (announcement.isEmpty() || !isUserIdValid(announcement.get().getUserId(), requesterId))
             throw new AnnouncementNotFoundException();
-        if(announcement.get().getIsClosed().equals(true))
+        if (announcement.get().getIsClosed().equals(true))
             throw new ClosedAnnouncementException();
 
         this.updateAnnouncementEntity(announcement.get(), updateAnnouncementRequest);
@@ -270,7 +270,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     }
 
     @Override
-    public void closeAnnouncement(Long announcementId, Long requesterId){
+    public void closeAnnouncement(Long announcementId, Long requesterId) throws AnnouncementNotFoundException {
         var announcement = this.announcementRepository.findById(announcementId);
         if (announcement.isEmpty() || !isUserIdValid(announcement.get().getUserId(), requesterId))
             throw new AnnouncementNotFoundException();
@@ -279,7 +279,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
         this.announcementRepository.save(announcement.get());
     }
 
-    private Boolean isUserIdValid(Long userId, Long requesterId){
+    private Boolean isUserIdValid(Long userId, Long requesterId) {
         return userId.equals(requesterId);
     }
 

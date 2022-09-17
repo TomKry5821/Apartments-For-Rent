@@ -41,7 +41,7 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public void deleteUser(Long userId) {
+    public void deleteUser(Long userId) throws UserNotFoundException {
         var user = this.userRepository.findUserEntityById(userId);
         if (Objects.isNull(user))
             throw new UserNotFoundException();
@@ -50,7 +50,7 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public ChangeUserDetailsResponse changeUserDetails(ChangeUserDetailsRequest changeUserDetailsRequest, Long userId) {
+    public ChangeUserDetailsResponse changeUserDetails(ChangeUserDetailsRequest changeUserDetailsRequest, Long userId) throws InvalidUserDetailsException, UserNotFoundException, InactiveAccountException {
         if (Objects.isNull(changeUserDetailsRequest) || Objects.isNull(userId) || userId < 1)
             throw new InvalidUserDetailsException();
 
@@ -59,7 +59,7 @@ public class AdminServiceImpl implements AdminService {
             throw new UserNotFoundException();
 
         var userDetails = user.getUserDetailsEntity();
-        if(this.isAccountInactive(userDetails))
+        if (this.isAccountInactive(userDetails))
             throw new InactiveAccountException();
 
         this.changeAndSaveUserDetails(userDetails, changeUserDetailsRequest);

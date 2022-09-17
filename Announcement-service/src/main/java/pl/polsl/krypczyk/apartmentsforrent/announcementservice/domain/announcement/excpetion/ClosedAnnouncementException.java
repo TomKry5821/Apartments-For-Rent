@@ -1,6 +1,6 @@
 package pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.excpetion;
 
-public class ClosedAnnouncementException extends RuntimeException {
+public class ClosedAnnouncementException extends Exception {
     private final static String CLOSED_ANNOUNCEMENT_MESSAGE = "Announcement with provided id is closed";
 
     public ClosedAnnouncementException() {

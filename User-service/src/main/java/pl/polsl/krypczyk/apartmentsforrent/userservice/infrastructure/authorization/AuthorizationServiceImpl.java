@@ -39,7 +39,7 @@ public class AuthorizationServiceImpl implements AuthorizationService {
     private final RoleRepository roleRepository;
     private final UserMapper userMapper = Mappers.getMapper(UserMapper.class);
 
-    public CreateUserResponse registerNewUser(CreateUserRequest createUserRequest) {
+    public CreateUserResponse registerNewUser(CreateUserRequest createUserRequest) throws BadCredentialsException, UserAlreadyExistsException {
         if (Objects.isNull(createUserRequest))
             throw new BadCredentialsException();
         if (this.userAlreadyExists(createUserRequest.getEmail()))
@@ -96,13 +96,13 @@ public class AuthorizationServiceImpl implements AuthorizationService {
     }
 
     @Override
-    public LoginUserResponse loginUser(UserLoginRequest userLoginRequest) {
+    public LoginUserResponse loginUser(UserLoginRequest userLoginRequest) throws BadCredentialsException, InactiveAccountException, UserNotFoundException {
         if (Objects.isNull(userLoginRequest))
             throw new BadCredentialsException();
 
         userLoginRequest.setPassword(AES.encrypt(userLoginRequest.getPassword()));
         var userDetails = retrieveUserDetailsByEmailAndPassword(userLoginRequest.getEmail(), userLoginRequest.getPassword());
-        if(this.isAccountInactive(userDetails))
+        if (this.isAccountInactive(userDetails))
             throw new InactiveAccountException();
 
         var user = this.userRepository.findUserEntityByUserDetailsEntity(userDetails);
@@ -113,7 +113,7 @@ public class AuthorizationServiceImpl implements AuthorizationService {
                 .map(RoleEntity::getName).collect(Collectors.toList()), user.getId());
     }
 
-    private UserDetailsEntity retrieveUserDetailsByEmailAndPassword(String email, String password) {
+    private UserDetailsEntity retrieveUserDetailsByEmailAndPassword(String email, String password) throws UserNotFoundException {
         var userDetails = this.userDetailsRepository.findUserDetailsEntityByEmailAndPassword(email, password);
         if (Objects.isNull(userDetails))
             throw new UserNotFoundException();
@@ -127,7 +127,7 @@ public class AuthorizationServiceImpl implements AuthorizationService {
     }
 
     @Override
-    public void logoutUser(Long userId) {
+    public void logoutUser(Long userId) throws InactiveAccountException, UserNotFoundException {
         var user = this.findUserByUserId(userId);
         var userDetails = user.getUserDetailsEntity();
         if (this.isAccountInactive(userDetails))
@@ -145,7 +145,7 @@ public class AuthorizationServiceImpl implements AuthorizationService {
         this.userAuthorizationRepository.save(userAuthorization);
     }
 
-    private UserEntity findUserByUserId(Long userId) {
+    private UserEntity findUserByUserId(Long userId) throws UserNotFoundException {
         var user = this.userRepository.findUserEntityById(userId);
         if (Objects.isNull(user))
             throw new UserNotFoundException();
@@ -154,14 +154,14 @@ public class AuthorizationServiceImpl implements AuthorizationService {
     }
 
     @Override
-    public void authorizeUser(Long userId, Long requesterId) {
+    public void authorizeUser(Long userId, Long requesterId) throws UnauthorizedUserException {
         var user = this.userRepository.findUserEntityById(userId);
         if (Objects.isNull(user) || !userId.equals(requesterId))
             throw new UnauthorizedUserException();
     }
 
     @Override
-    public void authorizeAdmin(Long requesterId) {
+    public void authorizeAdmin(Long requesterId) throws UnauthorizedUserException {
         var user = this.userRepository.findUserEntityById(requesterId);
         if (user.getUserAuthorizationEntity().getRoles()
                 .stream()

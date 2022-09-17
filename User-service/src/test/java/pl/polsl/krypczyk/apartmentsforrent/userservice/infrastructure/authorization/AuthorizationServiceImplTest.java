@@ -9,6 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.application.user.request.CreateUserRequest;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.authorization.AuthorizationService;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.authorization.exception.BadCredentialsException;
+import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.authorization.exception.InactiveAccountException;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.user.UserRepository;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.user.exception.UserAlreadyExistsException;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.user.exception.UserNotFoundException;
@@ -35,7 +36,7 @@ class AuthorizationServiceImplTest {
     }
 
     @Test
-    void testRegisterNewUser_WithValidUserInformation() {
+    void testRegisterNewUser_WithValidUserInformation() throws UserAlreadyExistsException, BadCredentialsException {
         //GIVEN
         CreateUserRequest createUserRequest = createValidUser();
 
@@ -47,7 +48,7 @@ class AuthorizationServiceImplTest {
     }
 
     @Test
-    void testRegister_AlreadyExistingUser() {
+    void testRegister_AlreadyExistingUser() throws UserAlreadyExistsException, BadCredentialsException {
         //GIVEN
         CreateUserRequest createUserRequest = createValidUser();
 
@@ -70,7 +71,7 @@ class AuthorizationServiceImplTest {
     }
 
     @Test
-    void testLoginUser_WithValidCredentials() {
+    void testLoginUser_WithValidCredentials() throws UserNotFoundException, InactiveAccountException, BadCredentialsException, UserAlreadyExistsException {
         //GIVEN
         CreateUserRequest createUserRequest = createValidUser();
         this.authorizationService.registerNewUser(createUserRequest);
@@ -86,7 +87,7 @@ class AuthorizationServiceImplTest {
     }
 
     @Test
-    void testLoginUser_WithNullCredentials() {
+    void testLoginUser_WithNullCredentials() throws UserAlreadyExistsException, BadCredentialsException {
         //GIVEN
         CreateUserRequest createUserRequest = createValidUser();
         this.authorizationService.registerNewUser(createUserRequest);
@@ -100,7 +101,7 @@ class AuthorizationServiceImplTest {
     }
 
     @Test
-    void testLoginUser_ThatDoesNotExists() {
+    void testLoginUser_ThatDoesNotExists() throws UserAlreadyExistsException, BadCredentialsException {
         //GIVEN
         CreateUserRequest createUserRequest = createValidUser();
         this.authorizationService.registerNewUser(createUserRequest);
@@ -116,7 +117,7 @@ class AuthorizationServiceImplTest {
     }
 
     @Test
-    void testLogoutUser_ThatExists() {
+    void testLogoutUser_ThatExists() throws UserNotFoundException, InactiveAccountException, UserAlreadyExistsException, BadCredentialsException {
         //GIVEN
         CreateUserRequest createUserRequest = this.createValidUser();
         var createUserResponse = this.authorizationService.registerNewUser(createUserRequest);
@@ -129,7 +130,7 @@ class AuthorizationServiceImplTest {
     }
 
     @Test
-    void testLogoutUser_ThatDoesNotExists() {
+    void testLogoutUser_ThatDoesNotExists() throws UserAlreadyExistsException, BadCredentialsException {
         //GIVEN
         CreateUserRequest createUserRequest = this.createValidUser();
         this.authorizationService.registerNewUser(createUserRequest);
