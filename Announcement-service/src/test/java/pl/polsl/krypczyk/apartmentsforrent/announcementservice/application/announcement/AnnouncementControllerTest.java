@@ -8,7 +8,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.UUID;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -57,7 +56,7 @@ class AnnouncementControllerTest {
                                            "buildingNumber":"1A",
                                            "localNumber":3
                                         }""")
-                                .header("Authorization", UUID.randomUUID()))
+                                .header("requester-user-id",1L))
                 .andExpect(status().isOk());
     }
 
@@ -87,7 +86,7 @@ class AnnouncementControllerTest {
                                            "buildingNumber":"1A",
                                            "localNumber":3
                                         }""")
-                                .header("Authorization", UUID.randomUUID()))
+                                .header("requester-user-id",1L))
                 .andExpect(status().isBadRequest());
     }
 
@@ -196,7 +195,7 @@ class AnnouncementControllerTest {
                                    "buildingNumber":"1A",
                                    "localNumber":3
                                 }""")
-                        .header("Authorization", UUID.randomUUID()));
+                        .header("requester-user-id", 1L));
     }
 
 }

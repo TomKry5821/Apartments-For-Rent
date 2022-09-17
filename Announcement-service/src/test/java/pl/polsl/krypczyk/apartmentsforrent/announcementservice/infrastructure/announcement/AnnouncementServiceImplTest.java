@@ -52,7 +52,8 @@ class AnnouncementServiceImplTest {
     @Test
     void testGetAllActiveAnnouncements_WithNotEmptyDatabase() {
         //GIVEN
-        this.announcementService.addNewAnnouncement(this.validAnnouncementRequest());
+        var request = this.validAnnouncementRequest();
+        this.announcementService.addNewAnnouncement(request, request.getUserId());
 
         //WHEN
         var expected = this.announcementService.getAllActiveAnnouncements();
@@ -68,7 +69,7 @@ class AnnouncementServiceImplTest {
         var response = validAnnouncementResponse();
 
         //WHEN
-        var expected = this.announcementService.addNewAnnouncement(request);
+        var expected = this.announcementService.addNewAnnouncement(request, request.getUserId());
         expected.setCreationDate(null);
         expected.setRentalTerm(null);
 
@@ -82,7 +83,7 @@ class AnnouncementServiceImplTest {
         //GIVEN
         var request = validAnnouncementRequest();
         var getAnnouncementDetailsResponse = validGetAnnouncementWithAllDetailsResponse();
-        this.announcementService.addNewAnnouncement(request);
+        this.announcementService.addNewAnnouncement(request, request.getUserId());
         var id = this.announcementRepository.findAll().get(0).getId();
 
         //WHEN
@@ -98,7 +99,7 @@ class AnnouncementServiceImplTest {
     void testGetAnnouncementWithAllDetails_WithInvalidAnnouncementId() {
         //GIVEN
         var request = validAnnouncementRequest();
-        this.announcementService.addNewAnnouncement(request);
+        this.announcementService.addNewAnnouncement(request, request.getUserId());
 
         //WHEN AND THEN
         Assertions.assertThrows(AnnouncementNotFoundException.class, () ->
@@ -109,7 +110,8 @@ class AnnouncementServiceImplTest {
     void testUpdateAnnouncement_WithValidRequestBodyAndUserId() {
         //GIVEN
         var request = validUpdateAnnouncementRequest();
-        this.announcementService.addNewAnnouncement(validAnnouncementRequest());
+        var addRequest = validAnnouncementRequest();
+        this.announcementService.addNewAnnouncement(addRequest, addRequest.getUserId());
         var response = validUpdateAnnouncementResponse();
 
         //WHEN
@@ -123,7 +125,8 @@ class AnnouncementServiceImplTest {
     void testUpdateAnnouncement_WithInvalidUserId() {
         //GIVEN
         var request = validUpdateAnnouncementRequest();
-        this.announcementService.addNewAnnouncement(validAnnouncementRequest());
+        var addRequest = validAnnouncementRequest();
+        this.announcementService.addNewAnnouncement(addRequest, addRequest.getUserId());
 
         //WHEN AND THEN
         Assertions.assertThrows(AnnouncementNotFoundException.class, () ->
