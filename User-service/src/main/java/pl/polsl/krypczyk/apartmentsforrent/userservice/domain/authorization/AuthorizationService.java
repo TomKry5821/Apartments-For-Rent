@@ -5,8 +5,6 @@ import pl.polsl.krypczyk.apartmentsforrent.userservice.application.user.request.
 import pl.polsl.krypczyk.apartmentsforrent.userservice.application.user.response.CreateUserResponse;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.application.user.response.LoginUserResponse;
 
-import java.util.UUID;
-
 public interface AuthorizationService {
 
     CreateUserResponse registerNewUser(CreateUserRequest createUserRequest);
