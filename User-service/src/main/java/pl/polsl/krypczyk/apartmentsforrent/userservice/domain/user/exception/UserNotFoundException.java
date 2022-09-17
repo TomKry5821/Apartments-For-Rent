@@ -1,6 +1,6 @@
 package pl.polsl.krypczyk.apartmentsforrent.userservice.domain.user.exception;
 
-public class UserNotFoundException extends RuntimeException {
+public class UserNotFoundException extends Exception {
 
     private static final String USER_NOT_FOUND_MESSAGE = "User could not been found";
 
