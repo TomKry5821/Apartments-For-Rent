@@ -48,7 +48,7 @@ class AdminServiceImplTest {
         var response = this.adminService.getAllUsers();
 
         //THEN
-        Assertions.assertFalse(response.getUsers().isEmpty());
+        Assertions.assertFalse(response.isEmpty());
     }
 
     @Test
@@ -59,7 +59,7 @@ class AdminServiceImplTest {
         var response = this.adminService.getAllUsers();
 
         //THEN
-        Assertions.assertTrue(response.getUsers().isEmpty());
+        Assertions.assertTrue(response.isEmpty());
     }
 
 
