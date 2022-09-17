@@ -168,11 +168,4 @@ public class AuthorizationServiceImpl implements AuthorizationService {
                 .noneMatch(r -> r.getName().equals("ROLE_ADMIN")))
             throw new UnauthorizedUserException();
     }
-
-    //////////////////////////////////////////////////////////////////////
-    ///////////////////////////////FOR TEST PURPOSES//////////////////////
-    @Override
-    public void deleteDbContent() {
-        this.userRepository.deleteAll();
-    }
 }

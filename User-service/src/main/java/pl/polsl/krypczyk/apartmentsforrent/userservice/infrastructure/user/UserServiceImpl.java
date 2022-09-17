@@ -99,10 +99,4 @@ public class UserServiceImpl implements UserService {
     private Boolean isAccountActive(UserDetailsEntity userDetails) {
         return userDetails.getIsActive().equals(false);
     }
-
-    ////////////////////////////////////////////////
-    /////////// FOR TESTS PURPOSE //////////////////
-    public void deleteDbContent() {
-        this.userRepository.deleteAll();
-    }
 }

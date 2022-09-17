@@ -109,11 +109,4 @@ public class AdminServiceImpl implements AdminService {
                         .collect(Collectors.toList()))
                 .build();
     }
-
-    ////////////////////////////////////////////////
-    /////////// FOR TESTS PURPOSE //////////////////
-    public void deleteDbContent() {
-        this.userRepository.deleteAll();
-    }
-
 }
