@@ -12,6 +12,7 @@ import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.user.UserMapper;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.user.UserRepository;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.user.UserService;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.user.exception.InvalidUserDetailsException;
+import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.user.exception.UserAlreadyExistsException;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.user.exception.UserNotFoundException;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.userdetails.UserDetailsEntity;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.userdetails.UserDetailsRepository;
@@ -67,8 +68,11 @@ public class UserServiceImpl implements UserService {
         if (!Objects.isNull(surname))
             userDetailsEntity.setSurname(surname);
         var email = changeUserDetailsRequest.getEmail();
-        if (!Objects.isNull(email))
+        if (!Objects.isNull(email)) {
+            if(this.userDetailsRepository.existsByEmail(email))
+                throw new UserAlreadyExistsException();
             userDetailsEntity.setEmail(email);
+        }
         var password = changeUserDetailsRequest.getPassword();
         if (!Objects.isNull(password)) {
             password = AES.encrypt(password);
