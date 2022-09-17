@@ -10,6 +10,7 @@ import pl.polsl.krypczyk.apartmentsforrent.userservice.application.userdetails.r
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.admin.AdminService;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.authorization.AuthorizationService;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.authorization.exception.InactiveAccountException;
+import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.user.UserRepository;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.user.exception.InvalidUserDetailsException;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.user.exception.UserNotFoundException;
 
@@ -29,9 +30,12 @@ class AdminServiceImplTest {
     @Autowired
     private AuthorizationService authorizationService;
 
+    @Autowired
+    private UserRepository userRepository;
+
     @AfterEach
     void deleteDbContent() {
-        this.adminService.deleteDbContent();
+        this.userRepository.deleteAll();
     }
 
     @Test

@@ -26,14 +26,6 @@ class UserControllerTest {
     @Autowired
     private MockMvc mvc;
 
-    @Autowired
-    private AuthorizationService authorizationService;
-
-    @AfterEach
-    void deleteDbContent() {
-        this.authorizationService.deleteDbContent();
-    }
-
     @Test
     void testGetUserDetails_WithValidUserIdAndRequesterId_shouldReturn200() throws Exception {
         //GIVEN

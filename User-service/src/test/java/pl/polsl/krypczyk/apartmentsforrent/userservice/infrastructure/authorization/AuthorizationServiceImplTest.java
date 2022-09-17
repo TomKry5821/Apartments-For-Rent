@@ -9,6 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.application.user.request.CreateUserRequest;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.authorization.AuthorizationService;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.authorization.exception.BadCredentialsException;
+import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.user.UserRepository;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.user.exception.UserAlreadyExistsException;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.user.exception.UserNotFoundException;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.application.user.request.UserLoginRequest;
@@ -25,9 +26,12 @@ class AuthorizationServiceImplTest {
     @Autowired
     private AuthorizationService authorizationService;
 
+    @Autowired
+    private UserRepository userRepository;
+
     @AfterEach
     void deleteDbContent() {
-        this.authorizationService.deleteDbContent();
+        this.userRepository.deleteAll();
     }
 
     @Test

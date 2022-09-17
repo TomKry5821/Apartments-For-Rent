@@ -25,14 +25,6 @@ class AdminControllerTest {
     @Autowired
     private MockMvc mvc;
 
-    @Autowired
-    private AuthorizationService authorizationService;
-
-    @AfterEach
-    void deleteDbContent() {
-        this.authorizationService.deleteDbContent();
-    }
-
     @Test
     void testDeleteUser_WithInvalidUserIdAndValidRequesterId_shouldReturn401() throws Exception {
         //GIVEN

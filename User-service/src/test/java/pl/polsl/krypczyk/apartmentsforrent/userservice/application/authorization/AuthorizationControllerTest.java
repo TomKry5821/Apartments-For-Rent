@@ -29,11 +29,6 @@ class AuthorizationControllerTest {
     @Autowired
     private AuthorizationService authorizationService;
 
-    @AfterEach
-    void deleteDbContent() {
-        this.authorizationService.deleteDbContent();
-    }
-
     @Test
     void testRegisterNewUser_WithValidUserDetails_ShouldReturn201() throws Exception {
         //GIVEN AND WHEN
