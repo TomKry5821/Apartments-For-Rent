@@ -8,6 +8,4 @@ public interface AdminService {
     GetAllUsersResponse getAllUsers();
     void deleteUser(Long userId);
     ChangeUserDetailsResponse changeUserDetails(ChangeUserDetailsRequest changeUserDetailsRequest, Long userId);
-    void deleteDbContent();
-
 }
