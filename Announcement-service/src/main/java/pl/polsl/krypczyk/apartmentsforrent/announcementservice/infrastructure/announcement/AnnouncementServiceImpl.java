@@ -65,7 +65,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     @Override
     public AddNewAnnouncementResponse addNewAnnouncement(AddNewAnnouncementRequest addNewAnnouncementRequest,
                                                          Long requesterId) {
-        if(!requesterId.equals(addNewAnnouncementRequest.getUserId()))
+        if(!this.isUserIdValid(addNewAnnouncementRequest.getUserId(), requesterId))
             throw new InvalidUserIdException();
 
         var announcement = this.createAndSaveAnnouncement(addNewAnnouncementRequest);
@@ -175,7 +175,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
                                                          Long announcementId,
                                                          Long requesterId) {
         var announcement = this.announcementRepository.findById(announcementId);
-        if (announcement.isEmpty() || !announcement.get().getUserId().equals(requesterId))
+        if (announcement.isEmpty() || !isUserIdValid(announcement.get().getUserId(), requesterId))
             throw new AnnouncementNotFoundException();
         if(announcement.get().getIsClosed().equals(true))
             throw new ClosedAnnouncementException();
@@ -267,6 +267,20 @@ public class AnnouncementServiceImpl implements AnnouncementService {
             addressDetails.setLocalNumber(localNumber);
 
         this.addressDetailsRepository.save(addressDetails);
+    }
+
+    @Override
+    public void closeAnnouncement(Long announcementId, Long requesterId){
+        var announcement = this.announcementRepository.findById(announcementId);
+        if (announcement.isEmpty() || !isUserIdValid(announcement.get().getUserId(), requesterId))
+            throw new AnnouncementNotFoundException();
+
+        announcement.get().setIsClosed(true);
+        this.announcementRepository.save(announcement.get());
+    }
+
+    private Boolean isUserIdValid(Long userId, Long requesterId){
+        return userId.equals(requesterId);
     }
 
 }

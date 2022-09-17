@@ -21,4 +21,6 @@ public interface AnnouncementService {
                                                   Long announcementId,
                                                   Long requesterId);
 
+    void closeAnnouncement(Long announcementId, Long requesterId);
+
 }
