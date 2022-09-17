@@ -13,6 +13,7 @@ import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announceme
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.dto.AnnouncementDTO;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.excpetion.AnnouncementNotFoundException;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.excpetion.ClosedAnnouncementException;
+import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.excpetion.InvalidUserIdException;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.request.AddNewAnnouncementRequest;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.request.UpdateAnnouncementRequest;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.response.AddNewAnnouncementResponse;
@@ -62,9 +63,12 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     }
 
     @Override
-    public AddNewAnnouncementResponse addNewAnnouncement(AddNewAnnouncementRequest addNewAnnouncementRequest) {
-        var announcement = this.createAndSaveAnnouncement(addNewAnnouncementRequest);
+    public AddNewAnnouncementResponse addNewAnnouncement(AddNewAnnouncementRequest addNewAnnouncementRequest,
+                                                         Long requesterId) {
+        if(!requesterId.equals(addNewAnnouncementRequest.getUserId()))
+            throw new InvalidUserIdException();
 
+        var announcement = this.createAndSaveAnnouncement(addNewAnnouncementRequest);
         var response = this.announcementMapper.createAnnouncementRequestToCreateAnnouncementResponse(addNewAnnouncementRequest);
         response.setCreationDate(announcement.getCreationDate());
         response.setIsClosed(announcement.getIsClosed());
