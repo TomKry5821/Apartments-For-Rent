@@ -75,7 +75,7 @@ class UserControllerTest {
                                         {
                                             "name": "Test",
                                             "surname": "Testowy",
-                                            "email": "test@test.pl",
+                                            "email": "test@2test.pl",
                                             "password": "Test"
                                         }""")
                                 .header("requester-user-id", 2))

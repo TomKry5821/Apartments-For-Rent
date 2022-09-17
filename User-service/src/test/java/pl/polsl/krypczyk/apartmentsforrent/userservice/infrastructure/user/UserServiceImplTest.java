@@ -14,6 +14,7 @@ import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.authorization.exce
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.authorization.exception.UnauthorizedUserException;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.user.UserService;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.user.exception.InvalidUserDetailsException;
+import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.user.exception.UserAlreadyExistsException;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.user.exception.UserNotFoundException;
 
 import java.time.LocalDateTime;
@@ -88,13 +89,27 @@ class UserServiceImplTest {
         var userId = response.getId();
         var changeUserDetailsResponse = this.createValidChangeUserDetailsResponse();
         var changeUserDetailsRequest = this.createValidChangeUserDetailsRequest();
+        changeUserDetailsRequest.setEmail("test@test2.pl");
 
         //WHEN
         var expected = this.userService.changeUserDetails(changeUserDetailsRequest, userId);
 
         //THEN
-        Assertions.assertEquals(expected, changeUserDetailsResponse);
         Assertions.assertDoesNotThrow(UserNotFoundException::new);
+    }
+
+    @Test
+    void testChangeUserDetails_WithExistingEmail(){
+        //GIVEN
+        var user = this.createValidUser();
+        var response = this.authorizationService.registerNewUser(user);
+        var userId = response.getId();
+        this.createValidChangeUserDetailsResponse();
+        var changeUserDetailsRequest = this.createValidChangeUserDetailsRequest();
+
+        //WHEN AND THEN
+        Assertions.assertThrows(UserAlreadyExistsException.class, () ->
+                this.userService.changeUserDetails(changeUserDetailsRequest, userId));
     }
 
     @Test
@@ -104,7 +119,7 @@ class UserServiceImplTest {
         var response = this.authorizationService.registerNewUser(user);
         var userId = response.getId();
         var changeUserDetailsRequest = this.createValidChangeUserDetailsRequest();
-
+        changeUserDetailsRequest.setEmail("test@test2.pl");
         //WHEN
         this.userService.changeUserDetails(changeUserDetailsRequest, userId);
         //WHEN AND THEN
