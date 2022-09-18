@@ -70,6 +70,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
 
         var announcement = this.createAndSaveAnnouncement(addNewAnnouncementRequest);
         var response = this.announcementMapper.createAnnouncementRequestToCreateAnnouncementResponse(addNewAnnouncementRequest);
+        response.setAnnouncementId(announcement.getId());
         response.setCreationDate(announcement.getCreationDate());
         response.setIsClosed(announcement.getIsClosed());
 
