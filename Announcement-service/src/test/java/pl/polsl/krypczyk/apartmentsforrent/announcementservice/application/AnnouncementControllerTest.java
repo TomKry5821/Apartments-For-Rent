@@ -1,4 +1,4 @@
-package pl.polsl.krypczyk.apartmentsforrent.announcementservice.application.announcement;
+package pl.polsl.krypczyk.apartmentsforrent.announcementservice.application;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
