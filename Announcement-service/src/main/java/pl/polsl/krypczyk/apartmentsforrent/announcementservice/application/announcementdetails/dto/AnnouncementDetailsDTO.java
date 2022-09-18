@@ -1,4 +1,4 @@
-package pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcementdetails.dto;
+package pl.polsl.krypczyk.apartmentsforrent.announcementservice.application.announcementdetails.dto;
 
 import lombok.Data;
 

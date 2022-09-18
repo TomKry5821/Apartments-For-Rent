@@ -1,4 +1,4 @@
-package pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.request;
+package pl.polsl.krypczyk.apartmentsforrent.announcementservice.application.announcement.request;
 
 import lombok.Builder;
 import lombok.Data;
@@ -10,7 +10,11 @@ import java.util.Collection;
 
 @Data
 @Builder
-public class UpdateAnnouncementRequest {
+public class AddNewAnnouncementRequest {
+
+    @NotNull(message = "Invalid user id")
+    @Min(value = 1, message = "User id cannot be lower than 1")
+    private Long userId;
 
     @NotEmpty(message = "Invalid announcement title")
     private String title;
@@ -55,4 +59,5 @@ public class UpdateAnnouncementRequest {
     @Min(value = 0, message = "Local number cannot be lower than 1")
     @NotNull(message = "Local number cannot be null")
     private Integer localNumber;
+
 }

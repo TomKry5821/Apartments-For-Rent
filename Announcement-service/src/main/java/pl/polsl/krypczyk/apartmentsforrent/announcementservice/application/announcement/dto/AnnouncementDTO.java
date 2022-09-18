@@ -1,7 +1,7 @@
-package pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.dto;
+package pl.polsl.krypczyk.apartmentsforrent.announcementservice.application.announcement.dto;
 
 import lombok.Data;
-import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcementdetails.dto.AnnouncementDetailsDTO;
+import pl.polsl.krypczyk.apartmentsforrent.announcementservice.application.announcementdetails.dto.AnnouncementDetailsDTO;
 
 import java.time.LocalDate;
 

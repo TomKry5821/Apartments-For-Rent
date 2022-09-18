@@ -1,4 +1,5 @@
-package pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.response;
+package pl.polsl.krypczyk.apartmentsforrent.announcementservice.application.announcement.response;
+
 
 import lombok.Builder;
 import lombok.Data;
@@ -9,7 +10,9 @@ import java.util.Collection;
 
 @Data
 @Builder
-public class UpdateAnnouncementResponse {
+public class AddNewAnnouncementResponse {
+
+    private Long userId;
 
     private String title;
 
@@ -38,4 +41,8 @@ public class UpdateAnnouncementResponse {
     private String buildingNumber;
 
     private Integer localNumber;
+
+    private LocalDate creationDate;
+
+    private Boolean isClosed;
 }
