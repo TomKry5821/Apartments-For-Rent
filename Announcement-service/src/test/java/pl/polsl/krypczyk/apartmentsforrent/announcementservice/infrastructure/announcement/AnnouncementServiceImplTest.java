@@ -162,47 +162,45 @@ class AnnouncementServiceImplTest {
     }
 
     private AddNewAnnouncementRequest validAnnouncementRequest() {
-        var createAnnouncementRequest = new AddNewAnnouncementRequest();
-        createAnnouncementRequest.setCity("City");
-        createAnnouncementRequest.setCaution(BigDecimal.valueOf(10.55));
-        createAnnouncementRequest.setContent("Content");
-        createAnnouncementRequest.setDistrict("District");
-        createAnnouncementRequest.setLocalNumber(1);
-        createAnnouncementRequest.setBuildingNumber("1A");
-        createAnnouncementRequest.setStreet("Street");
-        createAnnouncementRequest.setTitle("Title");
-        createAnnouncementRequest.setPhotoPaths(List.of("test", "test2"));
-        createAnnouncementRequest.setMainPhotoPath("path");
-        createAnnouncementRequest.setRentalAmount(BigDecimal.valueOf(10.55));
-        createAnnouncementRequest.setRoomsNumber(1);
-        createAnnouncementRequest.setZipCode("11-111");
-        createAnnouncementRequest.setRentalTerm(LocalDate.now());
-        createAnnouncementRequest.setUserId(1L);
-
-        return createAnnouncementRequest;
+        return AddNewAnnouncementRequest.builder()
+                .city("City")
+                .caution(BigDecimal.valueOf(10.55))
+                .content("Content")
+                .district("District")
+                .localNumber(1)
+                .buildingNumber("1A")
+                .street("Street")
+                .title("Title")
+                .photoPaths(List.of("test", "test2"))
+                .mainPhotoPath("path")
+                .rentalAmount(BigDecimal.valueOf(10.55))
+                .roomsNumber(1)
+                .zipCode("11-111")
+                .rentalTerm(LocalDate.now())
+                .userId(1L)
+                .build();
     }
 
     private AddNewAnnouncementResponse validAnnouncementResponse() {
-        var createAnnouncementResponse = new AddNewAnnouncementResponse();
-        createAnnouncementResponse.setCity("City");
-        createAnnouncementResponse.setCaution(BigDecimal.valueOf(10.55));
-        createAnnouncementResponse.setContent("Content");
-        createAnnouncementResponse.setDistrict("District");
-        createAnnouncementResponse.setLocalNumber(1);
-        createAnnouncementResponse.setBuildingNumber("1A");
-        createAnnouncementResponse.setStreet("Street");
-        createAnnouncementResponse.setTitle("Title");
-        createAnnouncementResponse.setPhotoPaths(List.of("test", "test2"));
-        createAnnouncementResponse.setMainPhotoPath("path");
-        createAnnouncementResponse.setRentalAmount(BigDecimal.valueOf(10.55));
-        createAnnouncementResponse.setRoomsNumber(1);
-        createAnnouncementResponse.setZipCode("11-111");
-        createAnnouncementResponse.setRentalTerm(null);
-        createAnnouncementResponse.setUserId(1L);
-        createAnnouncementResponse.setCreationDate(null);
-        createAnnouncementResponse.setIsClosed(false);
-
-        return createAnnouncementResponse;
+        return AddNewAnnouncementResponse.builder()
+                .city("City")
+                .caution(BigDecimal.valueOf(10.55))
+                .content("Content")
+                .district("District")
+                .localNumber(1)
+                .buildingNumber("1A")
+                .street("Street")
+                .title("Title")
+                .photoPaths(List.of("test", "test2"))
+                .mainPhotoPath("path")
+                .rentalAmount(BigDecimal.valueOf(10.55))
+                .roomsNumber(1)
+                .zipCode("11-111")
+                .rentalTerm(null)
+                .userId(1L)
+                .creationDate(null)
+                .isClosed(false)
+                .build();
     }
 
     private GetAnnouncementWithAllDetailsResponse validGetAnnouncementWithAllDetailsResponse() {
