@@ -51,8 +51,8 @@ class UserServiceImplTest {
     void testGetUserDetails_WithValidUserId() throws UserAlreadyExistsException, BadCredentialsException, UserNotFoundException, InactiveAccountException {
         //GIVEN
         var user = this.createValidUser();
-        var response = this.authorizationService.registerNewUser(user);
-        var userId = response.getId();
+        var createUserResponse = this.authorizationService.registerNewUser(user);
+        var userId = createUserResponse.getId();
         var userDetailsDTO = this.createValidUserDetailsDTO();
 
         //WHEN
@@ -78,8 +78,8 @@ class UserServiceImplTest {
     void testGetUserDetails_WithInactiveUser() throws UserAlreadyExistsException, BadCredentialsException {
         //GIVEN
         var inactiveUser = this.createInactiveUser();
-        var response = this.authorizationService.registerNewUser(inactiveUser);
-        var userId = response.getId();
+        var createUserResponse = this.authorizationService.registerNewUser(inactiveUser);
+        var userId = createUserResponse.getId();
 
         //WHEN AND THEN
         Assertions.assertThrows(InactiveAccountException.class, () ->
@@ -90,14 +90,13 @@ class UserServiceImplTest {
     void testChangeUserDetails_WithValidUserDetails() throws UserAlreadyExistsException, BadCredentialsException, UserNotFoundException, InactiveAccountException, InvalidUserDetailsException {
         //GIVEN
         var user = this.createValidUser();
-        var response = this.authorizationService.registerNewUser(user);
-        var userId = response.getId();
-        var changeUserDetailsResponse = this.createValidChangeUserDetailsResponse();
+        var createUserResponse = this.authorizationService.registerNewUser(user);
+        var userId = createUserResponse.getId();
         var changeUserDetailsRequest = this.createValidChangeUserDetailsRequest();
         changeUserDetailsRequest.setEmail("test@test2.pl");
 
         //WHEN
-        var expected = this.userService.changeUserDetails(changeUserDetailsRequest, userId);
+        this.userService.changeUserDetails(changeUserDetailsRequest, userId);
 
         //THEN
         Assertions.assertDoesNotThrow(UserNotFoundException::new);
@@ -107,8 +106,8 @@ class UserServiceImplTest {
     void testChangeUserDetails_WithExistingEmail() throws UserAlreadyExistsException, BadCredentialsException {
         //GIVEN
         var user = this.createValidUser();
-        var response = this.authorizationService.registerNewUser(user);
-        var userId = response.getId();
+        var createUserResponse = this.authorizationService.registerNewUser(user);
+        var userId = createUserResponse.getId();
         this.createValidChangeUserDetailsResponse();
         var changeUserDetailsRequest = this.createValidChangeUserDetailsRequest();
 
@@ -121,8 +120,8 @@ class UserServiceImplTest {
     void testChangeUserDetails_WithValidUserId() throws UserAlreadyExistsException, BadCredentialsException, UserNotFoundException, InactiveAccountException, InvalidUserDetailsException {
         //GIVEN
         var user = this.createValidUser();
-        var response = this.authorizationService.registerNewUser(user);
-        var userId = response.getId();
+        var createUserResponse = this.authorizationService.registerNewUser(user);
+        var userId = createUserResponse.getId();
         var changeUserDetailsRequest = this.createValidChangeUserDetailsRequest();
         changeUserDetailsRequest.setEmail("test@test2.pl");
         //WHEN
@@ -149,8 +148,8 @@ class UserServiceImplTest {
     void testChangeUserDetails_WithNullUserDetails() throws UserAlreadyExistsException, BadCredentialsException {
         //GIVEN
         var inactiveUser = this.createInactiveUser();
-        var response = this.authorizationService.registerNewUser(inactiveUser);
-        var userId = response.getId();
+        var createUserResponse = this.authorizationService.registerNewUser(inactiveUser);
+        var userId = createUserResponse.getId();
         ChangeUserDetailsRequest changeUserDetailsRequest = null;
 
         //WHEN AND THEN
@@ -162,8 +161,8 @@ class UserServiceImplTest {
     void testChangeUserDetails_WithInactiveUser() throws UserAlreadyExistsException, BadCredentialsException {
         //GIVEN
         var inactiveUser = this.createInactiveUser();
-        var response = this.authorizationService.registerNewUser(inactiveUser);
-        var userId = response.getId();
+        var createUserResponse = this.authorizationService.registerNewUser(inactiveUser);
+        var userId = createUserResponse.getId();
         var changeUserDetailsRequest = this.createValidChangeUserDetailsRequest();
 
         //WHEN AND THEN
@@ -175,8 +174,8 @@ class UserServiceImplTest {
     void testInactivateAccount_WithValidUserId() throws UserAlreadyExistsException, BadCredentialsException, UserNotFoundException, InactiveAccountException {
         //GIVEN
         var user = this.createValidUser();
-        var response = this.authorizationService.registerNewUser(user);
-        var userId = response.getId();
+        var createUserResponse = this.authorizationService.registerNewUser(user);
+        var userId = createUserResponse.getId();
 
         //WHEN
         this.userService.inactivateAccount(userId);
@@ -202,8 +201,8 @@ class UserServiceImplTest {
     void testInactivate_InactiveAccount() throws UserAlreadyExistsException, BadCredentialsException {
         //GIVEN
         var user = this.createInactiveUser();
-        var response = this.authorizationService.registerNewUser(user);
-        var userId = response.getId();
+        var createUserResponse = this.authorizationService.registerNewUser(user);
+        var userId = createUserResponse.getId();
 
         // WHEN AND THEN
         Assertions.assertThrows(InactiveAccountException.class, () ->
