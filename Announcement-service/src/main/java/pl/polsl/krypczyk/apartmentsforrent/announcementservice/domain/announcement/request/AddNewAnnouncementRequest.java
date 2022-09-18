@@ -1,5 +1,6 @@
 package pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.request;
 
+import lombok.Builder;
 import lombok.Data;
 
 import javax.validation.constraints.*;
@@ -8,6 +9,7 @@ import java.time.LocalDate;
 import java.util.Collection;
 
 @Data
+@Builder
 public class AddNewAnnouncementRequest {
 
     @NotNull(message = "Invalid user id")
