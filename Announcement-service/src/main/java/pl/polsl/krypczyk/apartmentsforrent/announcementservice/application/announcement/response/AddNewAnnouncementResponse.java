@@ -12,6 +12,8 @@ import java.util.Collection;
 @Builder
 public class AddNewAnnouncementResponse {
 
+    private Long announcementId;
+
     private Long userId;
 
     private String title;
