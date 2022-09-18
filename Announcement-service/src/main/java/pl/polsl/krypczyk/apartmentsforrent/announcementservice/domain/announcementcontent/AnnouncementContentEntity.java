@@ -24,7 +24,7 @@ public class AnnouncementContentEntity {
     @Column(name = "CONTENT", nullable = false)
     private String content;
 
-    @OneToMany(fetch = FetchType.EAGER, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.EAGER)
     private Collection<PhotoPathEntity> photoPaths;
 
 }
