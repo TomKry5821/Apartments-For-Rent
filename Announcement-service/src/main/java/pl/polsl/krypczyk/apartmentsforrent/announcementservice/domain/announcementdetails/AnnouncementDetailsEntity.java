@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.adressdetails.AddressDetailsEntity;
-import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcementphoto.AnnouncementPhotoEntity;
+import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcementcontent.AnnouncementContentEntity;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -43,16 +43,15 @@ public class AnnouncementDetailsEntity {
     @Column(name = "RENTAL_AMOUNT", nullable = false)
     private BigDecimal rentalAmount;
 
-    @Column(name = "CONTENT", nullable = false)
-    private String content;
-
     @OneToOne(orphanRemoval = true, fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "ADDRESS_DETAILS_ID", referencedColumnName = "ID")
+    @ToString.Exclude
     AddressDetailsEntity addressDetailsEntity;
 
-    @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true)
+    @OneToOne(fetch = FetchType.LAZY, orphanRemoval = true, optional = false)
+    @JoinColumn(name = "ANNOUNCEMENT_CONTENT_ID", referencedColumnName = "ID")
     @ToString.Exclude
-    Collection<AnnouncementPhotoEntity> announcementPhotos;
+    AnnouncementContentEntity announcementContent;
 
 
 }

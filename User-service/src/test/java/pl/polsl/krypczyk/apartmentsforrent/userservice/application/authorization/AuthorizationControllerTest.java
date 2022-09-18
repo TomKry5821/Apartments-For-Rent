@@ -29,13 +29,8 @@ class AuthorizationControllerTest {
     @Autowired
     private AuthorizationService authorizationService;
 
-    @AfterEach
-    void deleteDbContent() {
-        this.authorizationService.deleteDbContent();
-    }
-
     @Test
-    void registerNewUserWithValidUserDetails_ShouldReturn201() throws Exception {
+    void testRegisterNewUser_WithValidUserDetails_ShouldReturn201() throws Exception {
         //GIVEN AND WHEN
         var result = this.registerValidUser();
 
@@ -46,7 +41,7 @@ class AuthorizationControllerTest {
     }
 
     @Test
-    void registerNewUserWithInvalidUserDetails_ShouldReturn400() throws Exception {
+    void testRegisterNewUser_WithInvalidUserDetails_ShouldReturn400() throws Exception {
         mvc.perform(
                         post("/user/api/v1/auth/register")
                                 .contentType(MediaType.APPLICATION_JSON)
@@ -64,7 +59,7 @@ class AuthorizationControllerTest {
     }
 
     @Test
-    void registerExistingUser_ShouldReturn400() throws Exception {
+    void testRegister_ExistingUser_ShouldReturn400() throws Exception {
         //GIVEN AND WHEN
         this.registerValidUser();
         var result = this.registerValidUser();
@@ -75,7 +70,7 @@ class AuthorizationControllerTest {
     }
 
     @Test
-    void loginUserWithValidCredentials_ShouldReturn200() throws Exception {
+    void test_LoginUser_WithValidCredentials_ShouldReturn200() throws Exception {
         //GIVEN
         this.registerValidUser();
 
@@ -96,7 +91,7 @@ class AuthorizationControllerTest {
     }
 
     @Test
-    void loginUserWithInvalidCredentials_ShouldReturn400() throws Exception {
+    void testLoginUser_WithInvalidCredentials_ShouldReturn400() throws Exception {
         //GIVEN
         this.registerValidUser();
 
@@ -117,7 +112,7 @@ class AuthorizationControllerTest {
     }
 
     @Test
-    void loginUserWithNullCredentials_ShouldReturn400() throws Exception {
+    void testLoginUser_WithNullCredentials_ShouldReturn400() throws Exception {
         //GIVEN
         this.registerValidUser();
 
@@ -138,23 +133,21 @@ class AuthorizationControllerTest {
     }
 
     @Test
-    void logoutUserWithValidId_ShouldReturn204() throws Exception {
+    void testLogoutUser_WithValidId_ShouldReturn204() throws Exception {
         //GIVEN
-        var response = this.registerValidUser();
-        var token = this.getTokenFromResponse(response);
-
+        this.registerValidUser();
         //WHEN
         mvc.perform(
                         post("/user/api/v1/auth/2/logout")
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .header("Authorization", token))
+                                .header("requester-user-id", 2))
                 //THEN
                 .andExpect(status().isNoContent());
 
     }
 
     @Test
-    void logoutUserWithInvalidId_ShouldReturn400() throws Exception {
+    void testLogoutUser_WithInvalidId_ShouldReturn400() throws Exception {
         //GIVEN
         this.registerValidUser();
 

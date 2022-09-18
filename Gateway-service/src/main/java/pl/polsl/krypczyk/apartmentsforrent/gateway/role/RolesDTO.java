@@ -8,5 +8,6 @@ import java.util.Collection;
 public class RolesDTO {
 
     private final Collection<String> roles;
+    private final Long userId;
 
 }

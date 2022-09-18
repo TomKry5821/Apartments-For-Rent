@@ -7,10 +7,9 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+        <module name="Apartments-for-rent-ga" />
         <module name="Gateway-service" />
         <module name="Message-service" />
-        <module name="Apartments-for-rent-ga" />
-        <module name="Announcement-service" />
       </profile>
       <profile name="Annotation profile for Apartments-for-rent" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
@@ -22,6 +21,7 @@
           <entry name="$MAVEN_REPOSITORY$/org/mapstruct/mapstruct/1.5.2.Final/mapstruct-1.5.2.Final.jar" />
         </processorPath>
         <module name="User-service" />
+        <module name="Announcement-service" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>

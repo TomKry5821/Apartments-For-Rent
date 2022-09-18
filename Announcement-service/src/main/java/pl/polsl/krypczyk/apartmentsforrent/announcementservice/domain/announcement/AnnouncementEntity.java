@@ -7,6 +7,7 @@ import lombok.ToString;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcementdetails.AnnouncementDetailsEntity;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 
 @Getter
 @Setter
@@ -23,6 +24,12 @@ public class AnnouncementEntity {
 
     @Column(name = "USER_ID", nullable = false)
     private Long userId;
+
+    @Column(name = "CREATION_DATE", nullable = false)
+    private LocalDate creationDate;
+
+    @Column(name = "IS_CLOSED", nullable = false)
+    private Boolean isClosed;
 
     @OneToOne(orphanRemoval = true, optional = false, fetch = FetchType.EAGER)
     @JoinColumn(name = "ANNOUNCEMENT_DETAILS_ID", referencedColumnName = "ID")

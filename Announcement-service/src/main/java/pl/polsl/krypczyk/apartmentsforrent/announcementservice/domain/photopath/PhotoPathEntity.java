@@ -1,10 +1,9 @@
-package pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcementphoto;
+package pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.photopath;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcementdetails.AnnouncementDetailsEntity;
 
 import javax.persistence.*;
 
@@ -13,8 +12,9 @@ import javax.persistence.*;
 @RequiredArgsConstructor
 @ToString
 @Entity
-@Table(name = "ANNOUNCEMENT_PHOTO")
-public class AnnouncementPhotoEntity {
+@Table(name = "PHOTO_PATH")
+public class PhotoPathEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID", nullable = false)
@@ -22,5 +22,4 @@ public class AnnouncementPhotoEntity {
 
     @Column(name = "PHOTO_PATH", nullable = false)
     private String photoPath;
-
 }

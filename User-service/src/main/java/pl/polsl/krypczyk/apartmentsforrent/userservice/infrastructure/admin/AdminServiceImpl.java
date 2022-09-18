@@ -8,7 +8,6 @@ import pl.polsl.krypczyk.apartmentsforrent.userservice.application.userdetails.r
 import pl.polsl.krypczyk.apartmentsforrent.userservice.application.userdetails.response.ChangeUserDetailsResponse;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.admin.AdminService;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.application.admin.dto.UserDTO;
-import pl.polsl.krypczyk.apartmentsforrent.userservice.application.admin.response.GetAllUsersResponse;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.authorization.exception.InactiveAccountException;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.role.RoleEntity;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.user.UserEntity;
@@ -33,19 +32,16 @@ public class AdminServiceImpl implements AdminService {
     private final UserMapper userMapper = Mappers.getMapper(UserMapper.class);
 
     @Override
-    public GetAllUsersResponse getAllUsers() {
+    public Collection<UserDTO> getAllUsers() {
         var users = this.userRepository.findAll();
         Collection<UserDTO> userDTOS = new ArrayList<>();
         users.forEach(u -> userDTOS.add(this.buildUserDTO(u)));
 
-        var getAllUsersResponse = new GetAllUsersResponse();
-        getAllUsersResponse.setUsers(userDTOS);
-
-        return getAllUsersResponse;
+        return userDTOS;
     }
 
     @Override
-    public void deleteUser(Long userId) {
+    public void deleteUser(Long userId) throws UserNotFoundException {
         var user = this.userRepository.findUserEntityById(userId);
         if (Objects.isNull(user))
             throw new UserNotFoundException();
@@ -54,7 +50,7 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public ChangeUserDetailsResponse changeUserDetails(ChangeUserDetailsRequest changeUserDetailsRequest, Long userId) {
+    public ChangeUserDetailsResponse changeUserDetails(ChangeUserDetailsRequest changeUserDetailsRequest, Long userId) throws InvalidUserDetailsException, UserNotFoundException, InactiveAccountException {
         if (Objects.isNull(changeUserDetailsRequest) || Objects.isNull(userId) || userId < 1)
             throw new InvalidUserDetailsException();
 
@@ -63,7 +59,7 @@ public class AdminServiceImpl implements AdminService {
             throw new UserNotFoundException();
 
         var userDetails = user.getUserDetailsEntity();
-        if(this.isAccountInactive(userDetails))
+        if (this.isAccountInactive(userDetails))
             throw new InactiveAccountException();
 
         this.changeAndSaveUserDetails(userDetails, changeUserDetailsRequest);
@@ -109,11 +105,4 @@ public class AdminServiceImpl implements AdminService {
                         .collect(Collectors.toList()))
                 .build();
     }
-
-    ////////////////////////////////////////////////
-    /////////// FOR TESTS PURPOSE //////////////////
-    public void deleteDbContent() {
-        this.userRepository.deleteAll();
-    }
-
 }

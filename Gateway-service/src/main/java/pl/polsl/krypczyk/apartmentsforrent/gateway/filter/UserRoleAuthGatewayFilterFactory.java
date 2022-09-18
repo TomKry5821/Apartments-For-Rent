@@ -34,33 +34,34 @@ public class UserRoleAuthGatewayFilterFactory extends AbstractGatewayFilterFacto
         return (exchange, chain) -> {
             var request = exchange.getRequest();
             var response = exchange.getResponse();
-            if(!isResourceSecured(request)){
+            if (!isResourceSecured(request))
                 return chain.filter(exchange);
-            }
-            if (!isAuthorizationKeyPresent(request)) {
+            if (!isAuthorizationKeyPresent(request))
                 return setUnauthorizedResponse(response);
-            }
             String requestToken = request.getHeaders().get("Authorization").get(0);
-            if(!TokenUtils.isTokenCorrect(requestToken)){
+            if (!TokenUtils.isTokenCorrect(requestToken))
                 return setUnauthorizedResponse(response);
-            }
             RolesDTO userRoles = authorizationService.authorizeByToken(UUID.fromString(requestToken));
-            if(!userRoles.getRoles().contains("ROLE_USER")){
+            if (!userRoles.getRoles().contains("ROLE_USER"))
                 return setUnauthorizedResponse(response);
-            }
+            request = exchange.getRequest()
+                    .mutate()
+                    .header("requester-user-id", userRoles.getUserId().toString())
+                    .build();
+            exchange = exchange.mutate().request(request).build();
             return chain.filter(exchange);
         };
     }
 
-    private Boolean isResourceSecured(ServerHttpRequest serverHttpRequest){
+    private Boolean isResourceSecured(ServerHttpRequest serverHttpRequest) {
         return routerValidator.isSecured(serverHttpRequest);
     }
 
-    private Boolean isAuthorizationKeyPresent(ServerHttpRequest serverHttpRequest){
+    private Boolean isAuthorizationKeyPresent(ServerHttpRequest serverHttpRequest) {
         return serverHttpRequest.getHeaders().containsKey("Authorization");
     }
 
-    private Mono<Void> setUnauthorizedResponse(ServerHttpResponse serverHttpResponse){
+    private Mono<Void> setUnauthorizedResponse(ServerHttpResponse serverHttpResponse) {
         serverHttpResponse.setStatusCode(HttpStatus.UNAUTHORIZED);
         return serverHttpResponse.setComplete();
     }
