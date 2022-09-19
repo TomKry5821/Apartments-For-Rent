@@ -240,6 +240,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
                 this.photoPathRepository.save(photoPath);
                 photoPathEntities.add(photoPath);
             });
+            announcementContent.getPhotoPaths().clear();
             announcementContent.setPhotoPaths(photoPathEntities);
         }
 

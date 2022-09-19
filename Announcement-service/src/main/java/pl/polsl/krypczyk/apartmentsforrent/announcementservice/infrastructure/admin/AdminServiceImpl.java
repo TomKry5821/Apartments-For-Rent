@@ -17,7 +17,6 @@ public class AdminServiceImpl implements AdminService {
         var announcement = this.announcementRepository.findById(announcementId);
         if(announcement.isEmpty())
             throw new AnnouncementNotFoundException();
-
         this.announcementRepository.delete(announcement.get());
     }
 }
