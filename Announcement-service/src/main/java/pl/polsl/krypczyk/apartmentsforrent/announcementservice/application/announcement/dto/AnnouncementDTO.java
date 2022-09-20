@@ -16,4 +16,8 @@ public class AnnouncementDTO {
     private AnnouncementDetailsDTO announcementDetailsDTO;
 
     private Boolean isClosed;
+
+    private String district;
+
+    private String city;
 }

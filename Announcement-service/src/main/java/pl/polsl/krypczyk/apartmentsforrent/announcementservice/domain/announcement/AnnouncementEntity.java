@@ -31,6 +31,12 @@ public class AnnouncementEntity {
     @Column(name = "IS_CLOSED", nullable = false)
     private Boolean isClosed;
 
+    @Column(name = "DISTRICT", nullable = false)
+    private String district;
+
+    @Column(name = "CITY", nullable = false)
+    private String city;
+
     @OneToOne(orphanRemoval = true, optional = false, fetch = FetchType.EAGER)
     @JoinColumn(name = "ANNOUNCEMENT_DETAILS_ID", referencedColumnName = "ID")
     private AnnouncementDetailsEntity announcementDetailsEntity;

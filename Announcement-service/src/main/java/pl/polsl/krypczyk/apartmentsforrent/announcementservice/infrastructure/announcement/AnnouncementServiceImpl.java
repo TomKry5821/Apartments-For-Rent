@@ -58,6 +58,8 @@ public class AnnouncementServiceImpl implements AnnouncementService {
         var announcementDTO = announcementMapper.announcementEntityToAnnouncementDTO(announcement);
         var announcementDetailsDTO = announcementMapper.announcementDetailsEntityToAnnouncementDetailsDTO(announcementDetails);
         announcementDTO.setAnnouncementDetailsDTO(announcementDetailsDTO);
+        announcementDTO.setDistrict(announcement.getDistrict());
+        announcementDTO.setCity(announcementDTO.getCity());
 
         return announcementDTO;
     }
@@ -73,6 +75,8 @@ public class AnnouncementServiceImpl implements AnnouncementService {
         response.setAnnouncementId(announcement.getId());
         response.setCreationDate(announcement.getCreationDate());
         response.setIsClosed(announcement.getIsClosed());
+        response.setDistrict(announcement.getDistrict());
+        response.setCity(announcement.getCity());
 
         return response;
     }
@@ -84,6 +88,8 @@ public class AnnouncementServiceImpl implements AnnouncementService {
         announcement.setAnnouncementDetailsEntity(this.createAnnouncementDetailsEntity(addNewAnnouncementRequest));
         announcement.setCreationDate(LocalDate.now());
         announcement.setIsClosed(false);
+        announcement.setDistrict(addNewAnnouncementRequest.getDistrict());
+        announcement.setCity(addNewAnnouncementRequest.getCity());
         this.announcementRepository.save(announcement);
 
         return announcement;
@@ -121,8 +127,6 @@ public class AnnouncementServiceImpl implements AnnouncementService {
 
     private AddressDetailsEntity createAddressDetailsEntity(AddNewAnnouncementRequest addNewAnnouncementRequest) {
         var addressDetails = new AddressDetailsEntity();
-        addressDetails.setDistrict(addNewAnnouncementRequest.getDistrict());
-        addressDetails.setCity(addNewAnnouncementRequest.getCity());
         addressDetails.setZipCode(addNewAnnouncementRequest.getZipCode());
         addressDetails.setStreet(addNewAnnouncementRequest.getStreet());
         addressDetails.setBuildingNumber(addNewAnnouncementRequest.getBuildingNumber());
@@ -151,15 +155,15 @@ public class AnnouncementServiceImpl implements AnnouncementService {
                 .creationDate(announcement.getCreationDate())
                 .userId(announcement.getUserId())
                 .isClosed(announcement.getIsClosed())
+                .district(announcement.getDistrict())
+                .city(announcement.getCity())
                 .title(announcementDetails.getTitle())
                 .mainPhotoPath(announcementDetails.getMainPhotoPath())
                 .roomsNumber(announcementDetails.getRoomsNumber())
                 .rentalTerm(announcementDetails.getRentalTerm())
                 .caution(announcementDetails.getCaution())
                 .rentalAmount(announcementDetails.getRentalAmount())
-                .city(addressDetails.getCity())
                 .street(addressDetails.getStreet())
-                .district(addressDetails.getDistrict())
                 .zipCode(addressDetails.getZipCode())
                 .buildingNumber(addressDetails.getBuildingNumber())
                 .localNumber(addressDetails.getLocalNumber())
@@ -189,6 +193,12 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     private void updateAnnouncementEntity(AnnouncementEntity announcement,
                                           UpdateAnnouncementRequest updateAnnouncementRequest) {
 
+        var district = updateAnnouncementRequest.getDistrict();
+        if (!Objects.isNull(district))
+            announcement.setDistrict(district);
+        var city = updateAnnouncementRequest.getCity();
+        if (!Objects.isNull(city))
+            announcement.setCity(city);
         var announcementDetails = announcement.getAnnouncementDetailsEntity();
         this.updateAnnouncementDetailsEntity(announcementDetails, updateAnnouncementRequest);
         announcement.setAnnouncementDetailsEntity(announcementDetails);
@@ -249,15 +259,9 @@ public class AnnouncementServiceImpl implements AnnouncementService {
 
     private void updateAddressDetailsEntity(AddressDetailsEntity addressDetails,
                                             UpdateAnnouncementRequest updateAnnouncementRequest) {
-        var city = updateAnnouncementRequest.getCity();
-        if (!Objects.isNull(city))
-            addressDetails.setCity(city);
         var street = updateAnnouncementRequest.getStreet();
         if (!Objects.isNull(street))
             addressDetails.setStreet(street);
-        var district = updateAnnouncementRequest.getDistrict();
-        if (!Objects.isNull(district))
-            addressDetails.setDistrict(district);
         var zipCode = updateAnnouncementRequest.getZipCode();
         if (!Objects.isNull(zipCode))
             addressDetails.setZipCode(zipCode);

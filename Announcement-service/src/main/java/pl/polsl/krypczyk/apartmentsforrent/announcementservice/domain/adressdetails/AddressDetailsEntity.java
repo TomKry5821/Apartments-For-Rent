@@ -20,14 +20,8 @@ public class AddressDetailsEntity {
     @Column(name = "ID")
     private Long id;
 
-    @Column(name = "CITY", nullable = false)
-    private String city;
-
     @Column(name = "STREET", nullable = false)
     private String street;
-
-    @Column(name = "DISTRICT", nullable = false)
-    private String district;
 
     @Column(name = "ZIP_CODE", nullable = false)
     private String zipCode;
