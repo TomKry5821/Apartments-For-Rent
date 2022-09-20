@@ -75,63 +75,42 @@ public class AnnouncementServiceImpl implements AnnouncementService {
         response.setAnnouncementId(announcement.getId());
         response.setCreationDate(announcement.getCreationDate());
         response.setIsClosed(announcement.getIsClosed());
-        response.setDistrict(announcement.getDistrict());
-        response.setCity(announcement.getCity());
 
         return response;
     }
 
     private AnnouncementEntity createAndSaveAnnouncement(AddNewAnnouncementRequest addNewAnnouncementRequest) {
-        var announcement = new AnnouncementEntity();
-
-        announcement.setUserId(addNewAnnouncementRequest.getUserId());
+        var announcement = this.announcementMapper.addAnnouncementRequestDtoToAnnouncementEntity(addNewAnnouncementRequest);
         announcement.setAnnouncementDetailsEntity(this.createAnnouncementDetailsEntity(addNewAnnouncementRequest));
         announcement.setCreationDate(LocalDate.now());
         announcement.setIsClosed(false);
-        announcement.setDistrict(addNewAnnouncementRequest.getDistrict());
-        announcement.setCity(addNewAnnouncementRequest.getCity());
-        this.announcementRepository.save(announcement);
 
-        return announcement;
+        return this.announcementRepository.save(announcement);
     }
 
     private AnnouncementDetailsEntity createAnnouncementDetailsEntity(AddNewAnnouncementRequest addNewAnnouncementRequest) {
-        var announcementDetails = new AnnouncementDetailsEntity();
-
+        var announcementDetails = this.announcementMapper.addAnnouncementRequestDtoToAnnouncementDetailsEntity(addNewAnnouncementRequest);
         announcementDetails.setAnnouncementContent(this.createAnnouncementContentEntity(addNewAnnouncementRequest));
         announcementDetails.setAddressDetailsEntity(this.createAddressDetailsEntity(addNewAnnouncementRequest));
-        announcementDetails.setTitle(addNewAnnouncementRequest.getTitle());
-        announcementDetails.setMainPhotoPath(addNewAnnouncementRequest.getMainPhotoPath());
-        announcementDetails.setCaution(addNewAnnouncementRequest.getCaution());
-        announcementDetails.setRentalAmount(addNewAnnouncementRequest.getRentalAmount());
-        announcementDetails.setRoomsNumber(addNewAnnouncementRequest.getRoomsNumber());
-        announcementDetails.setRentalTerm(addNewAnnouncementRequest.getRentalTerm());
 
         return this.announcementDetailsRepository.save(announcementDetails);
     }
 
     private AnnouncementContentEntity createAnnouncementContentEntity(AddNewAnnouncementRequest addNewAnnouncementRequest) {
-        var announcementContent = new AnnouncementContentEntity();
+        var announcementContent = this.announcementMapper.addAnnouncementRequestDtoToAnnouncementContentEntity(addNewAnnouncementRequest);
 
         var photoPaths = new ArrayList<PhotoPathEntity>();
-        addNewAnnouncementRequest.getPhotoPaths().forEach(pp -> {
-            var photoPath = new PhotoPathEntity();
-            photoPath.setPhotoPath(pp);
+        addNewAnnouncementRequest.getPhotoPaths().forEach((r) -> {
+            var photoPath = this.announcementMapper.photoPathToPhotoPathEntity(r);
             photoPaths.add(this.photoPathRepository.save(photoPath));
         });
-        announcementContent.setContent(addNewAnnouncementRequest.getContent());
         announcementContent.setPhotoPaths(photoPaths);
 
         return announcementContentRepository.save(announcementContent);
     }
 
     private AddressDetailsEntity createAddressDetailsEntity(AddNewAnnouncementRequest addNewAnnouncementRequest) {
-        var addressDetails = new AddressDetailsEntity();
-        addressDetails.setZipCode(addNewAnnouncementRequest.getZipCode());
-        addressDetails.setStreet(addNewAnnouncementRequest.getStreet());
-        addressDetails.setBuildingNumber(addNewAnnouncementRequest.getBuildingNumber());
-        addressDetails.setLocalNumber(addNewAnnouncementRequest.getLocalNumber());
-
+        var addressDetails = this.announcementMapper.addAnnouncementRequestDtoToAddressDetailsEntity(addNewAnnouncementRequest);
         return this.addressDetailsRepository.save(addressDetails);
     }
 
