@@ -65,7 +65,7 @@ class AnnouncementServiceImplTest {
     }
 
     @Test
-    void testAddNewAnnouncement() throws InvalidUserIdException {
+    void testAddNewAnnouncement_WithValidRequestBody() throws InvalidUserIdException {
         //GIVEN
         var addNewAnnouncementRequest = validAnnouncementRequest();
 
@@ -78,6 +78,20 @@ class AnnouncementServiceImplTest {
         assertFalse(this.announcementRepository.findAll().isEmpty());
 
     }
+
+    @Test
+    void testAddNewAnnouncement_WithInvalidRequestBody() {
+        //GIVEN
+        var addNewAnnouncementRequest = validAnnouncementRequest();
+
+        //WHEN
+        addNewAnnouncementRequest.setUserId(100L);
+
+        //THEN
+        assertThrows(InvalidUserIdException.class, () ->
+                this.announcementService.addNewAnnouncement(addNewAnnouncementRequest, 1L));
+    }
+
 
     @Test
     void testGetAnnouncementWithAllDetails_WithValidAnnouncementId() throws InvalidUserIdException, AnnouncementNotFoundException {
@@ -131,6 +145,19 @@ class AnnouncementServiceImplTest {
         //WHEN AND THEN
         Assertions.assertThrows(AnnouncementNotFoundException.class, () ->
                 this.announcementService.updateAnnouncement(updateAnnouncementRequest, addNewAnnouncementResponse.getAnnouncementId(), 0L));
+    }
+
+    @Test
+    void testUpdateAnnouncement_WithClosedAnnouncement() throws InvalidUserIdException, AnnouncementNotFoundException {
+        //GIVEN
+        var updateAnnouncementRequest = validUpdateAnnouncementRequest();
+        var addNewAnnouncementRequest = validAnnouncementRequest();
+        var addNewAnnouncementResponse = this.announcementService.addNewAnnouncement(addNewAnnouncementRequest, addNewAnnouncementRequest.getUserId());
+        this.announcementService.closeAnnouncement(addNewAnnouncementResponse.getAnnouncementId(), 1L);
+
+        //WHEN AND THEN
+        Assertions.assertThrows(ClosedAnnouncementException.class, () ->
+                this.announcementService.updateAnnouncement(updateAnnouncementRequest, addNewAnnouncementResponse.getAnnouncementId(), 1L));
     }
 
     @Test
