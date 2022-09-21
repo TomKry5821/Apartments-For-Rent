@@ -13,7 +13,6 @@ import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announceme
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.excpetion.InvalidUserIdException;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.application.announcement.request.AddNewAnnouncementRequest;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.application.announcement.request.UpdateAnnouncementRequest;
-import pl.polsl.krypczyk.apartmentsforrent.announcementservice.application.announcement.response.AddNewAnnouncementResponse;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.application.announcement.response.GetAnnouncementWithAllDetailsResponse;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.application.announcement.response.UpdateAnnouncementResponse;
 
@@ -203,28 +202,6 @@ class AnnouncementServiceImplTest {
                 .zipCode("11-111")
                 .rentalTerm(LocalDate.now())
                 .userId(1L)
-                .build();
-    }
-
-    private AddNewAnnouncementResponse validAnnouncementResponse() {
-        return AddNewAnnouncementResponse.builder()
-                .city("City")
-                .caution(BigDecimal.valueOf(10.55))
-                .content("Content")
-                .district("District")
-                .localNumber(1)
-                .buildingNumber("1A")
-                .street("Street")
-                .title("Title")
-                .photoPaths(List.of("test", "test2"))
-                .mainPhotoPath("path")
-                .rentalAmount(BigDecimal.valueOf(10.55))
-                .roomsNumber(1)
-                .zipCode("11-111")
-                .rentalTerm(null)
-                .userId(1L)
-                .creationDate(null)
-                .isClosed(false)
                 .build();
     }
 
