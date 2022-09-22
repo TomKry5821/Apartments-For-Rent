@@ -1,6 +1,7 @@
 package pl.polsl.krypczyk.apartmentsforrent.announcementservice.infrastructure.announcement;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.mapstruct.factory.Mappers;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,6 +36,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Transactional
+@Slf4j
 public class AnnouncementServiceImpl implements AnnouncementService {
 
     private final AnnouncementRepository announcementRepository;
@@ -46,10 +48,14 @@ public class AnnouncementServiceImpl implements AnnouncementService {
 
     @Override
     public Collection<AnnouncementDTO> getAllActiveAnnouncements() {
+        log.info("Started retrieving all active announcements");
+
         var announcements = this.announcementRepository.findAnnouncementEntitiesByIsClosed(false);
 
         Collection<AnnouncementDTO> announcementDTOS = new ArrayList<>();
         announcements.forEach(a -> announcementDTOS.add(this.createAnnouncementDTO(a)));
+
+        log.info("Successfully retrieved all active announcements");
         return announcementDTOS;
     }
 
@@ -67,6 +73,8 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     @Override
     public AddNewAnnouncementResponse addNewAnnouncement(AddNewAnnouncementRequest addNewAnnouncementRequest,
                                                          Long requesterId) throws InvalidUserIdException {
+        log.info("Started creating announcement");
+
         if (!this.isUserIdValid(addNewAnnouncementRequest.getUserId(), requesterId))
             throw new InvalidUserIdException();
 
@@ -76,6 +84,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
         response.setCreationDate(announcement.getCreationDate());
         response.setIsClosed(announcement.getIsClosed());
 
+        log.info("Successfully created announcement - " + announcement );
         return response;
     }
 
@@ -116,11 +125,15 @@ public class AnnouncementServiceImpl implements AnnouncementService {
 
     @Override
     public GetAnnouncementWithAllDetailsResponse getAnnouncementWithAllDetails(Long announcementId) throws AnnouncementNotFoundException {
+        log.info("Started retrieving announcement details with provided id - " + announcementId);
         var announcement = this.announcementRepository.findById(announcementId);
         if (announcement.isEmpty())
             throw new AnnouncementNotFoundException();
 
-        return this.buildResponse(announcement.get());
+        var getAnnouncementWithDetailsResponse = this.buildResponse(announcement.get());
+
+        log.info("Successfully retrieved announcement details - " + getAnnouncementWithDetailsResponse);
+        return getAnnouncementWithDetailsResponse;
     }
 
     private GetAnnouncementWithAllDetailsResponse buildResponse(AnnouncementEntity announcement) {
@@ -158,6 +171,8 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     public UpdateAnnouncementResponse updateAnnouncement(UpdateAnnouncementRequest updateAnnouncementRequest,
                                                          Long announcementId,
                                                          Long requesterId) throws AnnouncementNotFoundException, ClosedAnnouncementException {
+        log.info("Started updating announcement with id - " + announcementId + " By user with id - " + requesterId);
+
         var announcement = this.announcementRepository.findById(announcementId);
         if (announcement.isEmpty() || !isUserIdValid(announcement.get().getUserId(), requesterId))
             throw new AnnouncementNotFoundException();
@@ -166,7 +181,10 @@ public class AnnouncementServiceImpl implements AnnouncementService {
 
         this.updateAnnouncementEntity(announcement.get(), updateAnnouncementRequest);
 
-        return this.announcementMapper.updateAnnouncementRequestToUpdateAnnouncementResponse(updateAnnouncementRequest);
+        var updateAnnouncementResponse = this.announcementMapper.updateAnnouncementRequestToUpdateAnnouncementResponse(updateAnnouncementRequest);
+
+        log.info("Successfully updated announcement with id " + announcementId + ": " + updateAnnouncementResponse);
+        return updateAnnouncementResponse;
     }
 
     private void updateAnnouncementEntity(AnnouncementEntity announcement,
@@ -256,11 +274,15 @@ public class AnnouncementServiceImpl implements AnnouncementService {
 
     @Override
     public void closeAnnouncement(Long announcementId, Long requesterId) throws AnnouncementNotFoundException {
+        log.info("Started closing announcement with id - " + announcementId + " by user with id - " + requesterId);
+
         var announcement = this.announcementRepository.findById(announcementId);
         if (announcement.isEmpty() || !isUserIdValid(announcement.get().getUserId(), requesterId))
             throw new AnnouncementNotFoundException();
 
         announcement.get().setIsClosed(true);
+
+        log.info("Successfully closed announcement with id - " + announcementId + " by user with id - " + requesterId);
         this.announcementRepository.save(announcement.get());
     }
 
