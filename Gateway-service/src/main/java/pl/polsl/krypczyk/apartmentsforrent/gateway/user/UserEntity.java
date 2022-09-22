@@ -13,7 +13,6 @@ import javax.persistence.*;
 @Getter
 @Setter
 @RequiredArgsConstructor
-@ToString
 @Entity
 @Table(name = "\"USER\"")
 public class UserEntity {
