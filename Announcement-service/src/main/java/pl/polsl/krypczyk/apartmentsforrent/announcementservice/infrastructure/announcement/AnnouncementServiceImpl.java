@@ -1,6 +1,7 @@
 package pl.polsl.krypczyk.apartmentsforrent.announcementservice.infrastructure.announcement;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.mapstruct.factory.Mappers;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,6 +36,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Transactional
+@Slf4j
 public class AnnouncementServiceImpl implements AnnouncementService {
 
     private final AnnouncementRepository announcementRepository;
@@ -46,10 +48,14 @@ public class AnnouncementServiceImpl implements AnnouncementService {
 
     @Override
     public Collection<AnnouncementDTO> getAllActiveAnnouncements() {
+        log.info("Started retrieving all active announcements");
+
         var announcements = this.announcementRepository.findAnnouncementEntitiesByIsClosed(false);
 
         Collection<AnnouncementDTO> announcementDTOS = new ArrayList<>();
         announcements.forEach(a -> announcementDTOS.add(this.createAnnouncementDTO(a)));
+
+        log.info("Successfully retrieved all active announcements");
         return announcementDTOS;
     }
 
@@ -58,6 +64,8 @@ public class AnnouncementServiceImpl implements AnnouncementService {
         var announcementDTO = announcementMapper.announcementEntityToAnnouncementDTO(announcement);
         var announcementDetailsDTO = announcementMapper.announcementDetailsEntityToAnnouncementDetailsDTO(announcementDetails);
         announcementDTO.setAnnouncementDetailsDTO(announcementDetailsDTO);
+        announcementDTO.setDistrict(announcement.getDistrict());
+        announcementDTO.setCity(announcementDTO.getCity());
 
         return announcementDTO;
     }
@@ -65,6 +73,8 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     @Override
     public AddNewAnnouncementResponse addNewAnnouncement(AddNewAnnouncementRequest addNewAnnouncementRequest,
                                                          Long requesterId) throws InvalidUserIdException {
+        log.info("Started creating announcement");
+
         if (!this.isUserIdValid(addNewAnnouncementRequest.getUserId(), requesterId))
             throw new InvalidUserIdException();
 
@@ -74,70 +84,56 @@ public class AnnouncementServiceImpl implements AnnouncementService {
         response.setCreationDate(announcement.getCreationDate());
         response.setIsClosed(announcement.getIsClosed());
 
+        log.info("Successfully created announcement - " + announcement );
         return response;
     }
 
     private AnnouncementEntity createAndSaveAnnouncement(AddNewAnnouncementRequest addNewAnnouncementRequest) {
-        var announcement = new AnnouncementEntity();
-
-        announcement.setUserId(addNewAnnouncementRequest.getUserId());
+        var announcement = this.announcementMapper.addAnnouncementRequestDtoToAnnouncementEntity(addNewAnnouncementRequest);
         announcement.setAnnouncementDetailsEntity(this.createAnnouncementDetailsEntity(addNewAnnouncementRequest));
         announcement.setCreationDate(LocalDate.now());
         announcement.setIsClosed(false);
-        this.announcementRepository.save(announcement);
 
-        return announcement;
+        return this.announcementRepository.save(announcement);
     }
 
     private AnnouncementDetailsEntity createAnnouncementDetailsEntity(AddNewAnnouncementRequest addNewAnnouncementRequest) {
-        var announcementDetails = new AnnouncementDetailsEntity();
-
+        var announcementDetails = this.announcementMapper.addAnnouncementRequestDtoToAnnouncementDetailsEntity(addNewAnnouncementRequest);
         announcementDetails.setAnnouncementContent(this.createAnnouncementContentEntity(addNewAnnouncementRequest));
         announcementDetails.setAddressDetailsEntity(this.createAddressDetailsEntity(addNewAnnouncementRequest));
-        announcementDetails.setTitle(addNewAnnouncementRequest.getTitle());
-        announcementDetails.setMainPhotoPath(addNewAnnouncementRequest.getMainPhotoPath());
-        announcementDetails.setCaution(addNewAnnouncementRequest.getCaution());
-        announcementDetails.setRentalAmount(addNewAnnouncementRequest.getRentalAmount());
-        announcementDetails.setRoomsNumber(addNewAnnouncementRequest.getRoomsNumber());
-        announcementDetails.setRentalTerm(addNewAnnouncementRequest.getRentalTerm());
 
         return this.announcementDetailsRepository.save(announcementDetails);
     }
 
     private AnnouncementContentEntity createAnnouncementContentEntity(AddNewAnnouncementRequest addNewAnnouncementRequest) {
-        var announcementContent = new AnnouncementContentEntity();
+        var announcementContent = this.announcementMapper.addAnnouncementRequestDtoToAnnouncementContentEntity(addNewAnnouncementRequest);
 
         var photoPaths = new ArrayList<PhotoPathEntity>();
-        addNewAnnouncementRequest.getPhotoPaths().forEach(pp -> {
-            var photoPath = new PhotoPathEntity();
-            photoPath.setPhotoPath(pp);
+        addNewAnnouncementRequest.getPhotoPaths().forEach((r) -> {
+            var photoPath = this.announcementMapper.photoPathToPhotoPathEntity(r);
             photoPaths.add(this.photoPathRepository.save(photoPath));
         });
-        announcementContent.setContent(addNewAnnouncementRequest.getContent());
         announcementContent.setPhotoPaths(photoPaths);
 
         return announcementContentRepository.save(announcementContent);
     }
 
     private AddressDetailsEntity createAddressDetailsEntity(AddNewAnnouncementRequest addNewAnnouncementRequest) {
-        var addressDetails = new AddressDetailsEntity();
-        addressDetails.setDistrict(addNewAnnouncementRequest.getDistrict());
-        addressDetails.setCity(addNewAnnouncementRequest.getCity());
-        addressDetails.setZipCode(addNewAnnouncementRequest.getZipCode());
-        addressDetails.setStreet(addNewAnnouncementRequest.getStreet());
-        addressDetails.setBuildingNumber(addNewAnnouncementRequest.getBuildingNumber());
-        addressDetails.setLocalNumber(addNewAnnouncementRequest.getLocalNumber());
-
+        var addressDetails = this.announcementMapper.addAnnouncementRequestDtoToAddressDetailsEntity(addNewAnnouncementRequest);
         return this.addressDetailsRepository.save(addressDetails);
     }
 
     @Override
     public GetAnnouncementWithAllDetailsResponse getAnnouncementWithAllDetails(Long announcementId) throws AnnouncementNotFoundException {
+        log.info("Started retrieving announcement details with provided id - " + announcementId);
         var announcement = this.announcementRepository.findById(announcementId);
         if (announcement.isEmpty())
             throw new AnnouncementNotFoundException();
 
-        return this.buildResponse(announcement.get());
+        var getAnnouncementWithDetailsResponse = this.buildResponse(announcement.get());
+
+        log.info("Successfully retrieved announcement details - " + getAnnouncementWithDetailsResponse);
+        return getAnnouncementWithDetailsResponse;
     }
 
     private GetAnnouncementWithAllDetailsResponse buildResponse(AnnouncementEntity announcement) {
@@ -151,15 +147,15 @@ public class AnnouncementServiceImpl implements AnnouncementService {
                 .creationDate(announcement.getCreationDate())
                 .userId(announcement.getUserId())
                 .isClosed(announcement.getIsClosed())
+                .district(announcement.getDistrict())
+                .city(announcement.getCity())
                 .title(announcementDetails.getTitle())
                 .mainPhotoPath(announcementDetails.getMainPhotoPath())
                 .roomsNumber(announcementDetails.getRoomsNumber())
                 .rentalTerm(announcementDetails.getRentalTerm())
                 .caution(announcementDetails.getCaution())
                 .rentalAmount(announcementDetails.getRentalAmount())
-                .city(addressDetails.getCity())
                 .street(addressDetails.getStreet())
-                .district(addressDetails.getDistrict())
                 .zipCode(addressDetails.getZipCode())
                 .buildingNumber(addressDetails.getBuildingNumber())
                 .localNumber(addressDetails.getLocalNumber())
@@ -175,6 +171,8 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     public UpdateAnnouncementResponse updateAnnouncement(UpdateAnnouncementRequest updateAnnouncementRequest,
                                                          Long announcementId,
                                                          Long requesterId) throws AnnouncementNotFoundException, ClosedAnnouncementException {
+        log.info("Started updating announcement with id - " + announcementId + " By user with id - " + requesterId);
+
         var announcement = this.announcementRepository.findById(announcementId);
         if (announcement.isEmpty() || !isUserIdValid(announcement.get().getUserId(), requesterId))
             throw new AnnouncementNotFoundException();
@@ -183,12 +181,21 @@ public class AnnouncementServiceImpl implements AnnouncementService {
 
         this.updateAnnouncementEntity(announcement.get(), updateAnnouncementRequest);
 
-        return this.announcementMapper.updateAnnouncementRequestToUpdateAnnouncementResponse(updateAnnouncementRequest);
+        var updateAnnouncementResponse = this.announcementMapper.updateAnnouncementRequestToUpdateAnnouncementResponse(updateAnnouncementRequest);
+
+        log.info("Successfully updated announcement with id " + announcementId + ": " + updateAnnouncementResponse);
+        return updateAnnouncementResponse;
     }
 
     private void updateAnnouncementEntity(AnnouncementEntity announcement,
                                           UpdateAnnouncementRequest updateAnnouncementRequest) {
 
+        var district = updateAnnouncementRequest.getDistrict();
+        if (!Objects.isNull(district))
+            announcement.setDistrict(district);
+        var city = updateAnnouncementRequest.getCity();
+        if (!Objects.isNull(city))
+            announcement.setCity(city);
         var announcementDetails = announcement.getAnnouncementDetailsEntity();
         this.updateAnnouncementDetailsEntity(announcementDetails, updateAnnouncementRequest);
         announcement.setAnnouncementDetailsEntity(announcementDetails);
@@ -249,15 +256,9 @@ public class AnnouncementServiceImpl implements AnnouncementService {
 
     private void updateAddressDetailsEntity(AddressDetailsEntity addressDetails,
                                             UpdateAnnouncementRequest updateAnnouncementRequest) {
-        var city = updateAnnouncementRequest.getCity();
-        if (!Objects.isNull(city))
-            addressDetails.setCity(city);
         var street = updateAnnouncementRequest.getStreet();
         if (!Objects.isNull(street))
             addressDetails.setStreet(street);
-        var district = updateAnnouncementRequest.getDistrict();
-        if (!Objects.isNull(district))
-            addressDetails.setDistrict(district);
         var zipCode = updateAnnouncementRequest.getZipCode();
         if (!Objects.isNull(zipCode))
             addressDetails.setZipCode(zipCode);
@@ -273,11 +274,15 @@ public class AnnouncementServiceImpl implements AnnouncementService {
 
     @Override
     public void closeAnnouncement(Long announcementId, Long requesterId) throws AnnouncementNotFoundException {
+        log.info("Started closing announcement with id - " + announcementId + " by user with id - " + requesterId);
+
         var announcement = this.announcementRepository.findById(announcementId);
         if (announcement.isEmpty() || !isUserIdValid(announcement.get().getUserId(), requesterId))
             throw new AnnouncementNotFoundException();
 
         announcement.get().setIsClosed(true);
+
+        log.info("Successfully closed announcement with id - " + announcementId + " by user with id - " + requesterId);
         this.announcementRepository.save(announcement.get());
     }
 

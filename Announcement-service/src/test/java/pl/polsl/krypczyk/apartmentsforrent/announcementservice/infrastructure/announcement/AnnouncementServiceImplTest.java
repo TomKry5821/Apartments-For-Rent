@@ -13,7 +13,6 @@ import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announceme
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.excpetion.InvalidUserIdException;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.application.announcement.request.AddNewAnnouncementRequest;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.application.announcement.request.UpdateAnnouncementRequest;
-import pl.polsl.krypczyk.apartmentsforrent.announcementservice.application.announcement.response.AddNewAnnouncementResponse;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.application.announcement.response.GetAnnouncementWithAllDetailsResponse;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.application.announcement.response.UpdateAnnouncementResponse;
 
@@ -65,7 +64,7 @@ class AnnouncementServiceImplTest {
     }
 
     @Test
-    void testAddNewAnnouncement() throws InvalidUserIdException {
+    void testAddNewAnnouncement_WithValidRequestBody() throws InvalidUserIdException {
         //GIVEN
         var addNewAnnouncementRequest = validAnnouncementRequest();
 
@@ -78,6 +77,20 @@ class AnnouncementServiceImplTest {
         assertFalse(this.announcementRepository.findAll().isEmpty());
 
     }
+
+    @Test
+    void testAddNewAnnouncement_WithInvalidRequestBody() {
+        //GIVEN
+        var addNewAnnouncementRequest = validAnnouncementRequest();
+
+        //WHEN
+        addNewAnnouncementRequest.setUserId(100L);
+
+        //THEN
+        assertThrows(InvalidUserIdException.class, () ->
+                this.announcementService.addNewAnnouncement(addNewAnnouncementRequest, 1L));
+    }
+
 
     @Test
     void testGetAnnouncementWithAllDetails_WithValidAnnouncementId() throws InvalidUserIdException, AnnouncementNotFoundException {
@@ -134,6 +147,19 @@ class AnnouncementServiceImplTest {
     }
 
     @Test
+    void testUpdateAnnouncement_WithClosedAnnouncement() throws InvalidUserIdException, AnnouncementNotFoundException {
+        //GIVEN
+        var updateAnnouncementRequest = validUpdateAnnouncementRequest();
+        var addNewAnnouncementRequest = validAnnouncementRequest();
+        var addNewAnnouncementResponse = this.announcementService.addNewAnnouncement(addNewAnnouncementRequest, addNewAnnouncementRequest.getUserId());
+        this.announcementService.closeAnnouncement(addNewAnnouncementResponse.getAnnouncementId(), 1L);
+
+        //WHEN AND THEN
+        Assertions.assertThrows(ClosedAnnouncementException.class, () ->
+                this.announcementService.updateAnnouncement(updateAnnouncementRequest, addNewAnnouncementResponse.getAnnouncementId(), 1L));
+    }
+
+    @Test
     void testCloseAnnouncement_WithValidUserId() throws InvalidUserIdException, AnnouncementNotFoundException {
         //GIVEN
         validUpdateAnnouncementRequest();
@@ -176,28 +202,6 @@ class AnnouncementServiceImplTest {
                 .zipCode("11-111")
                 .rentalTerm(LocalDate.now())
                 .userId(1L)
-                .build();
-    }
-
-    private AddNewAnnouncementResponse validAnnouncementResponse() {
-        return AddNewAnnouncementResponse.builder()
-                .city("City")
-                .caution(BigDecimal.valueOf(10.55))
-                .content("Content")
-                .district("District")
-                .localNumber(1)
-                .buildingNumber("1A")
-                .street("Street")
-                .title("Title")
-                .photoPaths(List.of("test", "test2"))
-                .mainPhotoPath("path")
-                .rentalAmount(BigDecimal.valueOf(10.55))
-                .roomsNumber(1)
-                .zipCode("11-111")
-                .rentalTerm(null)
-                .userId(1L)
-                .creationDate(null)
-                .isClosed(false)
                 .build();
     }
 

@@ -1,6 +1,7 @@
 package pl.polsl.krypczyk.apartmentsforrent.userservice.infrastructure.authorization;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.mapstruct.factory.Mappers;
 import org.springframework.stereotype.Service;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.application.authorization.AES;
@@ -25,6 +26,7 @@ import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.userdetails.UserDe
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.userdetails.UserDetailsRepository;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -32,6 +34,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class AuthorizationServiceImpl implements AuthorizationService {
     private final UserRepository userRepository;
     private final UserDetailsRepository userDetailsRepository;
@@ -39,7 +42,10 @@ public class AuthorizationServiceImpl implements AuthorizationService {
     private final RoleRepository roleRepository;
     private final UserMapper userMapper = Mappers.getMapper(UserMapper.class);
 
+    @Override
     public CreateUserResponse registerNewUser(CreateUserRequest createUserRequest) throws BadCredentialsException, UserAlreadyExistsException {
+        log.info("Started creating new user with details - " + createUserRequest);
+
         if (Objects.isNull(createUserRequest))
             throw new BadCredentialsException();
         if (this.userAlreadyExists(createUserRequest.getEmail()))
@@ -50,12 +56,10 @@ public class AuthorizationServiceImpl implements AuthorizationService {
         var userAuthorization = createAndSaveUserAuthorization(role);
         var user = this.createAndSaveUserEntity(userDetails, userAuthorization);
 
-        return new CreateUserResponse(createUserRequest.getEmail(), userAuthorization.getToken(),
-                userAuthorization.getRoles()
-                        .stream()
-                        .map(RoleEntity::getName).collect(Collectors.toList()),
-                user.getId()
-        );
+        var createUserResponse = this.buildCreateUserResponse(createUserRequest, userAuthorization, user.getId());
+
+        log.info("Successfully created user - " + createUserResponse);
+        return createUserResponse;
     }
 
     private Boolean userAlreadyExists(String email) {
@@ -66,6 +70,21 @@ public class AuthorizationServiceImpl implements AuthorizationService {
         var role = new RoleEntity("ROLE_USER");
         this.roleRepository.save(role);
         return role;
+    }
+
+    private CreateUserResponse buildCreateUserResponse(CreateUserRequest createUserRequest,
+                                                       UserAuthorizationEntity userAuthorization,
+                                                       Long userId) {
+        return CreateUserResponse
+                .builder()
+                .email(createUserRequest.getEmail())
+                .accessToken(userAuthorization.getToken())
+                .roles(userAuthorization.getRoles()
+                        .stream()
+                        .map(RoleEntity::getName).collect(Collectors.toList()))
+                .id(userId)
+                .creationDate(LocalDateTime.now())
+                .build();
     }
 
     private UserAuthorizationEntity createAndSaveUserAuthorization(RoleEntity roleEntity) {
@@ -97,6 +116,7 @@ public class AuthorizationServiceImpl implements AuthorizationService {
 
     @Override
     public LoginUserResponse loginUser(UserLoginRequest userLoginRequest) throws BadCredentialsException, InactiveAccountException, UserNotFoundException {
+        log.info("Started logging user with details -" + userLoginRequest);
         if (Objects.isNull(userLoginRequest))
             throw new BadCredentialsException();
 
@@ -109,8 +129,10 @@ public class AuthorizationServiceImpl implements AuthorizationService {
         var userAuthorization = user.getUserAuthorizationEntity();
         this.updateAccessToken(userAuthorization);
 
-        return new LoginUserResponse(userAuthorization.getToken(), userDetails.getEmail(), userAuthorization.getRoles().stream()
-                .map(RoleEntity::getName).collect(Collectors.toList()), user.getId());
+        var loginUserResponse = this.buildLoginUserResponse(userAuthorization.getToken(), userDetails.getEmail(), userAuthorization.getRoles(), user.getId());
+
+        log.info("Successfully logged user - " + loginUserResponse);
+        return loginUserResponse;
     }
 
     private UserDetailsEntity retrieveUserDetailsByEmailAndPassword(String email, String password) throws UserNotFoundException {
@@ -126,14 +148,32 @@ public class AuthorizationServiceImpl implements AuthorizationService {
         this.userAuthorizationRepository.save(userAuthorization);
     }
 
+    private LoginUserResponse buildLoginUserResponse(UUID accessToken,
+                                                     String email,
+                                                     Collection<RoleEntity> roles,
+                                                     Long userId) {
+        return LoginUserResponse
+                .builder()
+                .accessToken(accessToken)
+                .email(email)
+                .roles(roles.stream()
+                        .map(RoleEntity::getName).collect(Collectors.toList()))
+                .id(userId)
+                .build();
+    }
+
     @Override
     public void logoutUser(Long userId) throws InactiveAccountException, UserNotFoundException {
+        log.info("Started logout user with id - " + userId);
+
         var user = this.findUserByUserId(userId);
         var userDetails = user.getUserDetailsEntity();
         if (this.isAccountInactive(userDetails))
             throw new InactiveAccountException();
         var userAuthorization = user.getUserAuthorizationEntity();
         this.resetUserAccessToken(userAuthorization);
+
+        log.info("Successfully logged out user with id - " + userId);
     }
 
     private Boolean isAccountInactive(UserDetailsEntity userDetails) {
@@ -155,17 +195,25 @@ public class AuthorizationServiceImpl implements AuthorizationService {
 
     @Override
     public void authorizeUser(Long userId, Long requesterId) throws UnauthorizedUserException {
+        log.info("Started user authorization with provided id - " + userId);
+
         var user = this.userRepository.findUserEntityById(userId);
         if (Objects.isNull(user) || !userId.equals(requesterId))
             throw new UnauthorizedUserException();
+
+        log.info("Successfully authorized user with provided id - " + userId);
     }
 
     @Override
     public void authorizeAdmin(Long requesterId) throws UnauthorizedUserException {
+        log.info("Started admin authorization with provided id - " + requesterId);
+
         var user = this.userRepository.findUserEntityById(requesterId);
         if (user.getUserAuthorizationEntity().getRoles()
                 .stream()
                 .noneMatch(r -> r.getName().equals("ROLE_ADMIN")))
             throw new UnauthorizedUserException();
+
+        log.info("Successfully authorized admin with provided id - " + requesterId);
     }
 }

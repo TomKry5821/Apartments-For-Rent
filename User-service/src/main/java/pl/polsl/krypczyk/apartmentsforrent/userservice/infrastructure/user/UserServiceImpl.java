@@ -1,12 +1,13 @@
 package pl.polsl.krypczyk.apartmentsforrent.userservice.infrastructure.user;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.mapstruct.factory.Mappers;
 import org.springframework.stereotype.Service;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.application.authorization.AES;
-import pl.polsl.krypczyk.apartmentsforrent.userservice.application.userdetails.request.ChangeUserDetailsRequest;
-import pl.polsl.krypczyk.apartmentsforrent.userservice.application.userdetails.response.ChangeUserDetailsResponse;
-import pl.polsl.krypczyk.apartmentsforrent.userservice.application.userdetails.response.GetUserDetailsResponse;
+import pl.polsl.krypczyk.apartmentsforrent.userservice.application.authorization.userdetails.request.ChangeUserDetailsRequest;
+import pl.polsl.krypczyk.apartmentsforrent.userservice.application.authorization.userdetails.response.ChangeUserDetailsResponse;
+import pl.polsl.krypczyk.apartmentsforrent.userservice.application.authorization.userdetails.response.GetUserDetailsResponse;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.authorization.exception.InactiveAccountException;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.user.UserMapper;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.user.UserRepository;
@@ -22,6 +23,7 @@ import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
@@ -30,6 +32,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public GetUserDetailsResponse getUserDetails(Long userId) throws UserNotFoundException, InactiveAccountException {
+        log.info("Started retrieving user details with provided id - " + userId);
+
         var user = this.userRepository.findUserEntityById(userId);
         if (Objects.isNull(user))
             throw new UserNotFoundException();
@@ -40,11 +44,15 @@ public class UserServiceImpl implements UserService {
 
         var getUserDetailsResponse = userMapper.UserDetailsEntityToUserDetailsDTO(userDetails);
         getUserDetailsResponse.setPassword(AES.decrypt(userDetails.getPassword()));
+
+        log.info("successfully retrieved user details - " + getUserDetailsResponse);
         return getUserDetailsResponse;
     }
 
     @Override
     public ChangeUserDetailsResponse changeUserDetails(ChangeUserDetailsRequest changeUserDetailsRequest, Long userId) throws InvalidUserDetailsException, UserNotFoundException, InactiveAccountException, UserAlreadyExistsException {
+        log.info("Started updating user details with provided id - " + userId);
+
         if (Objects.isNull(changeUserDetailsRequest) || Objects.isNull(userId) || userId < 1)
             throw new InvalidUserDetailsException();
 
@@ -57,7 +65,10 @@ public class UserServiceImpl implements UserService {
             throw new InactiveAccountException();
 
         this.changeAndSaveUserDetails(userDetails, changeUserDetailsRequest);
-        return this.userMapper.ChangeUserDetailsRequestToChangeUserDetailsResponse(changeUserDetailsRequest);
+        var changeUserDetailsResponse = this.userMapper.ChangeUserDetailsRequestToChangeUserDetailsResponse(changeUserDetailsRequest);
+
+        log.info("Successfully updated user data - " + changeUserDetailsResponse);
+        return changeUserDetailsResponse;
     }
 
     private void changeAndSaveUserDetails(UserDetailsEntity userDetailsEntity, ChangeUserDetailsRequest changeUserDetailsRequest) throws UserAlreadyExistsException {
@@ -84,6 +95,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void inactivateAccount(Long userId) throws UserNotFoundException, InactiveAccountException {
+        log.info("Started inactivating account with user id - " + userId);
+
         var user = this.userRepository.findUserEntityById(userId);
         if (Objects.isNull(user))
             throw new UserNotFoundException();
@@ -94,6 +107,8 @@ public class UserServiceImpl implements UserService {
 
         userDetails.setIsActive(false);
         this.userDetailsRepository.save(userDetails);
+
+        log.info("Successfully inactivated account with user id - " + userId);
     }
 
     private Boolean isAccountActive(UserDetailsEntity userDetails) {
