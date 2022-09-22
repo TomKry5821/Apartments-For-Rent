@@ -18,13 +18,13 @@ public class GatewayApplication {
     private final AdminRoleAuthGatewayFilterFactory adminRoleAuthGatewayFilterFactory;
 
     @Value("${userHost}")
-    private final String USER_HOST;
+    private String USER_HOST;
 
     @Value("${announcementHost}")
-    private final String ANNOUNCEMENT_HOST;
+    private String ANNOUNCEMENT_HOST;
 
     @Value("${messageHost}")
-    private final String MESSAGE_HOST;
+    private String MESSAGE_HOST;
 
     @Bean
     public RouteLocator customRouteLocator(RouteLocatorBuilder builder) {
