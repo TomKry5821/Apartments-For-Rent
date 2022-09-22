@@ -9,8 +9,6 @@ import pl.polsl.krypczyk.apartmentsforrent.gateway.userdetails.UserDetailsEntity
 
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.Collection;
 
 @Getter
 @Setter
@@ -25,11 +23,11 @@ public class UserEntity {
     @Column(name = "ID")
     private Long id;
 
-    @OneToOne(orphanRemoval = true, optional = false)
+    @OneToOne(orphanRemoval = true, optional = false, fetch = FetchType.EAGER)
     @JoinColumn(name = "USER_DETAILS_ID", referencedColumnName = "ID", nullable = false)
     private UserDetailsEntity userDetailsEntity;
 
-    @OneToOne(orphanRemoval = true, optional = false)
+    @OneToOne(orphanRemoval = true, optional = false, fetch = FetchType.EAGER)
     @JoinColumn(name = "USER_AUTHORIZATION_ID", referencedColumnName = "ID", nullable = false)
     private UserAuthorizationEntity userAuthorizationEntity;
 }
