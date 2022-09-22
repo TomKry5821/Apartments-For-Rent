@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/Announcement-service/Announcement-service.iml" filepath="$PROJECT_DIR$/Announcement-service/Announcement-service.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Apartments-for-rent-gateway/Gateway-service.iml" filepath="$PROJECT_DIR$/Apartments-for-rent-gateway/Gateway-service.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Message-service/Message-service.iml" filepath="$PROJECT_DIR$/Message-service/Message-service.iml" />
+      <module fileurl="file://$PROJECT_DIR$/User-service/User-service.iml" filepath="$PROJECT_DIR$/User-service/User-service.iml" />
+    </modules>
+  </component>
+</project>

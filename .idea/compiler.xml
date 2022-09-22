@@ -7,15 +7,19 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="Apartments-for-rent-message" />
-        <module name="Apartments-for-rent-gateway" />
         <module name="Apartments-for-rent-ga" />
-        <module name="Apartments-for-rent-user" />
-        <module name="Apartments-for-rent-announcement" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
+      <module name="Announcement-service" target="17" />
+      <module name="Apartments-for-rent-announcement" target="18" />
       <module name="Apartments-for-rent-ga" target="18" />
+      <module name="Apartments-for-rent-gateway" target="18" />
+      <module name="Apartments-for-rent-message" target="18" />
+      <module name="Apartments-for-rent-user" target="18" />
+      <module name="Gateway-service" target="18" />
+      <module name="Message-service" target="17" />
+      <module name="User-service" target="17" />
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
