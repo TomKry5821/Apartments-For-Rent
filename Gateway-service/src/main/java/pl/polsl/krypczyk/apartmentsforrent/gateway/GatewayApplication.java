@@ -1,6 +1,7 @@
 package pl.polsl.krypczyk.apartmentsforrent.gateway;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.gateway.route.RouteLocator;
@@ -16,6 +17,15 @@ public class GatewayApplication {
     private final UserRoleAuthGatewayFilterFactory userRoleAuthGatewayFilterFactory;
     private final AdminRoleAuthGatewayFilterFactory adminRoleAuthGatewayFilterFactory;
 
+    @Value("${userHost}")
+    private final String USER_HOST;
+
+    @Value("${announcementHost}")
+    private final String ANNOUNCEMENT_HOST;
+
+    @Value("${messageHost}")
+    private final String MESSAGE_HOST;
+
     @Bean
     public RouteLocator customRouteLocator(RouteLocatorBuilder builder) {
 
@@ -24,22 +34,32 @@ public class GatewayApplication {
                         .path("/user/api/v1/admin/**")
                         .filters(f ->
                                 f.filter(adminRoleAuthGatewayFilterFactory.apply(new AdminRoleAuthGatewayFilterFactory.Config())))
-                        .uri("http://User:8081"))
+                        .uri("http://" + USER_HOST))
                 .route(r -> r
                         .path("/user/api/v1/**")
                         .filters(f ->
                                 f.filter(userRoleAuthGatewayFilterFactory.apply(new UserRoleAuthGatewayFilterFactory.Config())))
-                        .uri("http://User:8081"))
+                        .uri("http://" + USER_HOST))
+                .route(r -> r
+                        .path("/announcement/api/admin/v1/**")
+                        .filters(f ->
+                                f.filter(userRoleAuthGatewayFilterFactory.apply(new UserRoleAuthGatewayFilterFactory.Config())))
+                        .uri("http://" + ANNOUNCEMENT_HOST))
                 .route(r -> r
                         .path("/announcement/api/v1/**")
                         .filters(f ->
-                                f.filter(userRoleAuthGatewayFilterFactory.apply(new UserRoleAuthGatewayFilterFactory.Config())))
-                        .uri("http://Announcement:8082"))
+                                f.filter(adminRoleAuthGatewayFilterFactory.apply(new AdminRoleAuthGatewayFilterFactory.Config())))
+                        .uri("http://" + ANNOUNCEMENT_HOST))
+                .route(r -> r
+                        .path("/message/api/admin/v1/**")
+                        .filters(f ->
+                                f.filter(adminRoleAuthGatewayFilterFactory.apply(new AdminRoleAuthGatewayFilterFactory.Config())))
+                        .uri("http://" + MESSAGE_HOST))
                 .route(r -> r
                         .path("/message/api/v1/**")
                         .filters(f ->
                                 f.filter(userRoleAuthGatewayFilterFactory.apply(new UserRoleAuthGatewayFilterFactory.Config())))
-                        .uri("http://Message:8083"))
+                        .uri("http://" + MESSAGE_HOST))
                 .build();
     }
 
