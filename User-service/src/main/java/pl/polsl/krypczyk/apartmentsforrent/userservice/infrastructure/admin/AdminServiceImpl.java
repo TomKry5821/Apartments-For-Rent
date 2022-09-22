@@ -1,6 +1,7 @@
 package pl.polsl.krypczyk.apartmentsforrent.userservice.infrastructure.admin;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.mapstruct.factory.Mappers;
 import org.springframework.stereotype.Service;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.application.authorization.AES;
@@ -25,6 +26,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class AdminServiceImpl implements AdminService {
 
     private final UserRepository userRepository;
@@ -33,24 +35,30 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     public Collection<UserDTO> getAllUsers() {
+        log.info("Started retrieving all users");
+
         var users = this.userRepository.findAll();
         Collection<UserDTO> userDTOS = new ArrayList<>();
         users.forEach(u -> userDTOS.add(this.buildUserDTO(u)));
 
+        log.info("Successfully retrieved all users");
         return userDTOS;
     }
 
     @Override
     public void deleteUser(Long userId) throws UserNotFoundException {
+        log.info("Started deleting user with id - " + userId);
         var user = this.userRepository.findUserEntityById(userId);
         if (Objects.isNull(user))
             throw new UserNotFoundException();
 
         this.userRepository.delete(user);
+        log.info("Started deleting user with id - " + userId);
     }
 
     @Override
     public ChangeUserDetailsResponse changeUserDetails(ChangeUserDetailsRequest changeUserDetailsRequest, Long userId) throws InvalidUserDetailsException, UserNotFoundException, InactiveAccountException {
+        log.info("Started updating user details with user id - " + userId);
         if (Objects.isNull(changeUserDetailsRequest) || Objects.isNull(userId) || userId < 1)
             throw new InvalidUserDetailsException();
 
@@ -63,7 +71,10 @@ public class AdminServiceImpl implements AdminService {
             throw new InactiveAccountException();
 
         this.changeAndSaveUserDetails(userDetails, changeUserDetailsRequest);
-        return this.userMapper.ChangeUserDetailsRequestToChangeUserDetailsResponse(changeUserDetailsRequest);
+        var changeUserDetailsResponse = this.userMapper.ChangeUserDetailsRequestToChangeUserDetailsResponse(changeUserDetailsRequest);
+
+        log.info("Successfully updated user - " + changeUserDetailsResponse);
+        return changeUserDetailsResponse;
     }
 
     private void changeAndSaveUserDetails(UserDetailsEntity userDetailsEntity, ChangeUserDetailsRequest changeUserDetailsRequest) {
