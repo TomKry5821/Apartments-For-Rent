@@ -1,4 +1,4 @@
-package pl.polsl.krypczyk.apartmentsforrent.userservice.application.userdetails.response;
+package pl.polsl.krypczyk.apartmentsforrent.userservice.application.authorization.userdetails.response;
 
 import lombok.Builder;
 import lombok.Data;

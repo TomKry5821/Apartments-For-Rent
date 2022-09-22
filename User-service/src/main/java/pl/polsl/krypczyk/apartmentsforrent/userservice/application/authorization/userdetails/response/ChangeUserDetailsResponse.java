@@ -1,4 +1,4 @@
-package pl.polsl.krypczyk.apartmentsforrent.userservice.application.userdetails.request;
+package pl.polsl.krypczyk.apartmentsforrent.userservice.application.authorization.userdetails.response;
 
 import lombok.Builder;
 import lombok.Data;
@@ -8,7 +8,7 @@ import javax.validation.constraints.NotNull;
 @Data
 @NotNull
 @Builder
-public class ChangeUserDetailsRequest {
+public class ChangeUserDetailsResponse {
 
     private String name;
 
