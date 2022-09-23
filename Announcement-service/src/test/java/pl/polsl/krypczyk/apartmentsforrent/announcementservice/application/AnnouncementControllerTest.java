@@ -192,6 +192,40 @@ class AnnouncementControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
+    @Test
+    void testObserveAnnouncement_WithValidUserIdAndValidAnnouncementId_ShouldReturn201() throws Exception {
+        this.createAnnouncement();
+
+        mvc.perform(
+                        post("/announcement/api/v1/announcements/1/observe/1")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .header("requester-user-id",1L))
+                .andExpect(status().isCreated());
+    }
+
+    @Test
+    void testObserveAnnouncement_WithInvalidUserIdAndValidAnnouncementId_ShouldReturn400() throws Exception {
+        this.createAnnouncement();
+
+        mvc.perform(
+                        post("/announcement/api/v1/announcements/1/observe/100")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .header("requester-user-id",1L))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void testObserveAnnouncement_WithValidUserIdAndInvalidAnnouncementId_ShouldReturn400() throws Exception {
+        this.createAnnouncement();
+
+        mvc.perform(
+                        post("/announcement/api/v1/announcements/100/observe/1")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .header("requester-user-id",1L))
+                .andExpect(status().isBadRequest());
+    }
+
+
     private void createAnnouncement() throws Exception {
         mvc.perform(
                 post("/announcement/api/v1/announcements")
