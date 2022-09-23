@@ -25,6 +25,7 @@ import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announceme
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcementcontent.AnnouncementContentRepository;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.observedannouncement.ObservedAnnouncementEntity;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.observedannouncement.ObservedAnnouncementRepository;
+import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.observedannouncement.exception.AnnouncementAlreadyObservedException;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.photopath.PhotoPathEntity;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.photopath.PhotoPathRepository;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcementdetails.AnnouncementDetailsEntity;
@@ -286,16 +287,15 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     }
 
     @Override
-    public ObserveAnnouncementResponse observeAnnouncement(Long announcementId, Long userId, Long requesterId) throws InvalidUserIdException, AnnouncementNotFoundException {
+    public ObserveAnnouncementResponse observeAnnouncement(Long announcementId, Long userId, Long requesterId) throws InvalidUserIdException, AnnouncementNotFoundException, AnnouncementAlreadyObservedException {
         log.info("Started observing announcement with id - " + announcementId + " by user with id - " + userId);
         this.checkIsUserIdValidElseThrowInvalidUser(userId, requesterId);
 
         var announcement = this.getAnnouncementOrThrowAnnouncementNotFound(announcementId);
+        if (this.observedAnnouncementRepository.existsByAnnouncementEntityAndAndObservingUserId(announcement, userId))
+            throw new AnnouncementAlreadyObservedException();
 
-        var observedAnnouncement = new ObservedAnnouncementEntity();
-        observedAnnouncement.setObservingUserId(userId);
-        observedAnnouncement.setAnnouncementEntity(announcement);
-        this.observedAnnouncementRepository.save(observedAnnouncement);
+        this.buildAndSaveObservedAnnouncement(announcement, userId);
 
         log.info("Successfully observed announcement with id - " + announcementId + " by user with id - " + userId);
         return this.buildObserveAnnouncementResponse(userId, announcementId);
@@ -311,6 +311,13 @@ public class AnnouncementServiceImpl implements AnnouncementService {
         if (announcement.isEmpty())
             throw new AnnouncementNotFoundException();
         return announcement.get();
+    }
+
+    private void buildAndSaveObservedAnnouncement(AnnouncementEntity announcement, Long userId) {
+        var observedAnnouncement = new ObservedAnnouncementEntity();
+        observedAnnouncement.setObservingUserId(userId);
+        observedAnnouncement.setAnnouncementEntity(announcement);
+        this.observedAnnouncementRepository.save(observedAnnouncement);
     }
 
     private ObserveAnnouncementResponse buildObserveAnnouncementResponse(Long userId, Long announcementId) {
