@@ -53,3 +53,4 @@ dependency-reduced-pom.xml
 #properties
 .properties
 
+/src/main/resources/application.properties

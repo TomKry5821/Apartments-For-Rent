@@ -9,7 +9,6 @@ import pl.polsl.krypczyk.apartmentsforrent.userservice.application.authorization
 import pl.polsl.krypczyk.apartmentsforrent.userservice.application.authorization.userdetails.response.ChangeUserDetailsResponse;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.admin.AdminService;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.application.admin.dto.UserDTO;
-import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.authorization.exception.InactiveAccountException;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.role.RoleEntity;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.user.UserEntity;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.user.UserMapper;
@@ -57,7 +56,7 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public ChangeUserDetailsResponse changeUserDetails(ChangeUserDetailsRequest changeUserDetailsRequest, Long userId) throws InvalidUserDetailsException, UserNotFoundException, InactiveAccountException {
+    public ChangeUserDetailsResponse changeUserDetails(ChangeUserDetailsRequest changeUserDetailsRequest, Long userId) throws InvalidUserDetailsException, UserNotFoundException {
         log.info("Started updating user details with user id - " + userId);
         if (Objects.isNull(changeUserDetailsRequest) || Objects.isNull(userId) || userId < 1)
             throw new InvalidUserDetailsException();
@@ -67,8 +66,6 @@ public class AdminServiceImpl implements AdminService {
             throw new UserNotFoundException();
 
         var userDetails = user.getUserDetailsEntity();
-        if (this.isAccountInactive(userDetails))
-            throw new InactiveAccountException();
 
         this.changeAndSaveUserDetails(userDetails, changeUserDetailsRequest);
         var changeUserDetailsResponse = this.userMapper.ChangeUserDetailsRequestToChangeUserDetailsResponse(changeUserDetailsRequest);
@@ -94,10 +91,6 @@ public class AdminServiceImpl implements AdminService {
         }
 
         this.userDetailsRepository.save(userDetailsEntity);
-    }
-
-    private Boolean isAccountInactive(UserDetailsEntity userDetails) {
-        return userDetails.getIsActive().equals(false);
     }
 
     private UserDTO buildUserDTO(UserEntity user) {
