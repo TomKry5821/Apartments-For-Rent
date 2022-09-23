@@ -1,6 +1,7 @@
 package pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement;
 
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.application.announcement.dto.AnnouncementDTO;
+import pl.polsl.krypczyk.apartmentsforrent.announcementservice.application.announcement.response.ObserveAnnouncementResponse;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.excpetion.AnnouncementNotFoundException;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.excpetion.ClosedAnnouncementException;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.excpetion.InvalidUserIdException;
@@ -22,8 +23,10 @@ public interface AnnouncementService {
 
     UpdateAnnouncementResponse updateAnnouncement(UpdateAnnouncementRequest updateAnnouncementRequest,
                                                   Long announcementId,
-                                                  Long requesterId) throws AnnouncementNotFoundException, ClosedAnnouncementException;
+                                                  Long requesterId) throws AnnouncementNotFoundException, ClosedAnnouncementException, InvalidUserIdException;
 
-    void closeAnnouncement(Long announcementId, Long requesterId) throws AnnouncementNotFoundException;
+    void closeAnnouncement(Long announcementId, Long requesterId) throws AnnouncementNotFoundException, InvalidUserIdException;
+
+    ObserveAnnouncementResponse observeAnnouncement(Long announcementId, Long userId, Long requesterId) throws InvalidUserIdException, AnnouncementNotFoundException;
 
 }
