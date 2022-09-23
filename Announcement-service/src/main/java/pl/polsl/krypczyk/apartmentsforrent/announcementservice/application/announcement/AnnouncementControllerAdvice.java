@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.excpetion.AnnouncementNotFoundException;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.excpetion.ClosedAnnouncementException;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.excpetion.InvalidUserIdException;
+import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.observedannouncement.exception.AnnouncementAlreadyObservedException;
 
 @ControllerAdvice
 @Slf4j
@@ -48,6 +49,14 @@ public class AnnouncementControllerAdvice {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
     public String handleException(InvalidUserIdException e) {
+        log.error(e.getMessage());
+        return e.getMessage();
+    }
+
+    @ExceptionHandler(AnnouncementAlreadyObservedException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseBody
+    public String handleException(AnnouncementAlreadyObservedException e) {
         log.error(e.getMessage());
         return e.getMessage();
     }
