@@ -43,12 +43,12 @@ public class GatewayApplication {
                 .route(r -> r
                         .path("/announcement/api/admin/v1/**")
                         .filters(f ->
-                                f.filter(userRoleAuthGatewayFilterFactory.apply(new UserRoleAuthGatewayFilterFactory.Config())))
+                                f.filter(adminRoleAuthGatewayFilterFactory.apply(new AdminRoleAuthGatewayFilterFactory.Config())))
                         .uri("http://" + ANNOUNCEMENT_HOST))
                 .route(r -> r
                         .path("/announcement/api/v1/**")
                         .filters(f ->
-                                f.filter(adminRoleAuthGatewayFilterFactory.apply(new AdminRoleAuthGatewayFilterFactory.Config())))
+                                f.filter(userRoleAuthGatewayFilterFactory.apply(new UserRoleAuthGatewayFilterFactory.Config())))
                         .uri("http://" + ANNOUNCEMENT_HOST))
                 .route(r -> r
                         .path("/message/api/admin/v1/**")

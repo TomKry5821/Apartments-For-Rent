@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.AnnouncementEntity;
 
 import javax.persistence.*;
@@ -24,6 +26,7 @@ public class ObservedAnnouncementEntity {
 
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "ANNOUNCEMENT_ID", referencedColumnName = "ID")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private AnnouncementEntity announcementEntity;
 
     @Column(name = "OBSERVING_USER_ID", nullable = false)

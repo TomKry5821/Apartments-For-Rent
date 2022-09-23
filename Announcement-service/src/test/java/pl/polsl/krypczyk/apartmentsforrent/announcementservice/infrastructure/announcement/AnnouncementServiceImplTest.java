@@ -5,6 +5,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
+import pl.polsl.krypczyk.apartmentsforrent.announcementservice.application.announcement.response.ObserveAnnouncementResponse;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.AnnouncementRepository;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.AnnouncementService;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.application.announcement.dto.AnnouncementDTO;
@@ -142,7 +144,7 @@ class AnnouncementServiceImplTest {
         var addNewAnnouncementResponse = this.announcementService.addNewAnnouncement(addNewAnnouncementRequest, addNewAnnouncementRequest.getUserId());
 
         //WHEN AND THEN
-        Assertions.assertThrows(AnnouncementNotFoundException.class, () ->
+        Assertions.assertThrows(InvalidUserIdException.class, () ->
                 this.announcementService.updateAnnouncement(updateAnnouncementRequest, addNewAnnouncementResponse.getAnnouncementId(), 0L));
     }
 
@@ -181,8 +183,43 @@ class AnnouncementServiceImplTest {
         var addNewAnnouncementResponse = this.announcementService.addNewAnnouncement(addNewAnnouncementRequest, addNewAnnouncementRequest.getUserId());
 
         //WHEN AND THEN
-        Assertions.assertThrows(AnnouncementNotFoundException.class, () ->
+        Assertions.assertThrows(InvalidUserIdException.class, () ->
                 this.announcementService.closeAnnouncement(addNewAnnouncementResponse.getAnnouncementId(), 0L));
+    }
+
+    @Test
+    void testObserveAnnouncement_WithValidUserIdAndValidAnnouncementId() throws InvalidUserIdException, AnnouncementNotFoundException {
+        //GIVEN
+        var addNewAnnouncementRequest = validAnnouncementRequest();
+        var addNewAnnouncementResponse = this.announcementService.addNewAnnouncement(addNewAnnouncementRequest, addNewAnnouncementRequest.getUserId());
+        var expected = this.validObserveAnnouncementResponse(addNewAnnouncementResponse.getAnnouncementId(), addNewAnnouncementResponse.getUserId());
+
+        //WHEN
+        var actual = this.announcementService.observeAnnouncement(addNewAnnouncementResponse.getAnnouncementId(), addNewAnnouncementResponse.getUserId(), addNewAnnouncementResponse.getUserId());
+        //THEN
+        Assertions.assertEquals(expected, actual);
+    }
+
+    @Test
+    void testObserveAnnouncement_WithInvalidUserIdAndValidAnnouncementId() throws InvalidUserIdException, AnnouncementNotFoundException {
+        //GIVEN
+        var addNewAnnouncementRequest = validAnnouncementRequest();
+        var addNewAnnouncementResponse = this.announcementService.addNewAnnouncement(addNewAnnouncementRequest, addNewAnnouncementRequest.getUserId());
+
+        //WHEN AND THEN
+        Assertions.assertThrows(InvalidUserIdException.class, () ->
+                this.announcementService.observeAnnouncement(addNewAnnouncementResponse.getAnnouncementId(), 0L, 1L));
+    }
+
+    @Test
+    void testObserveAnnouncement_WithValidUserIdAndInvalidAnnouncementId() throws InvalidUserIdException, AnnouncementNotFoundException {
+        //GIVEN
+        var addNewAnnouncementRequest = validAnnouncementRequest();
+        var addNewAnnouncementResponse = this.announcementService.addNewAnnouncement(addNewAnnouncementRequest, addNewAnnouncementRequest.getUserId());
+
+        //WHEN AND THEN
+        Assertions.assertThrows(AnnouncementNotFoundException.class, () ->
+                this.announcementService.observeAnnouncement(0L, addNewAnnouncementResponse.getUserId(), addNewAnnouncementResponse.getUserId()));
     }
 
     private AddNewAnnouncementRequest validAnnouncementRequest() {
@@ -265,6 +302,14 @@ class AnnouncementServiceImplTest {
                 .roomsNumber(1)
                 .zipCode("11-111")
                 .rentalTerm(null)
+                .build();
+    }
+
+    private ObserveAnnouncementResponse validObserveAnnouncementResponse(Long announcementId, Long userId){
+        return ObserveAnnouncementResponse
+                .builder()
+                .announcementId(announcementId)
+                .userId(userId)
                 .build();
     }
 

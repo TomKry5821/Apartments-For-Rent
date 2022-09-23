@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 
+import pl.polsl.krypczyk.apartmentsforrent.announcementservice.application.announcement.response.ObserveAnnouncementResponse;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.AnnouncementService;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.application.announcement.dto.AnnouncementDTO;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.excpetion.AnnouncementNotFoundException;
@@ -25,6 +26,7 @@ import pl.polsl.krypczyk.apartmentsforrent.announcementservice.application.annou
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.application.announcement.response.UpdateAnnouncementResponse;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.util.Collection;
 
@@ -54,15 +56,23 @@ public class AnnouncementController {
     @PutMapping("/announcements/{announcementId}")
     public UpdateAnnouncementResponse updateAnnouncement(@RequestBody @Valid UpdateAnnouncementRequest updateAnnouncementRequest,
                                                          @PathVariable("announcementId") @NotNull Long announcementId,
-                                                         @RequestHeader("requester-user-id") @NotNull Long requesterId) throws AnnouncementNotFoundException, ClosedAnnouncementException {
+                                                         @RequestHeader("requester-user-id") @NotNull Long requesterId) throws AnnouncementNotFoundException, ClosedAnnouncementException, InvalidUserIdException {
         return this.announcementService.updateAnnouncement(updateAnnouncementRequest, announcementId, requesterId);
     }
 
     @PostMapping("/announcements/{announcementId}/close")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void closeAnnouncement(@PathVariable("announcementId") @NotNull Long announcementId,
-                                  @RequestHeader("requester-user-id") @NotNull Long requesterId) throws AnnouncementNotFoundException {
+                                  @RequestHeader("requester-user-id") @NotNull Long requesterId) throws AnnouncementNotFoundException, InvalidUserIdException {
         this.announcementService.closeAnnouncement(announcementId, requesterId);
+    }
+
+    @PostMapping("/announcements/{announcementId}/observe/{userId}")
+    @ResponseStatus(HttpStatus.CREATED)
+    public ObserveAnnouncementResponse observeAnnouncement(@NotNull @Min(value = 1) @PathVariable("announcementId") Long announcementId,
+                                                           @NotNull @Min(value = 1) @PathVariable("userId") Long userId,
+                                                           @RequestHeader("requester-user-id") @NotNull Long requesterId) throws InvalidUserIdException, AnnouncementNotFoundException {
+        return this.announcementService.observeAnnouncement(announcementId, userId, requesterId);
     }
 
 
