@@ -6,6 +6,7 @@ import org.mapstruct.factory.Mappers;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.application.announcement.response.ObserveAnnouncementResponse;
+import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.ResponseFactory;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.adressdetails.AddressDetailsEntity;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.adressdetails.AddressDetailsRepository;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.AnnouncementEntity;
@@ -50,6 +51,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     private final PhotoPathRepository photoPathRepository;
     private final ObservedAnnouncementRepository observedAnnouncementRepository;
     private final AnnouncementMapper announcementMapper = Mappers.getMapper(AnnouncementMapper.class);
+    private final ResponseFactory responseFactory;
 
     @Override
     public Collection<AnnouncementDTO> getAllActiveAnnouncements() {
@@ -58,21 +60,10 @@ public class AnnouncementServiceImpl implements AnnouncementService {
         var announcements = this.announcementRepository.findAnnouncementEntitiesByIsClosed(false);
 
         Collection<AnnouncementDTO> announcementDTOS = new ArrayList<>();
-        announcements.forEach(a -> announcementDTOS.add(this.createAnnouncementDTO(a)));
+        announcements.forEach(a -> announcementDTOS.add(this.responseFactory.createAnnouncementDTO(a)));
 
         log.info("Successfully retrieved all active announcements");
         return announcementDTOS;
-    }
-
-    private AnnouncementDTO createAnnouncementDTO(AnnouncementEntity announcement) {
-        var announcementDetails = announcement.getAnnouncementDetailsEntity();
-        var announcementDTO = announcementMapper.announcementEntityToAnnouncementDTO(announcement);
-        var announcementDetailsDTO = announcementMapper.announcementDetailsEntityToAnnouncementDetailsDTO(announcementDetails);
-        announcementDTO.setAnnouncementDetailsDTO(announcementDetailsDTO);
-        announcementDTO.setDistrict(announcement.getDistrict());
-        announcementDTO.setCity(announcementDTO.getCity());
-
-        return announcementDTO;
     }
 
     @Override
@@ -83,10 +74,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
         this.checkIsUserIdValidElseThrowInvalidUser(addNewAnnouncementRequest.getUserId(), requesterId);
 
         var announcement = this.createAndSaveAnnouncement(addNewAnnouncementRequest);
-        var response = this.announcementMapper.createAnnouncementRequestToCreateAnnouncementResponse(addNewAnnouncementRequest);
-        response.setAnnouncementId(announcement.getId());
-        response.setCreationDate(announcement.getCreationDate());
-        response.setIsClosed(announcement.getIsClosed());
+        var response = this.responseFactory.createAddNewAnnouncementResponse(announcement, addNewAnnouncementRequest);
 
         log.info("Successfully created announcement - " + announcement);
         return response;
@@ -130,43 +118,12 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     @Override
     public GetAnnouncementWithAllDetailsResponse getAnnouncementWithAllDetails(Long announcementId) throws AnnouncementNotFoundException {
         log.info("Started retrieving announcement details with provided id - " + announcementId);
-        var announcement = this.getAnnouncementOrThrowAnnouncementNotFound(announcementId);
+        var announcement = this.getAnnouncementElseThrowAnnouncementNotFound(announcementId);
 
-        var getAnnouncementWithDetailsResponse = this.buildResponse(announcement);
+        var getAnnouncementWithDetailsResponse = this.responseFactory.createGetAnnouncementWithAllDetailsResponse(announcement);
 
         log.info("Successfully retrieved announcement details - " + getAnnouncementWithDetailsResponse);
         return getAnnouncementWithDetailsResponse;
-    }
-
-    private GetAnnouncementWithAllDetailsResponse buildResponse(AnnouncementEntity announcement) {
-        var announcementDetails = announcement.getAnnouncementDetailsEntity();
-        var addressDetails = announcementDetails.getAddressDetailsEntity();
-        var announcementContent = announcementDetails.getAnnouncementContent();
-        var photoPaths = announcementContent.getPhotoPaths();
-
-        return GetAnnouncementWithAllDetailsResponse
-                .builder()
-                .creationDate(announcement.getCreationDate())
-                .userId(announcement.getUserId())
-                .isClosed(announcement.getIsClosed())
-                .district(announcement.getDistrict())
-                .city(announcement.getCity())
-                .title(announcementDetails.getTitle())
-                .mainPhotoPath(announcementDetails.getMainPhotoPath())
-                .roomsNumber(announcementDetails.getRoomsNumber())
-                .rentalTerm(announcementDetails.getRentalTerm())
-                .caution(announcementDetails.getCaution())
-                .rentalAmount(announcementDetails.getRentalAmount())
-                .street(addressDetails.getStreet())
-                .zipCode(addressDetails.getZipCode())
-                .buildingNumber(addressDetails.getBuildingNumber())
-                .localNumber(addressDetails.getLocalNumber())
-                .content(announcementContent.getContent())
-                .photoPaths(photoPaths
-                        .stream()
-                        .map(PhotoPathEntity::getPhotoPath)
-                        .collect(Collectors.toList()))
-                .build();
     }
 
     @Override
@@ -175,14 +132,14 @@ public class AnnouncementServiceImpl implements AnnouncementService {
                                                          Long requesterId) throws AnnouncementNotFoundException, ClosedAnnouncementException, InvalidUserIdException {
         log.info("Started updating announcement with id - " + announcementId + " By user with id - " + requesterId);
 
-        var announcement = this.getAnnouncementOrThrowAnnouncementNotFound(announcementId);
+        var announcement = this.getAnnouncementElseThrowAnnouncementNotFound(announcementId);
         this.checkIsUserIdValidElseThrowInvalidUser(announcement.getUserId(), requesterId);
         if (announcement.getIsClosed().equals(true))
             throw new ClosedAnnouncementException();
 
         this.updateAnnouncementEntity(announcement, updateAnnouncementRequest);
 
-        var updateAnnouncementResponse = this.announcementMapper.updateAnnouncementRequestToUpdateAnnouncementResponse(updateAnnouncementRequest);
+        var updateAnnouncementResponse = this.responseFactory.createUpdateAnnouncementResponse(updateAnnouncementRequest);
 
         log.info("Successfully updated announcement with id " + announcementId + ": " + updateAnnouncementResponse);
         return updateAnnouncementResponse;
@@ -277,7 +234,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     public void closeAnnouncement(Long announcementId, Long requesterId) throws AnnouncementNotFoundException, InvalidUserIdException {
         log.info("Started closing announcement with id - " + announcementId + " by user with id - " + requesterId);
 
-        var announcement = this.getAnnouncementOrThrowAnnouncementNotFound(announcementId);
+        var announcement = this.getAnnouncementElseThrowAnnouncementNotFound(announcementId);
         this.checkIsUserIdValidElseThrowInvalidUser(announcement.getUserId(), requesterId);
 
         announcement.setIsClosed(true);
@@ -291,14 +248,14 @@ public class AnnouncementServiceImpl implements AnnouncementService {
         log.info("Started observing announcement with id - " + announcementId + " by user with id - " + userId);
         this.checkIsUserIdValidElseThrowInvalidUser(userId, requesterId);
 
-        var announcement = this.getAnnouncementOrThrowAnnouncementNotFound(announcementId);
+        var announcement = this.getAnnouncementElseThrowAnnouncementNotFound(announcementId);
         if (this.observedAnnouncementRepository.existsByAnnouncementEntityAndAndObservingUserId(announcement, userId))
             throw new AnnouncementAlreadyObservedException();
 
         this.buildAndSaveObservedAnnouncement(announcement, userId);
 
         log.info("Successfully observed announcement with id - " + announcementId + " by user with id - " + userId);
-        return this.buildObserveAnnouncementResponse(userId, announcementId);
+        return this.responseFactory.createObserveAnnouncementResponse(userId, announcementId);
     }
 
     private void checkIsUserIdValidElseThrowInvalidUser(Long userId, Long requesterId) throws InvalidUserIdException {
@@ -306,7 +263,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
             throw new InvalidUserIdException();
     }
 
-    private AnnouncementEntity getAnnouncementOrThrowAnnouncementNotFound(Long announcementId) throws AnnouncementNotFoundException {
+    private AnnouncementEntity getAnnouncementElseThrowAnnouncementNotFound(Long announcementId) throws AnnouncementNotFoundException {
         var announcement = this.announcementRepository.findById(announcementId);
         if (announcement.isEmpty())
             throw new AnnouncementNotFoundException();
@@ -318,14 +275,6 @@ public class AnnouncementServiceImpl implements AnnouncementService {
         observedAnnouncement.setObservingUserId(userId);
         observedAnnouncement.setAnnouncementEntity(announcement);
         this.observedAnnouncementRepository.save(observedAnnouncement);
-    }
-
-    private ObserveAnnouncementResponse buildObserveAnnouncementResponse(Long userId, Long announcementId) {
-        return ObserveAnnouncementResponse
-                .builder()
-                .userId(userId)
-                .announcementId(announcementId)
-                .build();
     }
 
 }
