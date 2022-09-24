@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.application.user.request.CreateUserRequest;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.application.authorization.userdetails.request.ChangeUserDetailsRequest;
-import pl.polsl.krypczyk.apartmentsforrent.userservice.application.authorization.userdetails.response.ChangeUserDetailsResponse;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.application.authorization.userdetails.response.GetUserDetailsResponse;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.authorization.AuthorizationService;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.authorization.exception.BadCredentialsException;
@@ -108,7 +107,6 @@ class UserServiceImplTest {
         var user = this.createValidUser();
         var createUserResponse = this.authorizationService.registerNewUser(user);
         var userId = createUserResponse.getId();
-        this.createValidChangeUserDetailsResponse();
         var changeUserDetailsRequest = this.createValidChangeUserDetailsRequest();
 
         //WHEN AND THEN
@@ -141,19 +139,6 @@ class UserServiceImplTest {
 
         //WHEN AND THEN
         Assertions.assertThrows(UserNotFoundException.class, () ->
-                this.userService.changeUserDetails(changeUserDetailsRequest, userId));
-    }
-
-    @Test
-    void testChangeUserDetails_WithNullUserDetails() throws UserAlreadyExistsException, BadCredentialsException {
-        //GIVEN
-        var inactiveUser = this.createInactiveUser();
-        var createUserResponse = this.authorizationService.registerNewUser(inactiveUser);
-        var userId = createUserResponse.getId();
-        ChangeUserDetailsRequest changeUserDetailsRequest = null;
-
-        //WHEN AND THEN
-        Assertions.assertThrows(InvalidUserDetailsException.class, () ->
                 this.userService.changeUserDetails(changeUserDetailsRequest, userId));
     }
 
@@ -226,15 +211,6 @@ class UserServiceImplTest {
                 .name(VALID_USER_NAME)
                 .email(VALID_USER_EMAIL)
                 .isActive(INACTIVE_USER_IS_ACTIVE)
-                .build();
-    }
-
-    private ChangeUserDetailsResponse createValidChangeUserDetailsResponse() {
-        return ChangeUserDetailsResponse.builder()
-                .surname(VALID_USER_SURNAME)
-                .password(VALID_USER_PASSWORD)
-                .name(VALID_USER_NAME)
-                .email(VALID_USER_EMAIL)
                 .build();
     }
 
