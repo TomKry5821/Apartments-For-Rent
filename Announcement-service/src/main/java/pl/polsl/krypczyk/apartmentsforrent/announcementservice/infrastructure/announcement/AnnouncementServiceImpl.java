@@ -2,15 +2,14 @@ package pl.polsl.krypczyk.apartmentsforrent.announcementservice.infrastructure.a
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.mapstruct.factory.Mappers;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.application.announcement.response.ObserveAnnouncementResponse;
+import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.EntityFactory;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.ResponseFactory;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.adressdetails.AddressDetailsEntity;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.adressdetails.AddressDetailsRepository;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.AnnouncementEntity;
-import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.AnnouncementMapper;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.AnnouncementRepository;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.AnnouncementService;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.application.announcement.dto.AnnouncementDTO;
@@ -24,7 +23,6 @@ import pl.polsl.krypczyk.apartmentsforrent.announcementservice.application.annou
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.application.announcement.response.UpdateAnnouncementResponse;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcementcontent.AnnouncementContentEntity;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcementcontent.AnnouncementContentRepository;
-import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.observedannouncement.ObservedAnnouncementEntity;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.observedannouncement.ObservedAnnouncementRepository;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.observedannouncement.exception.AnnouncementAlreadyObservedException;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.photopath.PhotoPathEntity;
@@ -32,11 +30,9 @@ import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.photopath.
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcementdetails.AnnouncementDetailsEntity;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcementdetails.AnnouncementDetailsRepository;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -50,8 +46,8 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     private final AnnouncementDetailsRepository announcementDetailsRepository;
     private final PhotoPathRepository photoPathRepository;
     private final ObservedAnnouncementRepository observedAnnouncementRepository;
-    private final AnnouncementMapper announcementMapper = Mappers.getMapper(AnnouncementMapper.class);
     private final ResponseFactory responseFactory;
+    private final EntityFactory entityFactory;
 
     @Override
     public Collection<AnnouncementDTO> getAllActiveAnnouncements() {
@@ -73,46 +69,11 @@ public class AnnouncementServiceImpl implements AnnouncementService {
 
         this.checkIsUserIdValidElseThrowInvalidUser(addNewAnnouncementRequest.getUserId(), requesterId);
 
-        var announcement = this.createAndSaveAnnouncement(addNewAnnouncementRequest);
+        var announcement = this.entityFactory.createAnnouncementEntity(addNewAnnouncementRequest);
         var response = this.responseFactory.createAddNewAnnouncementResponse(announcement, addNewAnnouncementRequest);
 
         log.info("Successfully created announcement - " + announcement);
         return response;
-    }
-
-    private AnnouncementEntity createAndSaveAnnouncement(AddNewAnnouncementRequest addNewAnnouncementRequest) {
-        var announcement = this.announcementMapper.addAnnouncementRequestDtoToAnnouncementEntity(addNewAnnouncementRequest);
-        announcement.setAnnouncementDetailsEntity(this.createAnnouncementDetailsEntity(addNewAnnouncementRequest));
-        announcement.setCreationDate(LocalDate.now());
-        announcement.setIsClosed(false);
-
-        return this.announcementRepository.save(announcement);
-    }
-
-    private AnnouncementDetailsEntity createAnnouncementDetailsEntity(AddNewAnnouncementRequest addNewAnnouncementRequest) {
-        var announcementDetails = this.announcementMapper.addAnnouncementRequestDtoToAnnouncementDetailsEntity(addNewAnnouncementRequest);
-        announcementDetails.setAnnouncementContent(this.createAnnouncementContentEntity(addNewAnnouncementRequest));
-        announcementDetails.setAddressDetailsEntity(this.createAddressDetailsEntity(addNewAnnouncementRequest));
-
-        return this.announcementDetailsRepository.save(announcementDetails);
-    }
-
-    private AnnouncementContentEntity createAnnouncementContentEntity(AddNewAnnouncementRequest addNewAnnouncementRequest) {
-        var announcementContent = this.announcementMapper.addAnnouncementRequestDtoToAnnouncementContentEntity(addNewAnnouncementRequest);
-
-        var photoPaths = new ArrayList<PhotoPathEntity>();
-        addNewAnnouncementRequest.getPhotoPaths().forEach((r) -> {
-            var photoPath = this.announcementMapper.photoPathToPhotoPathEntity(r);
-            photoPaths.add(this.photoPathRepository.save(photoPath));
-        });
-        announcementContent.setPhotoPaths(photoPaths);
-
-        return announcementContentRepository.save(announcementContent);
-    }
-
-    private AddressDetailsEntity createAddressDetailsEntity(AddNewAnnouncementRequest addNewAnnouncementRequest) {
-        var addressDetails = this.announcementMapper.addAnnouncementRequestDtoToAddressDetailsEntity(addNewAnnouncementRequest);
-        return this.addressDetailsRepository.save(addressDetails);
     }
 
     @Override
@@ -252,10 +213,10 @@ public class AnnouncementServiceImpl implements AnnouncementService {
         if (this.observedAnnouncementRepository.existsByAnnouncementEntityAndAndObservingUserId(announcement, userId))
             throw new AnnouncementAlreadyObservedException();
 
-        this.buildAndSaveObservedAnnouncement(announcement, userId);
+        var observedAnnouncement = this.entityFactory.createObservedAnnouncementEntity(announcement, userId);
 
         log.info("Successfully observed announcement with id - " + announcementId + " by user with id - " + userId);
-        return this.responseFactory.createObserveAnnouncementResponse(userId, announcementId);
+        return this.responseFactory.createObserveAnnouncementResponse(observedAnnouncement.getObservingUserId(), announcementId);
     }
 
     private void checkIsUserIdValidElseThrowInvalidUser(Long userId, Long requesterId) throws InvalidUserIdException {
@@ -268,13 +229,6 @@ public class AnnouncementServiceImpl implements AnnouncementService {
         if (announcement.isEmpty())
             throw new AnnouncementNotFoundException();
         return announcement.get();
-    }
-
-    private void buildAndSaveObservedAnnouncement(AnnouncementEntity announcement, Long userId) {
-        var observedAnnouncement = new ObservedAnnouncementEntity();
-        observedAnnouncement.setObservingUserId(userId);
-        observedAnnouncement.setAnnouncementEntity(announcement);
-        this.observedAnnouncementRepository.save(observedAnnouncement);
     }
 
 }
