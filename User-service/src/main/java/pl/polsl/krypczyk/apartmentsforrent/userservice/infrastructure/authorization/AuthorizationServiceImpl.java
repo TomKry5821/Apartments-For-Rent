@@ -9,6 +9,7 @@ import pl.polsl.krypczyk.apartmentsforrent.userservice.application.user.request.
 import pl.polsl.krypczyk.apartmentsforrent.userservice.application.user.request.UserLoginRequest;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.application.user.response.CreateUserResponse;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.application.user.response.LoginUserResponse;
+import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.ResponseFactory;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.authorization.AuthorizationService;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.authorization.exception.InactiveAccountException;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.authorization.exception.BadCredentialsException;
@@ -26,11 +27,9 @@ import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.userdetails.UserDe
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.userdetails.UserDetailsRepository;
 
 import java.time.LocalDateTime;
-import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -41,6 +40,8 @@ public class AuthorizationServiceImpl implements AuthorizationService {
     private final UserAuthorizationRepository userAuthorizationRepository;
     private final RoleRepository roleRepository;
     private final UserMapper userMapper = Mappers.getMapper(UserMapper.class);
+    private final ResponseFactory responseFactory;
+
 
     @Override
     public CreateUserResponse registerNewUser(CreateUserRequest createUserRequest) throws BadCredentialsException, UserAlreadyExistsException {
@@ -56,7 +57,7 @@ public class AuthorizationServiceImpl implements AuthorizationService {
         var userAuthorization = createAndSaveUserAuthorization(role);
         var user = this.createAndSaveUserEntity(userDetails, userAuthorization);
 
-        var createUserResponse = this.buildCreateUserResponse(createUserRequest, userAuthorization, user.getId());
+        var createUserResponse = this.responseFactory.createCreateUserResponse(createUserRequest, userAuthorization, user.getId());
 
         log.info("Successfully created user - " + createUserResponse);
         return createUserResponse;
@@ -70,21 +71,6 @@ public class AuthorizationServiceImpl implements AuthorizationService {
         var role = new RoleEntity("ROLE_USER");
         this.roleRepository.save(role);
         return role;
-    }
-
-    private CreateUserResponse buildCreateUserResponse(CreateUserRequest createUserRequest,
-                                                       UserAuthorizationEntity userAuthorization,
-                                                       Long userId) {
-        return CreateUserResponse
-                .builder()
-                .email(createUserRequest.getEmail())
-                .accessToken(userAuthorization.getToken())
-                .roles(userAuthorization.getRoles()
-                        .stream()
-                        .map(RoleEntity::getName).collect(Collectors.toList()))
-                .id(userId)
-                .creationDate(LocalDateTime.now())
-                .build();
     }
 
     private UserAuthorizationEntity createAndSaveUserAuthorization(RoleEntity roleEntity) {
@@ -129,7 +115,7 @@ public class AuthorizationServiceImpl implements AuthorizationService {
         var userAuthorization = user.getUserAuthorizationEntity();
         this.updateAccessToken(userAuthorization);
 
-        var loginUserResponse = this.buildLoginUserResponse(userAuthorization.getToken(), userDetails.getEmail(), userAuthorization.getRoles(), user.getId());
+        var loginUserResponse = this.responseFactory.createLoginUserResponse(userAuthorization.getToken(), userDetails.getEmail(), userAuthorization.getRoles(), user.getId());
 
         log.info("Successfully logged user - " + loginUserResponse);
         return loginUserResponse;
@@ -146,20 +132,6 @@ public class AuthorizationServiceImpl implements AuthorizationService {
     private void updateAccessToken(UserAuthorizationEntity userAuthorization) {
         userAuthorization.setToken(UUID.randomUUID());
         this.userAuthorizationRepository.save(userAuthorization);
-    }
-
-    private LoginUserResponse buildLoginUserResponse(UUID accessToken,
-                                                     String email,
-                                                     Collection<RoleEntity> roles,
-                                                     Long userId) {
-        return LoginUserResponse
-                .builder()
-                .accessToken(accessToken)
-                .email(email)
-                .roles(roles.stream()
-                        .map(RoleEntity::getName).collect(Collectors.toList()))
-                .id(userId)
-                .build();
     }
 
     @Override

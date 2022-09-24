@@ -2,14 +2,13 @@ package pl.polsl.krypczyk.apartmentsforrent.userservice.infrastructure.user;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.mapstruct.factory.Mappers;
 import org.springframework.stereotype.Service;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.application.authorization.AES;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.application.authorization.userdetails.request.ChangeUserDetailsRequest;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.application.authorization.userdetails.response.ChangeUserDetailsResponse;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.application.authorization.userdetails.response.GetUserDetailsResponse;
+import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.ResponseFactory;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.authorization.exception.InactiveAccountException;
-import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.user.UserMapper;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.user.UserRepository;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.user.UserService;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.user.exception.InvalidUserDetailsException;
@@ -28,7 +27,7 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final UserDetailsRepository userDetailsRepository;
-    private final UserMapper userMapper = Mappers.getMapper(UserMapper.class);
+    private final ResponseFactory responseFactory;
 
     @Override
     public GetUserDetailsResponse getUserDetails(Long userId) throws UserNotFoundException, InactiveAccountException {
@@ -42,8 +41,7 @@ public class UserServiceImpl implements UserService {
         if (this.isAccountActive(userDetails))
             throw new InactiveAccountException();
 
-        var getUserDetailsResponse = userMapper.UserDetailsEntityToUserDetailsDTO(userDetails);
-        getUserDetailsResponse.setPassword(AES.decrypt(userDetails.getPassword()));
+        var getUserDetailsResponse = this.responseFactory.createGetUserDetailsResponse(userDetails);
 
         log.info("successfully retrieved user details - " + getUserDetailsResponse);
         return getUserDetailsResponse;
@@ -65,7 +63,7 @@ public class UserServiceImpl implements UserService {
             throw new InactiveAccountException();
 
         this.changeAndSaveUserDetails(userDetails, changeUserDetailsRequest);
-        var changeUserDetailsResponse = this.userMapper.ChangeUserDetailsRequestToChangeUserDetailsResponse(changeUserDetailsRequest);
+        var changeUserDetailsResponse = this.responseFactory.createChangeUserDetailsResponse(changeUserDetailsRequest);
 
         log.info("Successfully updated user data - " + changeUserDetailsResponse);
         return changeUserDetailsResponse;

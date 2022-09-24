@@ -2,16 +2,13 @@ package pl.polsl.krypczyk.apartmentsforrent.userservice.infrastructure.admin;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.mapstruct.factory.Mappers;
 import org.springframework.stereotype.Service;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.application.authorization.AES;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.application.authorization.userdetails.request.ChangeUserDetailsRequest;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.application.authorization.userdetails.response.ChangeUserDetailsResponse;
+import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.ResponseFactory;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.admin.AdminService;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.application.admin.dto.UserDTO;
-import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.role.RoleEntity;
-import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.user.UserEntity;
-import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.user.UserMapper;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.user.UserRepository;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.user.exception.InvalidUserDetailsException;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.user.exception.UserNotFoundException;
@@ -21,7 +18,6 @@ import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.userdetails.UserDe
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -30,7 +26,7 @@ public class AdminServiceImpl implements AdminService {
 
     private final UserRepository userRepository;
     private final UserDetailsRepository userDetailsRepository;
-    private final UserMapper userMapper = Mappers.getMapper(UserMapper.class);
+    private final ResponseFactory responseFactory;
 
     @Override
     public Collection<UserDTO> getAllUsers() {
@@ -38,7 +34,7 @@ public class AdminServiceImpl implements AdminService {
 
         var users = this.userRepository.findAll();
         Collection<UserDTO> userDTOS = new ArrayList<>();
-        users.forEach(u -> userDTOS.add(this.buildUserDTO(u)));
+        users.forEach(u -> userDTOS.add(this.responseFactory.createUserDTO(u)));
 
         log.info("Successfully retrieved all users");
         return userDTOS;
@@ -68,7 +64,7 @@ public class AdminServiceImpl implements AdminService {
         var userDetails = user.getUserDetailsEntity();
 
         this.changeAndSaveUserDetails(userDetails, changeUserDetailsRequest);
-        var changeUserDetailsResponse = this.userMapper.ChangeUserDetailsRequestToChangeUserDetailsResponse(changeUserDetailsRequest);
+        var changeUserDetailsResponse = this.responseFactory.createChangeUserDetailsResponse(changeUserDetailsRequest);
 
         log.info("Successfully updated user - " + changeUserDetailsResponse);
         return changeUserDetailsResponse;
@@ -91,22 +87,5 @@ public class AdminServiceImpl implements AdminService {
         }
 
         this.userDetailsRepository.save(userDetailsEntity);
-    }
-
-    private UserDTO buildUserDTO(UserEntity user) {
-        return UserDTO.builder()
-                .id(user.getId())
-                .name(user.getUserDetailsEntity().getName())
-                .surname(user.getUserDetailsEntity().getSurname())
-                .email(user.getUserDetailsEntity().getEmail())
-                .password(AES.decrypt(user.getUserDetailsEntity().getPassword()))
-                .creationDate(user.getUserDetailsEntity().getCreationDate())
-                .isActive(user.getUserDetailsEntity().getIsActive())
-                .accessToken(user.getUserAuthorizationEntity().getToken())
-                .roles(user.getUserAuthorizationEntity().getRoles()
-                        .stream()
-                        .map(RoleEntity::getName)
-                        .collect(Collectors.toList()))
-                .build();
     }
 }
