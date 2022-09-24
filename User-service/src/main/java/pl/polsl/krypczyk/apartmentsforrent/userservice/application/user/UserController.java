@@ -15,6 +15,7 @@ import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.user.exception.Use
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.user.exception.UserNotFoundException;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 @RestController
@@ -34,8 +35,8 @@ public class UserController {
 
     @PutMapping("users/{userId}/details")
     public ChangeUserDetailsResponse changeUserDetails(@RequestBody @Valid ChangeUserDetailsRequest changeUserDetailsRequest,
-                                                       @PathVariable("userId") @NotNull Long userId,
-                                                       @RequestHeader("requester-user-id") @NotNull Long requesterId) throws UnauthorizedUserException, UserNotFoundException, InactiveAccountException, InvalidUserDetailsException, UserAlreadyExistsException {
+                                                       @PathVariable("userId") @NotNull @Min(value = 1) Long userId,
+                                                       @RequestHeader("requester-user-id") @NotNull @Min(value = 1) Long requesterId) throws UnauthorizedUserException, UserNotFoundException, InactiveAccountException, InvalidUserDetailsException, UserAlreadyExistsException {
         this.authorizationService.authorizeUser(userId, requesterId);
         return this.userService.changeUserDetails(changeUserDetailsRequest, userId);
     }
