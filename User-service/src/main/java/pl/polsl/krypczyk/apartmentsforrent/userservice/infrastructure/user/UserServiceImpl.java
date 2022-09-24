@@ -38,7 +38,7 @@ public class UserServiceImpl implements UserService {
             throw new UserNotFoundException();
 
         var userDetails = user.getUserDetailsEntity();
-        if (this.isAccountActive(userDetails))
+        if (this.isAccountInactive(userDetails))
             throw new InactiveAccountException();
 
         var getUserDetailsResponse = this.responseFactory.createGetUserDetailsResponse(userDetails);
@@ -51,15 +51,12 @@ public class UserServiceImpl implements UserService {
     public ChangeUserDetailsResponse changeUserDetails(ChangeUserDetailsRequest changeUserDetailsRequest, Long userId) throws InvalidUserDetailsException, UserNotFoundException, InactiveAccountException, UserAlreadyExistsException {
         log.info("Started updating user details with provided id - " + userId);
 
-        if (Objects.isNull(changeUserDetailsRequest) || Objects.isNull(userId) || userId < 1)
-            throw new InvalidUserDetailsException();
-
         var user = this.userRepository.findUserEntityById(userId);
         if (Objects.isNull(user))
             throw new UserNotFoundException();
         var userDetails = user.getUserDetailsEntity();
 
-        if (this.isAccountActive(userDetails))
+        if (this.isAccountInactive(userDetails))
             throw new InactiveAccountException();
 
         this.changeAndSaveUserDetails(userDetails, changeUserDetailsRequest);
@@ -100,7 +97,7 @@ public class UserServiceImpl implements UserService {
             throw new UserNotFoundException();
 
         var userDetails = user.getUserDetailsEntity();
-        if (this.isAccountActive(userDetails))
+        if (this.isAccountInactive(userDetails))
             throw new InactiveAccountException();
 
         userDetails.setIsActive(false);
@@ -109,7 +106,7 @@ public class UserServiceImpl implements UserService {
         log.info("Successfully inactivated account with user id - " + userId);
     }
 
-    private Boolean isAccountActive(UserDetailsEntity userDetails) {
+    private Boolean isAccountInactive(UserDetailsEntity userDetails) {
         return userDetails.getIsActive().equals(false);
     }
 }
