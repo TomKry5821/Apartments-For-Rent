@@ -11,6 +11,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -225,6 +226,30 @@ class AnnouncementControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
+    @Test
+    void testUnobserveAnnouncement_WithValidUserIdAndValidAnnouncementId_ShouldReturn204() throws Exception {
+        this.createAnnouncement();
+        this.observeAnnouncement();
+
+        mvc.perform(
+                        delete("/announcement/api/v1/announcements/1/unobserve/1")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .header("requester-user-id",1L))
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    void testUnobserveAnnouncement_WithInvalidUserIdAndInvalidAnnouncementId_ShouldReturn400() throws Exception {
+        this.createAnnouncement();
+        this.observeAnnouncement();
+
+        mvc.perform(
+                        delete("/announcement/api/v1/announcements/10/unobserve/10")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .header("requester-user-id",1L))
+                .andExpect(status().isBadRequest());
+    }
+
 
     private void createAnnouncement() throws Exception {
         mvc.perform(
@@ -254,6 +279,12 @@ class AnnouncementControllerTest {
                         .header("requester-user-id", 1L));
     }
 
+    private void observeAnnouncement() throws Exception {
+        mvc.perform(
+                        post("/announcement/api/v1/announcements/1/observe/1")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .header("requester-user-id",1L));
+    }
 }
 
 

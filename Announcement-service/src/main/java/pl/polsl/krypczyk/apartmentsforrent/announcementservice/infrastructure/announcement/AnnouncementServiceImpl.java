@@ -210,13 +210,25 @@ public class AnnouncementServiceImpl implements AnnouncementService {
         this.checkIsUserIdValidElseThrowInvalidUser(userId, requesterId);
 
         var announcement = this.getAnnouncementElseThrowAnnouncementNotFound(announcementId);
-        if (this.observedAnnouncementRepository.existsByAnnouncementEntityAndAndObservingUserId(announcement, userId))
+        if (this.observedAnnouncementRepository.existsByAnnouncementEntityAndObservingUserId(announcement, userId))
             throw new AnnouncementAlreadyObservedException();
 
         var observedAnnouncement = this.entityFactory.createObservedAnnouncementEntity(announcement, userId);
 
         log.info("Successfully observed announcement with id - " + announcementId + " by user with id - " + userId);
         return this.responseFactory.createObserveAnnouncementResponse(observedAnnouncement.getObservingUserId(), announcementId);
+    }
+
+    @Override
+    public void unobserveAnnouncement(Long announcementId, Long userId, Long requesterId) throws InvalidUserIdException, AnnouncementNotFoundException {
+        log.info("Started unobserving announcement with id - " + announcementId + " by user with id - " + userId);
+
+        this.checkIsUserIdValidElseThrowInvalidUser(userId, requesterId);
+        var announcement = this.getAnnouncementElseThrowAnnouncementNotFound(announcementId);
+
+        this.observedAnnouncementRepository.removeObservedAnnouncementEntityByAnnouncementEntityAndObservingUserId(announcement, userId);
+
+        log.info("Successfully unobserved announcement with id" + announcementId + " by user with id - " + userId);
     }
 
     private void checkIsUserIdValidElseThrowInvalidUser(Long userId, Long requesterId) throws InvalidUserIdException {
