@@ -5,7 +5,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.application.announcement.response.ObserveAnnouncementResponse;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.AnnouncementRepository;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.AnnouncementService;
@@ -202,7 +201,7 @@ class AnnouncementServiceImplTest {
     }
 
     @Test
-    void testObserveAnnouncement_WithInvalidUserIdAndValidAnnouncementId() throws InvalidUserIdException, AnnouncementNotFoundException {
+    void testObserveAnnouncement_WithInvalidUserIdAndValidAnnouncementId() throws InvalidUserIdException {
         //GIVEN
         var addNewAnnouncementRequest = validAnnouncementRequest();
         var addNewAnnouncementResponse = this.announcementService.addNewAnnouncement(addNewAnnouncementRequest, addNewAnnouncementRequest.getUserId());
@@ -213,7 +212,7 @@ class AnnouncementServiceImplTest {
     }
 
     @Test
-    void testObserveAnnouncement_WithValidUserIdAndInvalidAnnouncementId() throws InvalidUserIdException, AnnouncementNotFoundException {
+    void testObserveAnnouncement_WithValidUserIdAndInvalidAnnouncementId() throws InvalidUserIdException {
         //GIVEN
         var addNewAnnouncementRequest = validAnnouncementRequest();
         var addNewAnnouncementResponse = this.announcementService.addNewAnnouncement(addNewAnnouncementRequest, addNewAnnouncementRequest.getUserId());
@@ -221,6 +220,57 @@ class AnnouncementServiceImplTest {
         //WHEN AND THEN
         Assertions.assertThrows(AnnouncementNotFoundException.class, () ->
                 this.announcementService.observeAnnouncement(0L, addNewAnnouncementResponse.getUserId(), addNewAnnouncementResponse.getUserId()));
+    }
+
+    @Test
+    void testObserveAnnouncement_WithAlreadyObservedAnnouncement() throws InvalidUserIdException, AnnouncementAlreadyObservedException, AnnouncementNotFoundException {
+        //GIVEN
+        var addNewAnnouncementRequest = validAnnouncementRequest();
+        var addNewAnnouncementResponse = this.announcementService.addNewAnnouncement(addNewAnnouncementRequest, addNewAnnouncementRequest.getUserId());
+        this.announcementService.observeAnnouncement(addNewAnnouncementResponse.getAnnouncementId(), addNewAnnouncementResponse.getUserId(), addNewAnnouncementResponse.getUserId());
+
+        //WHEN AND THEN
+        Assertions.assertThrows(AnnouncementAlreadyObservedException.class, () ->
+                this.announcementService.observeAnnouncement(addNewAnnouncementResponse.getAnnouncementId(), addNewAnnouncementResponse.getUserId(), addNewAnnouncementResponse.getUserId()));
+    }
+
+    @Test
+    void testUnobserveAnnouncement_WithValidUserIdAndValidAnnouncementId() throws InvalidUserIdException, AnnouncementAlreadyObservedException, AnnouncementNotFoundException {
+        //GIVEN
+        var addNewAnnouncementRequest = validAnnouncementRequest();
+        var addNewAnnouncementResponse = this.announcementService.addNewAnnouncement(addNewAnnouncementRequest, addNewAnnouncementRequest.getUserId());
+        this.announcementService.observeAnnouncement(addNewAnnouncementResponse.getAnnouncementId(), addNewAnnouncementResponse.getUserId(), addNewAnnouncementResponse.getUserId());
+
+        //WHEN
+        this.announcementService.unobserveAnnouncement(addNewAnnouncementResponse.getAnnouncementId(), addNewAnnouncementResponse.getUserId(), addNewAnnouncementResponse.getUserId());
+
+        //THEN
+        Assertions.assertDoesNotThrow(InvalidUserIdException::new);
+        Assertions.assertDoesNotThrow(AnnouncementNotFoundException::new);
+    }
+
+    @Test
+    void testUnobserveAnnouncement_WithInvalidUserIdAndValidAnnouncementId() throws InvalidUserIdException, AnnouncementAlreadyObservedException, AnnouncementNotFoundException {
+        //GIVEN
+        var addNewAnnouncementRequest = validAnnouncementRequest();
+        var addNewAnnouncementResponse = this.announcementService.addNewAnnouncement(addNewAnnouncementRequest, addNewAnnouncementRequest.getUserId());
+        this.announcementService.observeAnnouncement(addNewAnnouncementResponse.getAnnouncementId(), addNewAnnouncementResponse.getUserId(), addNewAnnouncementResponse.getUserId());
+
+        //WHEN AND THEN
+        Assertions.assertThrows(InvalidUserIdException.class, () ->
+                this.announcementService.unobserveAnnouncement(addNewAnnouncementResponse.getAnnouncementId(), 0L, addNewAnnouncementResponse.getUserId()));
+    }
+
+    @Test
+    void testUnobserveAnnouncement_WithValidUserIdAndInvalidAnnouncementId() throws InvalidUserIdException, AnnouncementAlreadyObservedException, AnnouncementNotFoundException {
+        //GIVEN
+        var addNewAnnouncementRequest = validAnnouncementRequest();
+        var addNewAnnouncementResponse = this.announcementService.addNewAnnouncement(addNewAnnouncementRequest, addNewAnnouncementRequest.getUserId());
+        this.announcementService.observeAnnouncement(addNewAnnouncementResponse.getAnnouncementId(), addNewAnnouncementResponse.getUserId(), addNewAnnouncementResponse.getUserId());
+
+        //WHEN AND THEN
+        Assertions.assertThrows(AnnouncementNotFoundException.class, () ->
+                this.announcementService.unobserveAnnouncement(0L, addNewAnnouncementResponse.getUserId(), addNewAnnouncementResponse.getUserId()));
     }
 
     private AddNewAnnouncementRequest validAnnouncementRequest() {
@@ -306,7 +356,7 @@ class AnnouncementServiceImplTest {
                 .build();
     }
 
-    private ObserveAnnouncementResponse validObserveAnnouncementResponse(Long announcementId, Long userId){
+    private ObserveAnnouncementResponse validObserveAnnouncementResponse(Long announcementId, Long userId) {
         return ObserveAnnouncementResponse
                 .builder()
                 .announcementId(announcementId)
