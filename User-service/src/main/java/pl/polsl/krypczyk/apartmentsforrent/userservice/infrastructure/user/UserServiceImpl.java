@@ -2,6 +2,7 @@ package pl.polsl.krypczyk.apartmentsforrent.userservice.infrastructure.user;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.application.authorization.AES;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.application.authorization.userdetails.request.ChangeUserDetailsRequest;
@@ -27,6 +28,8 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final UserDetailsRepository userDetailsRepository;
     private final ResponseFactory responseFactory;
+    // IF WE WANT TO WORK WITH DIFFERENT CLASS THAN STRING WE NEED TO CHANGE THIS SECOND ARGUMENT
+    private final KafkaTemplate<String, String> measurementKafkaTemplate;
 
     @Override
     public GetUserDetailsResponse getUserDetails(Long userId) throws UserNotFoundException, InactiveAccountException {
@@ -101,6 +104,7 @@ public class UserServiceImpl implements UserService {
 
         userDetails.setIsActive(false);
         this.userDetailsRepository.save(userDetails);
+        this.measurementKafkaTemplate.send("topic", "test");
 
         log.info("Successfully inactivated account with user id - " + userId);
     }
