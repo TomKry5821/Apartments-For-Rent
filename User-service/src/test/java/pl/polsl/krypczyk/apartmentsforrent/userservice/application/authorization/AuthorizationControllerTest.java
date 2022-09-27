@@ -1,7 +1,6 @@
 package pl.polsl.krypczyk.apartmentsforrent.userservice.application.authorization;
 
 
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -10,10 +9,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
-import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.authorization.AuthorizationService;
-
-import java.io.UnsupportedEncodingException;
-import java.util.UUID;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -25,9 +20,6 @@ class AuthorizationControllerTest {
 
     @Autowired
     private MockMvc mvc;
-
-    @Autowired
-    private AuthorizationService authorizationService;
 
     @Test
     void testRegisterNewUser_WithValidUserDetails_ShouldReturn201() throws Exception {
@@ -173,11 +165,5 @@ class AuthorizationControllerTest {
                                     "isActive": true,
                                     "password": "Test"
                                 }"""));
-    }
-
-    private UUID getTokenFromResponse(ResultActions resultActions) throws UnsupportedEncodingException {
-        var token = resultActions.andReturn().getResponse().getContentAsString().lines().toArray()[0].toString();
-        token = token.substring(39, 75);
-        return UUID.fromString(token);
     }
 }
