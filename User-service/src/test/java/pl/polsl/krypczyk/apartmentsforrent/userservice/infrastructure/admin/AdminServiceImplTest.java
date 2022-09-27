@@ -124,11 +124,10 @@ class AdminServiceImplTest {
         var inactiveUser = this.createInactiveUser();
         var createUserResponse = this.authorizationService.registerNewUser(inactiveUser);
         var userId = createUserResponse.getId();
-        ChangeUserDetailsRequest changeUserDetailsRequest = null;
 
         //WHEN AND THEN
         Assertions.assertThrows(InvalidUserDetailsException.class, () ->
-                this.adminService.changeUserDetails(changeUserDetailsRequest, userId));
+                this.adminService.changeUserDetails(null, userId));
     }
 
     private CreateUserRequest createValidUser() {
