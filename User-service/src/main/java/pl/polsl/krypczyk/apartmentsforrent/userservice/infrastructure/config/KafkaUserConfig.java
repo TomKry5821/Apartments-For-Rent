@@ -1,6 +1,7 @@
 package pl.polsl.krypczyk.apartmentsforrent.userservice.infrastructure.config;
 
 import org.apache.kafka.clients.producer.ProducerConfig;
+import org.apache.kafka.common.serialization.LongSerializer;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -18,21 +19,21 @@ public class KafkaUserConfig {
     @Value("${spring.kafka.bootstrap-servers}")
     private String bootstrapServers;
 
-    public Map<String, Object> producerConfig() {
+    public Map<String, Object> producerWithUserIdConfig() {
         Map<String, Object> properties = new HashMap<>();
         properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
         properties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
-        properties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
+        properties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, LongSerializer.class);
         return properties;
     }
 
     @Bean
-    public ProducerFactory<String, String> producerFactory() {
-        return new DefaultKafkaProducerFactory<>(producerConfig());
+    public ProducerFactory<String, Long> producerWithUserIdFactory() {
+        return new DefaultKafkaProducerFactory<>(producerWithUserIdConfig());
     }
 
     @Bean
-    public KafkaTemplate<String, String> kafkaTemplate(ProducerFactory<String, String> producerFactory) {
+    public KafkaTemplate<String, Long> kafkaWithUserIdTemplate(ProducerFactory<String, Long> producerFactory) {
         return new KafkaTemplate<>(producerFactory);
     }
 }
