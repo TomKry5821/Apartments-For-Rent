@@ -13,4 +13,5 @@ public interface AdminService {
     Collection<UserDTO> getAllUsers();
     void deleteUser(Long userId) throws UserNotFoundException;
     ChangeUserDetailsResponse changeUserDetails(ChangeUserDetailsRequest changeUserDetailsRequest, Long userId) throws InvalidUserDetailsException, UserNotFoundException, InactiveAccountException;
+    void activateAccount(Long userId) throws UserNotFoundException;
 }
