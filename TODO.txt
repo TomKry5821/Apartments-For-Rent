@@ -1,5 +1,3 @@
-1. Przy usuwaniu usera należy usunąć wszystkie powiązane z nim ogłoszenia(do realizacji po podpięciu kafki)
-2. Przy dezaktywacji konta usera należy zamknąć wszystkie jego ogłoszenia(do realizacji po podpięciu kafki)
 3. Dodać logger(W trakcie realizacji)
 4. Sprawdzanie, czy konto jest aktywne(może przenieść to sprawdzanie do bramy)
 5. Dodać mozliwośc zmiany statusu akrywności konta dla admina
