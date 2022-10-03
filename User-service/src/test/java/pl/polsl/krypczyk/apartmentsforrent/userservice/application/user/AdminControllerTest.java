@@ -12,7 +12,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest
+@SpringBootTest("spring.autoconfigure.exclude=org.springframework.boot.autoconfigure.kafka.KafkaAutoConfiguration")
 @AutoConfigureMockMvc(addFilters = false)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 class AdminControllerTest {
@@ -107,6 +107,34 @@ class AdminControllerTest {
                                             "password": "Test"
                                         }""")
                                 .header("Authorization", "sfsf"))
+                //THEN
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void testActivateAccount_WithValidUserIdAndValidRequesterId_shouldReturn204() throws Exception {
+        //GIVEN
+        this.registerValidUser();
+
+        //WHEN
+        mvc.perform(
+                        post("/user/api/v1/admin/users/1/activate")
+                                .header("Authorization", "1")
+                                .header("requester-user-id", 1L))
+                //THEN
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    void testActivateAccount_WithInvalidUserIdAndValidRequesterId_shouldReturn204() throws Exception {
+        //GIVEN
+        this.registerValidUser();
+
+        //WHEN
+        mvc.perform(
+                        post("/user/api/v1/admin/users/0/activate")
+                                .header("Authorization", "1")
+                                .header("requester-user-id", 1L))
                 //THEN
                 .andExpect(status().isBadRequest());
     }

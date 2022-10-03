@@ -32,4 +32,6 @@ public interface AnnouncementService {
 
     void unobserveAnnouncement(Long announcementId, Long userId, Long requesterId) throws InvalidUserIdException, AnnouncementNotFoundException;
 
+    void closeUserAnnouncements(Long userId);
+
 }

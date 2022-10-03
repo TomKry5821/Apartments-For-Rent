@@ -243,4 +243,19 @@ public class AnnouncementServiceImpl implements AnnouncementService {
         return announcement.get();
     }
 
+    @Override
+    public void closeUserAnnouncements(Long userId){
+        log.info("Started inactivating all announcements with user id " + userId);
+
+        var announcementsToClose = this.announcementRepository.findAnnouncementEntitiesByUserId(userId);
+
+        for(var announcementToClose : announcementsToClose){
+            log.info("Inactivating announcement with id " + announcementToClose.getId());
+            announcementToClose.setIsClosed(true);
+            this.announcementRepository.save(announcementToClose);
+        }
+
+        log.info("Successfully inactivated all announcements with user id " + userId);
+    }
+
 }

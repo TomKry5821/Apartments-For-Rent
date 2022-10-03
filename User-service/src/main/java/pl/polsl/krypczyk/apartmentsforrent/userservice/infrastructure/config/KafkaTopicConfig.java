@@ -8,13 +8,10 @@ import org.springframework.kafka.config.TopicBuilder;
 @Configuration
 public class KafkaTopicConfig {
 
+    private final String USER_ANNOUNCEMENT_TOPIC = "user-announcement";
+
     @Bean
     public NewTopic topic() {
-        return TopicBuilder.name("topic").build();
+        return TopicBuilder.name(USER_ANNOUNCEMENT_TOPIC).build();
     }
-
-    /*@Bean
-    public NewTopic streamTopic(){
-        return TopicBuilder.name("streamTopic").build();
-    }*/
 }

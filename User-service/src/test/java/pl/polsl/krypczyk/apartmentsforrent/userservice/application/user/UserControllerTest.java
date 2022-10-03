@@ -16,7 +16,7 @@ import java.util.UUID;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest
+@SpringBootTest("spring.autoconfigure.exclude=org.springframework.boot.autoconfigure.kafka.KafkaAutoConfiguration")
 @AutoConfigureMockMvc
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 class UserControllerTest {
@@ -166,11 +166,5 @@ class UserControllerTest {
                                     "isActive": true,
                                     "password": "Test"
                                 }"""));
-    }
-
-    private UUID getTokenFromResponse(ResultActions resultActions) throws UnsupportedEncodingException {
-        var token = resultActions.andReturn().getResponse().getContentAsString().lines().toArray()[0].toString();
-        token = token.substring(39, 75);
-        return UUID.fromString(token);
     }
 }

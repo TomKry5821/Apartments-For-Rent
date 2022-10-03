@@ -8,4 +8,6 @@ import java.util.Collection;
 @Repository
 public interface AnnouncementRepository extends JpaRepository<AnnouncementEntity, Long> {
     Collection<AnnouncementEntity> findAnnouncementEntitiesByIsClosed(Boolean isClosed);
+
+    Collection<AnnouncementEntity> findAnnouncementEntitiesByUserId(Long userId);
 }

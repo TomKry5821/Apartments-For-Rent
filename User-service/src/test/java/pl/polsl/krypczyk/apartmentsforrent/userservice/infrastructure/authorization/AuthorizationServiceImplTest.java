@@ -9,13 +9,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.application.user.request.CreateUserRequest;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.authorization.AuthorizationService;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.authorization.exception.BadCredentialsException;
-import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.authorization.exception.InactiveAccountException;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.user.UserRepository;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.user.exception.UserAlreadyExistsException;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.user.exception.UserNotFoundException;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.application.user.request.UserLoginRequest;
 
-@SpringBootTest
+@SpringBootTest("spring.autoconfigure.exclude=org.springframework.boot.autoconfigure.kafka.KafkaAutoConfiguration")
 class AuthorizationServiceImplTest {
 
     private final String VALID_USER_SURNAME = "surname";
@@ -71,7 +70,7 @@ class AuthorizationServiceImplTest {
     }
 
     @Test
-    void testLoginUser_WithValidCredentials() throws UserNotFoundException, InactiveAccountException, BadCredentialsException, UserAlreadyExistsException {
+    void testLoginUser_WithValidCredentials() throws UserNotFoundException, BadCredentialsException, UserAlreadyExistsException {
         //GIVEN
         var createUserRequest = createValidUser();
         this.authorizationService.registerNewUser(createUserRequest);
@@ -117,7 +116,7 @@ class AuthorizationServiceImplTest {
     }
 
     @Test
-    void testLogoutUser_ThatExists() throws UserNotFoundException, InactiveAccountException, UserAlreadyExistsException, BadCredentialsException {
+    void testLogoutUser_ThatExists() throws UserNotFoundException, UserAlreadyExistsException, BadCredentialsException {
         //GIVEN
         var createUserRequest = this.createValidUser();
         var createUserResponse = this.authorizationService.registerNewUser(createUserRequest);

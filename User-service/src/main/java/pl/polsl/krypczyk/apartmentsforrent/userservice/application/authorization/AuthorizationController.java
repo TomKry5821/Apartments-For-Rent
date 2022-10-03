@@ -9,7 +9,6 @@ import pl.polsl.krypczyk.apartmentsforrent.userservice.application.user.response
 import pl.polsl.krypczyk.apartmentsforrent.userservice.application.user.response.LoginUserResponse;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.authorization.AuthorizationService;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.authorization.exception.BadCredentialsException;
-import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.authorization.exception.InactiveAccountException;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.authorization.exception.UnauthorizedUserException;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.user.exception.UserAlreadyExistsException;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.user.exception.UserNotFoundException;
@@ -32,14 +31,14 @@ public class AuthorizationController {
 
     @PostMapping("/login")
     @ResponseStatus(HttpStatus.OK)
-    public LoginUserResponse loginUser(@Valid @RequestBody UserLoginRequest userLoginRequest) throws UserNotFoundException, InactiveAccountException, BadCredentialsException {
+    public LoginUserResponse loginUser(@Valid @RequestBody UserLoginRequest userLoginRequest) throws UserNotFoundException, BadCredentialsException {
         return this.authorizationService.loginUser(userLoginRequest);
     }
 
     @PostMapping("{userId}/logout")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void logoutUser(@PathVariable("userId") Long userId,
-                           @RequestHeader("requester-user-id") @NotNull Long requesterId) throws UnauthorizedUserException, UserNotFoundException, InactiveAccountException {
+                           @RequestHeader("requester-user-id") @NotNull Long requesterId) throws UnauthorizedUserException, UserNotFoundException {
         this.authorizationService.authorizeUser(userId, requesterId);
         this.authorizationService.logoutUser(userId);
     }

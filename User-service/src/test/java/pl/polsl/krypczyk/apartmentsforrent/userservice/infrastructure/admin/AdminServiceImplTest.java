@@ -10,13 +10,12 @@ import pl.polsl.krypczyk.apartmentsforrent.userservice.application.authorization
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.admin.AdminService;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.authorization.AuthorizationService;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.authorization.exception.BadCredentialsException;
-import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.authorization.exception.InactiveAccountException;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.user.UserRepository;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.user.exception.InvalidUserDetailsException;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.user.exception.UserAlreadyExistsException;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.user.exception.UserNotFoundException;
 
-@SpringBootTest
+@SpringBootTest("spring.autoconfigure.exclude=org.springframework.boot.autoconfigure.kafka.KafkaAutoConfiguration")
 class AdminServiceImplTest {
 
     private final String VALID_USER_SURNAME = "surname";
@@ -91,7 +90,7 @@ class AdminServiceImplTest {
     }
 
     @Test
-    void testChangeUserDetails_WithValidUserId() throws UserAlreadyExistsException, BadCredentialsException, UserNotFoundException, InactiveAccountException, InvalidUserDetailsException {
+    void testChangeUserDetails_WithValidUserId() throws UserAlreadyExistsException, BadCredentialsException, UserNotFoundException, InvalidUserDetailsException {
         //GIVEN
         var user = this.createValidUser();
         var createUserResponse = this.authorizationService.registerNewUser(user);
@@ -102,7 +101,6 @@ class AdminServiceImplTest {
         this.adminService.changeUserDetails(changeUserDetailsRequest, userId);
         //WHEN AND THEN
         Assertions.assertDoesNotThrow(UserNotFoundException::new);
-        Assertions.assertDoesNotThrow(InactiveAccountException::new);
     }
 
     @Test
@@ -128,6 +126,30 @@ class AdminServiceImplTest {
         //WHEN AND THEN
         Assertions.assertThrows(InvalidUserDetailsException.class, () ->
                 this.adminService.changeUserDetails(null, userId));
+    }
+
+    @Test
+    void testActivateAccount_WithValidUserId() throws UserAlreadyExistsException, BadCredentialsException, UserNotFoundException {
+        //GIVEN
+        var inactiveUser = this.createInactiveUser();
+        var createUserResponse = this.authorizationService.registerNewUser(inactiveUser);
+        var userId = createUserResponse.getId();
+
+        //WHEN
+        this.adminService.activateAccount(userId);
+
+        //THEN
+        Assertions.assertDoesNotThrow(UserNotFoundException::new);
+    }
+
+    @Test
+    void testActivateAccount_WithInvalidUserId() throws UserAlreadyExistsException, BadCredentialsException {
+        //GIVEN
+        var inactiveUser = this.createInactiveUser();
+        this.authorizationService.registerNewUser(inactiveUser);
+
+        //WHEN AND THEN
+        Assertions.assertThrows(UserNotFoundException.class, () -> this.adminService.activateAccount(0L));
     }
 
     private CreateUserRequest createValidUser() {

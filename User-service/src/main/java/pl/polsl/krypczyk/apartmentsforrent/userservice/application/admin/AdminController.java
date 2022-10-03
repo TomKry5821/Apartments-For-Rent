@@ -8,7 +8,6 @@ import pl.polsl.krypczyk.apartmentsforrent.userservice.application.authorization
 import pl.polsl.krypczyk.apartmentsforrent.userservice.application.authorization.userdetails.response.ChangeUserDetailsResponse;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.admin.AdminService;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.authorization.AuthorizationService;
-import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.authorization.exception.InactiveAccountException;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.authorization.exception.UnauthorizedUserException;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.user.exception.InvalidUserDetailsException;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.user.exception.UserNotFoundException;
@@ -42,8 +41,16 @@ public class AdminController {
     @PutMapping("users/{userId}/details")
     public ChangeUserDetailsResponse changeUserDetails(@RequestBody @Valid ChangeUserDetailsRequest changeUserDetailsRequest,
                                                        @PathVariable("userId") @NotNull Long userId,
-                                                       @RequestHeader("requester-user-id") @NotNull Long requesterId) throws UnauthorizedUserException, UserNotFoundException, InactiveAccountException, InvalidUserDetailsException {
+                                                       @RequestHeader("requester-user-id") @NotNull Long requesterId) throws UnauthorizedUserException, UserNotFoundException, InvalidUserDetailsException {
         this.authorizationService.authorizeAdmin(requesterId);
         return this.adminService.changeUserDetails(changeUserDetailsRequest, userId);
+    }
+
+    @PostMapping("users/{userId}/activate")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void activateAccount(@PathVariable("userId") @NotNull Long userId,
+                                @RequestHeader("requester-user-id") @NotNull Long requesterId) throws UnauthorizedUserException, UserNotFoundException {
+        this.authorizationService.authorizeAdmin(requesterId);
+        this.adminService.activateAccount(userId);
     }
 }
