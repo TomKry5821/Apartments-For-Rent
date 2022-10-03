@@ -46,4 +46,12 @@ public class AdminController {
         this.authorizationService.authorizeAdmin(requesterId);
         return this.adminService.changeUserDetails(changeUserDetailsRequest, userId);
     }
+
+    @PostMapping("users/{userId}/activate")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void activateAccount(@PathVariable("userId") @NotNull Long userId,
+                                @RequestHeader("requester-user-id") @NotNull Long requesterId) throws UnauthorizedUserException, UserNotFoundException {
+        this.authorizationService.authorizeAdmin(requesterId);
+        this.adminService.activateAccount(userId);
+    }
 }

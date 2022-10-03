@@ -92,4 +92,20 @@ public class AdminServiceImpl implements AdminService {
 
         this.userDetailsRepository.save(userDetailsEntity);
     }
+
+    @Override
+    public void activateAccount(Long userId) throws UserNotFoundException {
+        log.info("Started activating account with user id - " + userId);
+
+        var user = this.userRepository.findUserEntityById(userId);
+        if (Objects.isNull(user))
+            throw new UserNotFoundException();
+
+        var userDetails = user.getUserDetailsEntity();
+
+        userDetails.setIsActive(true);
+        this.userDetailsRepository.save(userDetails);
+
+        log.info("Successfully activated account with user id - " + userId);
+    }
 }
