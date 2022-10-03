@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.application.authorization.AES;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.application.authorization.userdetails.request.ChangeUserDetailsRequest;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.application.authorization.userdetails.response.ChangeUserDetailsResponse;
+import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.KafkaMessageProducer;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.ResponseFactory;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.admin.AdminService;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.application.admin.dto.UserDTO;
@@ -18,12 +19,14 @@ import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.userdetails.UserDe
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class AdminServiceImpl implements AdminService {
 
+    private final KafkaMessageProducer kafkaMessageProducer;
     private final UserRepository userRepository;
     private final UserDetailsRepository userDetailsRepository;
     private final ResponseFactory responseFactory;
@@ -47,6 +50,7 @@ public class AdminServiceImpl implements AdminService {
         if (Objects.isNull(user))
             throw new UserNotFoundException();
 
+        CompletableFuture.runAsync(() -> this.kafkaMessageProducer.sendInactivateAnnouncementsMessage(userId));
         this.userRepository.delete(user);
         log.info("Started deleting user with id - " + userId);
     }
