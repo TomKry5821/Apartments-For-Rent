@@ -20,7 +20,7 @@ import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.user.exception.Use
 
 import java.time.LocalDateTime;
 
-@SpringBootTest
+@SpringBootTest("spring.autoconfigure.exclude=org.springframework.boot.autoconfigure.kafka.KafkaAutoConfiguration")
 class UserServiceImplTest {
 
     private final String VALID_USER_SURNAME = "surname";

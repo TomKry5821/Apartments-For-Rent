@@ -15,7 +15,7 @@ import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.user.exception.Use
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.user.exception.UserNotFoundException;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.application.user.request.UserLoginRequest;
 
-@SpringBootTest
+@SpringBootTest("spring.autoconfigure.exclude=org.springframework.boot.autoconfigure.kafka.KafkaAutoConfiguration")
 class AuthorizationServiceImplTest {
 
     private final String VALID_USER_SURNAME = "surname";
