@@ -11,7 +11,6 @@ import pl.polsl.krypczyk.apartmentsforrent.userservice.application.user.response
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.EntityFactory;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.ResponseFactory;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.authorization.AuthorizationService;
-import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.authorization.exception.InactiveAccountException;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.authorization.exception.BadCredentialsException;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.authorization.exception.UnauthorizedUserException;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.user.UserEntity;
@@ -62,15 +61,13 @@ public class AuthorizationServiceImpl implements AuthorizationService {
     }
 
     @Override
-    public LoginUserResponse loginUser(UserLoginRequest userLoginRequest) throws BadCredentialsException, InactiveAccountException, UserNotFoundException {
+    public LoginUserResponse loginUser(UserLoginRequest userLoginRequest) throws BadCredentialsException, UserNotFoundException {
         log.info("Started logging user with details -" + userLoginRequest);
         if (Objects.isNull(userLoginRequest))
             throw new BadCredentialsException();
 
         userLoginRequest.setPassword(AES.encrypt(userLoginRequest.getPassword()));
         var userDetails = retrieveUserDetailsByEmailAndPassword(userLoginRequest.getEmail(), userLoginRequest.getPassword());
-        if (this.isAccountInactive(userDetails))
-            throw new InactiveAccountException();
 
         var user = this.userRepository.findUserEntityByUserDetailsEntity(userDetails);
         var userAuthorization = user.getUserAuthorizationEntity();
@@ -96,21 +93,15 @@ public class AuthorizationServiceImpl implements AuthorizationService {
     }
 
     @Override
-    public void logoutUser(Long userId) throws InactiveAccountException, UserNotFoundException {
+    public void logoutUser(Long userId) throws UserNotFoundException {
         log.info("Started logout user with id - " + userId);
 
         var user = this.findUserByUserId(userId);
-        var userDetails = user.getUserDetailsEntity();
-        if (this.isAccountInactive(userDetails))
-            throw new InactiveAccountException();
+
         var userAuthorization = user.getUserAuthorizationEntity();
         this.resetUserAccessToken(userAuthorization);
 
         log.info("Successfully logged out user with id - " + userId);
-    }
-
-    private Boolean isAccountInactive(UserDetailsEntity userDetails) {
-        return userDetails.getIsActive().equals(false);
     }
 
     private void resetUserAccessToken(UserAuthorizationEntity userAuthorization) {

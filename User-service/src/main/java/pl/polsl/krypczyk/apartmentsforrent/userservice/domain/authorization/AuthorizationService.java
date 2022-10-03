@@ -5,7 +5,6 @@ import pl.polsl.krypczyk.apartmentsforrent.userservice.application.user.request.
 import pl.polsl.krypczyk.apartmentsforrent.userservice.application.user.response.CreateUserResponse;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.application.user.response.LoginUserResponse;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.authorization.exception.BadCredentialsException;
-import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.authorization.exception.InactiveAccountException;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.authorization.exception.UnauthorizedUserException;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.user.exception.UserAlreadyExistsException;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.user.exception.UserNotFoundException;
@@ -13,8 +12,12 @@ import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.user.exception.Use
 public interface AuthorizationService {
 
     CreateUserResponse registerNewUser(CreateUserRequest createUserRequest) throws BadCredentialsException, UserAlreadyExistsException;
-    LoginUserResponse loginUser(UserLoginRequest userLoginRequest) throws BadCredentialsException, InactiveAccountException, UserNotFoundException;
-    void logoutUser(Long userId) throws InactiveAccountException, UserNotFoundException;
+
+    LoginUserResponse loginUser(UserLoginRequest userLoginRequest) throws BadCredentialsException, UserNotFoundException;
+
+    void logoutUser(Long userId) throws UserNotFoundException;
+
     void authorizeUser(Long userId, Long requesterId) throws UnauthorizedUserException;
+
     void authorizeAdmin(Long requesterId) throws UnauthorizedUserException;
 }

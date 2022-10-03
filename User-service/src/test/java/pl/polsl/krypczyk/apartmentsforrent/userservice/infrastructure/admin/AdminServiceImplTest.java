@@ -10,7 +10,6 @@ import pl.polsl.krypczyk.apartmentsforrent.userservice.application.authorization
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.admin.AdminService;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.authorization.AuthorizationService;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.authorization.exception.BadCredentialsException;
-import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.authorization.exception.InactiveAccountException;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.user.UserRepository;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.user.exception.InvalidUserDetailsException;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.user.exception.UserAlreadyExistsException;
@@ -91,7 +90,7 @@ class AdminServiceImplTest {
     }
 
     @Test
-    void testChangeUserDetails_WithValidUserId() throws UserAlreadyExistsException, BadCredentialsException, UserNotFoundException, InactiveAccountException, InvalidUserDetailsException {
+    void testChangeUserDetails_WithValidUserId() throws UserAlreadyExistsException, BadCredentialsException, UserNotFoundException, InvalidUserDetailsException {
         //GIVEN
         var user = this.createValidUser();
         var createUserResponse = this.authorizationService.registerNewUser(user);
@@ -102,7 +101,6 @@ class AdminServiceImplTest {
         this.adminService.changeUserDetails(changeUserDetailsRequest, userId);
         //WHEN AND THEN
         Assertions.assertDoesNotThrow(UserNotFoundException::new);
-        Assertions.assertDoesNotThrow(InactiveAccountException::new);
     }
 
     @Test
