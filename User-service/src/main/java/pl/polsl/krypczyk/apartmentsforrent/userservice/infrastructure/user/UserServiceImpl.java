@@ -18,6 +18,7 @@ import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.userdetails.UserDe
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.userdetails.UserDetailsRepository;
 
 import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
 
 
 @Service
@@ -103,7 +104,7 @@ public class UserServiceImpl implements UserService {
 
         userDetails.setIsActive(false);
         this.userDetailsRepository.save(userDetails);
-        this.kafkaMessageProducer.sendInactivateAnnouncementsMessage("topic", userId);
+        CompletableFuture.runAsync(() -> this.kafkaMessageProducer.sendInactivateAnnouncementsMessage("topic", userId));
 
         log.info("Successfully inactivated account with user id - " + userId);
     }
