@@ -9,10 +9,12 @@ import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announceme
 @RequiredArgsConstructor
 public class AnnouncementListener {
 
+    private final String GROUP_ID = "apartments-for-rent";
+    private final String USER_ANNOUNCEMENT_TOPIC = "user-announcement";
     private final AnnouncementService announcementService;
     // IF DATA WILL BE OUR CUSTOM CLASS WE WILL PASS THERE THAT CLASS
-    @KafkaListener(topics = "topic", groupId = "test", containerFactory = "kafkaListenerWithUserIdContainerFactory")
-    void listener(Long userId) {
+    @KafkaListener(topics = USER_ANNOUNCEMENT_TOPIC, groupId = GROUP_ID, containerFactory = "kafkaListenerWithUserIdContainerFactory")
+    void closeUserAnnouncementsListener(Long userId) {
         this.announcementService.closeUserAnnouncements(userId);
     }
 }
