@@ -130,6 +130,30 @@ class AdminServiceImplTest {
                 this.adminService.changeUserDetails(null, userId));
     }
 
+    @Test
+    void testActivateAccount_WithValidUserId() throws UserAlreadyExistsException, BadCredentialsException, UserNotFoundException {
+        //GIVEN
+        var inactiveUser = this.createInactiveUser();
+        var createUserResponse = this.authorizationService.registerNewUser(inactiveUser);
+        var userId = createUserResponse.getId();
+
+        //WHEN
+        this.adminService.activateAccount(userId);
+
+        //THEN
+        Assertions.assertDoesNotThrow(UserNotFoundException::new);
+    }
+
+    @Test
+    void testActivateAccount_WithInvalidUserId() throws UserAlreadyExistsException, BadCredentialsException {
+        //GIVEN
+        var inactiveUser = this.createInactiveUser();
+        this.authorizationService.registerNewUser(inactiveUser);
+
+        //WHEN AND THEN
+        Assertions.assertThrows(UserNotFoundException.class, () -> this.adminService.activateAccount(0L));
+    }
+
     private CreateUserRequest createValidUser() {
         return CreateUserRequest.builder()
                 .surname(VALID_USER_SURNAME)
