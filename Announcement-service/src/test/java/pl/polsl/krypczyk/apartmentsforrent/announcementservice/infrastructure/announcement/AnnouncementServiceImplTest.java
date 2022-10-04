@@ -273,6 +273,32 @@ class AnnouncementServiceImplTest {
                 this.announcementService.unobserveAnnouncement(0L, addNewAnnouncementResponse.getUserId(), addNewAnnouncementResponse.getUserId()));
     }
 
+    @Test
+    void testCloseUserAnnouncementsListener_WithValidUserId() throws InvalidUserIdException {
+        //GIVEN
+        var announcement = this.validAnnouncementRequest();
+        this.announcementService.addNewAnnouncement(announcement, 1L);
+
+        //WHEN
+        this.announcementService.closeUserAnnouncements(announcement.getUserId());
+
+        //THEN
+        Assertions.assertTrue(this.announcementRepository.findAnnouncementEntitiesByIsClosed(false).isEmpty());
+    }
+
+    @Test
+    void deleteUserAnnouncementsListener_WithValidUserId() throws InvalidUserIdException {
+        //GIVEN
+        var announcement = this.validAnnouncementRequest();
+        this.announcementService.addNewAnnouncement(announcement, 1L);
+
+        //WHEN
+        this.announcementService.deleteUserAnnouncements(announcement.getUserId());
+
+        //THEN
+        Assertions.assertTrue(this.announcementRepository.findAll().isEmpty());
+    }
+
     private AddNewAnnouncementRequest validAnnouncementRequest() {
         return AddNewAnnouncementRequest.builder()
                 .city("City")
