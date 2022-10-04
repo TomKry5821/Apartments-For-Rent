@@ -8,10 +8,16 @@ import org.springframework.kafka.config.TopicBuilder;
 @Configuration
 public class KafkaTopicConfig {
 
-    private final String USER_ANNOUNCEMENT_TOPIC = "user-announcement";
+    private final String INACTIVATE_ANNOUNCEMENT_TOPIC = "inactivate-announcement";
+    private final String DELETE_ANNOUNCEMENT_TOPIC = "delete-announcement";
 
     @Bean
-    public NewTopic topic() {
-        return TopicBuilder.name(USER_ANNOUNCEMENT_TOPIC).build();
+    public NewTopic inactivateAnnouncementTopic() {
+        return TopicBuilder.name(INACTIVATE_ANNOUNCEMENT_TOPIC).build();
+    }
+
+    @Bean
+    public NewTopic deleteAnnouncementTopic() {
+        return TopicBuilder.name(DELETE_ANNOUNCEMENT_TOPIC).build();
     }
 }
