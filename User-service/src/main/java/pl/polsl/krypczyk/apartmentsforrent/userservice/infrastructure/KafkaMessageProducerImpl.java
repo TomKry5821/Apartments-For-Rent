@@ -19,14 +19,12 @@ public class KafkaMessageProducerImpl implements KafkaMessageProducer {
     public void sendInactivateAnnouncementsMessage(Long userId) {
         log.info("Sending inactivate announcements message for user with id " + userId + " on topic " + INACTIVATE_ANNOUNCEMENT_TOPIC);
         this.kafkaWithUserIdTemplate.send(INACTIVATE_ANNOUNCEMENT_TOPIC, userId);
-        log.info("Successfully sent inactivate announcements message for user with id " + userId + " on topic " + INACTIVATE_ANNOUNCEMENT_TOPIC);
     }
 
     @Override
     public  void sendDeleteAnnouncementMessage(Long userId){
-        log.info("Sending delete announcements message for user with id " + userId + " on topic " + INACTIVATE_ANNOUNCEMENT_TOPIC);
+        log.info("Sending delete announcements message for user with id " + userId + " on topic " + DELETE_ANNOUNCEMENT_TOPIC);
         this.kafkaWithUserIdTemplate.send(DELETE_ANNOUNCEMENT_TOPIC, userId);
-        log.info("Successfully sent deleyr announcements message for user with id " + userId + " on topic " + INACTIVATE_ANNOUNCEMENT_TOPIC);
     }
 
 }
