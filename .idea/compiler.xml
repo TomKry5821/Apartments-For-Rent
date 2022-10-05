@@ -9,7 +9,6 @@
         <outputRelativeToContentRoot value="true" />
         <module name="Apartments-for-rent-ga" />
         <module name="Gateway-service" />
-        <module name="Message-service" />
       </profile>
       <profile name="Annotation profile for Apartments-for-rent" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
@@ -22,6 +21,7 @@
         </processorPath>
         <module name="Announcement-service" />
         <module name="User-service" />
+        <module name="Message-service" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>

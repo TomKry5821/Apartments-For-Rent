@@ -1,1 +1,3 @@
-3. Dodać logger(W trakcie realizacji)
+1. Rozdzielić bramę od serwera autoryzacyjnego(?)
+2. Usprawnić uwierzetylnianie(?)
+3. Dokończyć encje dla message service
