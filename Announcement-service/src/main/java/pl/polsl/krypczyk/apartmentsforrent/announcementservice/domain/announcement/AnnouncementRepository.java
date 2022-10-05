@@ -10,4 +10,6 @@ public interface AnnouncementRepository extends JpaRepository<AnnouncementEntity
     Collection<AnnouncementEntity> findAnnouncementEntitiesByIsClosed(Boolean isClosed);
 
     Collection<AnnouncementEntity> findAnnouncementEntitiesByUserId(Long userId);
+
+    void deleteAnnouncementEntitiesByUserId(Long userId);
 }

@@ -258,4 +258,13 @@ public class AnnouncementServiceImpl implements AnnouncementService {
         log.info("Successfully inactivated all announcements with user id " + userId);
     }
 
+    @Override
+    public void deleteUserAnnouncements(Long userId){
+        log.info("Started deleting all announcements with user id " + userId);
+
+        this.announcementRepository.deleteAnnouncementEntitiesByUserId(userId);
+
+        log.info("Successfully deleted all announcements with user id " + userId);
+    }
+
 }

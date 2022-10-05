@@ -20,6 +20,7 @@ public class AuthorizationControllerAdvice {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
     public String handleException(UserNotFoundException e) {
+        e.printStackTrace();
         log.error(e.getMessage());
         return e.getMessage();
     }
@@ -28,6 +29,7 @@ public class AuthorizationControllerAdvice {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
     public String handleException(BadCredentialsException e) {
+        e.printStackTrace();
         log.error(e.getMessage());
         return e.getMessage();
     }
@@ -36,6 +38,7 @@ public class AuthorizationControllerAdvice {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
     public String handleException(UserAlreadyExistsException e) {
+        e.printStackTrace();
         log.error(e.getMessage());
         return e.getMessage();
     }
@@ -44,6 +47,7 @@ public class AuthorizationControllerAdvice {
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ResponseBody
     public String handleException(UnauthorizedUserException e) {
+        e.printStackTrace();
         log.error(e.getMessage());
         return e.getMessage();
     }
@@ -57,6 +61,7 @@ public class AuthorizationControllerAdvice {
             errorMessage.append("Invalid ").append(error.getField()).append("\n");
         }
 
+        e.printStackTrace();
         log.error(errorMessage.toString());
         return errorMessage.toString();
     }

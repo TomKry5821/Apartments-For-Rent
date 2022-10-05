@@ -3,7 +3,7 @@ package pl.polsl.krypczyk.apartmentsforrent.userservice.infrastructure.admin;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import pl.polsl.krypczyk.apartmentsforrent.userservice.application.authorization.AES;
+import pl.polsl.krypczyk.apartmentsforrent.userservice.infrastructure.authorization.AES;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.application.authorization.userdetails.request.ChangeUserDetailsRequest;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.application.authorization.userdetails.response.ChangeUserDetailsResponse;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.KafkaMessageProducer;
@@ -50,7 +50,7 @@ public class AdminServiceImpl implements AdminService {
         if (Objects.isNull(user))
             throw new UserNotFoundException();
 
-        CompletableFuture.runAsync(() -> this.kafkaMessageProducer.sendInactivateAnnouncementsMessage(userId));
+        CompletableFuture.runAsync(() -> this.kafkaMessageProducer.sendDeleteAnnouncementMessage(userId));
         this.userRepository.delete(user);
         log.info("Started deleting user with id - " + userId);
     }

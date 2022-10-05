@@ -34,4 +34,6 @@ public interface AnnouncementService {
 
     void closeUserAnnouncements(Long userId);
 
+    void deleteUserAnnouncements(Long userId);
+
 }

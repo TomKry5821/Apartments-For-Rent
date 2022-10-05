@@ -2,6 +2,7 @@ package pl.polsl.krypczyk.apartmentsforrent.userservice.application.authorizatio
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import pl.polsl.krypczyk.apartmentsforrent.userservice.infrastructure.authorization.AES;
 
 import java.util.Objects;
 

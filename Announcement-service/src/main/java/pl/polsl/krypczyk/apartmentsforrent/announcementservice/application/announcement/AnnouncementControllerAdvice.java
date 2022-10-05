@@ -25,6 +25,7 @@ public class AnnouncementControllerAdvice {
             errorMessage.append("Invalid ").append(error.getField()).append("\n");
         }
 
+        e.printStackTrace();
         log.error(errorMessage.toString());
         return errorMessage.toString();
     }
@@ -33,6 +34,7 @@ public class AnnouncementControllerAdvice {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
     public String handleException(AnnouncementNotFoundException e) {
+        e.printStackTrace();
         log.error(e.getMessage());
         return e.getMessage();
     }
@@ -41,6 +43,7 @@ public class AnnouncementControllerAdvice {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
     public String handleException(ClosedAnnouncementException e) {
+        e.printStackTrace();
         log.error(e.getMessage());
         return e.getMessage();
     }
@@ -49,6 +52,7 @@ public class AnnouncementControllerAdvice {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
     public String handleException(InvalidUserIdException e) {
+        e.printStackTrace();
         log.error(e.getMessage());
         return e.getMessage();
     }
@@ -57,6 +61,7 @@ public class AnnouncementControllerAdvice {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
     public String handleException(AnnouncementAlreadyObservedException e) {
+        e.printStackTrace();
         log.error(e.getMessage());
         return e.getMessage();
     }
