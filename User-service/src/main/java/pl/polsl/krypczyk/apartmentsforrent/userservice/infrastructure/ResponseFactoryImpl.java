@@ -3,7 +3,7 @@ package pl.polsl.krypczyk.apartmentsforrent.userservice.infrastructure;
 import org.mapstruct.factory.Mappers;
 import org.springframework.stereotype.Component;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.application.admin.dto.UserDTO;
-import pl.polsl.krypczyk.apartmentsforrent.userservice.application.authorization.AES;
+import pl.polsl.krypczyk.apartmentsforrent.userservice.infrastructure.authorization.AES;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.application.authorization.userdetails.request.ChangeUserDetailsRequest;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.application.authorization.userdetails.response.ChangeUserDetailsResponse;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.application.authorization.userdetails.response.GetUserDetailsResponse;
