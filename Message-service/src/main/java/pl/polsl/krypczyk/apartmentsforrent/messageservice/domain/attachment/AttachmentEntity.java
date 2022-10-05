@@ -19,5 +19,6 @@ public class AttachmentEntity {
     private Long id;
 
     @Column(name = "ATTACHMENT_PATH")
-    private String attachmentPath;
+    @Lob
+    private byte[] attachment;
 }
