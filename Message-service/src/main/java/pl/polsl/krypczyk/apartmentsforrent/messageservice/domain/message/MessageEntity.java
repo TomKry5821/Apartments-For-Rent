@@ -33,7 +33,7 @@ public class MessageEntity {
     private LocalDateTime sendDate;
 
     @Column(name = "CONTENT", nullable = false)
-    private String content;
+    private String message;
 
     @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true)
     private Collection<AttachmentEntity> attachmentEntities;
