@@ -18,7 +18,7 @@ public class AttachmentEntity {
     @Column(name = "ID", nullable = false)
     private Long id;
 
-    @Column(name = "ATTACHMENT_PATH")
+    @Column(name = "ATTACHMENT")
     @Lob
     private byte[] attachment;
 }
