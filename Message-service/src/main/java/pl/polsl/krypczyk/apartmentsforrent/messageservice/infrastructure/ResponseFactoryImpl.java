@@ -4,8 +4,13 @@ import org.mapstruct.factory.Mappers;
 import org.springframework.stereotype.Component;
 import pl.polsl.krypczyk.apartmentsforrent.messageservice.application.message.request.AddNewMessageRequest;
 import pl.polsl.krypczyk.apartmentsforrent.messageservice.application.message.response.AddNewMessageResponse;
+import pl.polsl.krypczyk.apartmentsforrent.messageservice.application.message.response.MessageDTO;
 import pl.polsl.krypczyk.apartmentsforrent.messageservice.domain.ResponseFactory;
+import pl.polsl.krypczyk.apartmentsforrent.messageservice.domain.message.MessageEntity;
 import pl.polsl.krypczyk.apartmentsforrent.messageservice.domain.message.MessageMapper;
+
+import java.util.ArrayList;
+import java.util.Collection;
 
 @Component
 public class ResponseFactoryImpl implements ResponseFactory {
@@ -19,5 +24,14 @@ public class ResponseFactoryImpl implements ResponseFactory {
         addNewMessageResponse.setId(messageId);
 
         return addNewMessageResponse;
+    }
+
+    @Override
+    public Collection<MessageDTO> createGetConversationResponse(Collection<MessageEntity> messageEntities) {
+        Collection<MessageDTO> messageDTOS = new ArrayList<>();
+
+        messageEntities.forEach(me -> messageDTOS.add(this.messageMapper.messageEntityToMessageDTO(me)));
+
+        return messageDTOS;
     }
 }
