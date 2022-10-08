@@ -9,11 +9,10 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.io.IOException;
 import java.util.HashMap;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -52,12 +51,47 @@ class MessageControllerTest {
         MediaType mediaType = new MediaType("multipart", "form-data", contentTypeParams);
 
         mvc.perform(multipart("/message/api/v1/messages").file("attachments", multipartFile.getBytes())
-                        .param("senderId", "0")
-                        .param("receiverId", "0")
+                        .param("senderId", "-1")
+                        .param("receiverId", "-1")
                         .param("message", "test")
                         .contentType(mediaType)
                         .accept(MediaType.ALL))
                 .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void testGetConversationWithValidSenderIdShouldReturn200() throws Exception {
+        this.addNewMessage();
+
+        mvc.perform(get("/message/api/v1/messages/1")
+                        .header("requester-user-id", 1L))
+                .andExpect(status().isOk());
+
+    }
+
+    @Test
+    void testGetConversationWithInvalidSenderIdShouldReturn401() throws Exception {
+        this.addNewMessage();
+
+        mvc.perform(get("/message/api/v1/messages/1")
+                        .header("requester-user-id", 0L))
+                .andExpect(status().isOk());
+
+    }
+
+    void addNewMessage() throws Exception {
+        MockMultipartFile multipartFile = new MockMultipartFile("file", "test".getBytes());
+
+        HashMap<String, String> contentTypeParams = new HashMap<>();
+        contentTypeParams.put("boundary", "265001916915724");
+        MediaType mediaType = new MediaType("multipart", "form-data", contentTypeParams);
+
+        mvc.perform(multipart("/message/api/v1/messages").file("attachments", multipartFile.getBytes())
+                .param("senderId", "0")
+                .param("receiverId", "0")
+                .param("message", "test")
+                .contentType(mediaType)
+                .accept(MediaType.ALL));
     }
 
 }

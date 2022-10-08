@@ -36,7 +36,7 @@ public class MessageEntity {
     private String message;
 
     @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true)
-    private Collection<AttachmentEntity> attachmentEntities;
+    private Collection<AttachmentEntity> attachments;
 
 
 }

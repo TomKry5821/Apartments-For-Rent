@@ -33,7 +33,7 @@ public class EntityFactoryImpl implements EntityFactory {
         var attachments = new ArrayList<AttachmentEntity>();
 
         addNewMessageRequest.getAttachments().forEach(f -> attachments.add(this.createAttachmentEntity(f)));
-        message.setAttachmentEntities(attachments);
+        message.setAttachments(attachments);
 
         return this.messageRepository.save(message);
     }

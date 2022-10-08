@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.transaction.annotation.Transactional;
 import pl.polsl.krypczyk.apartmentsforrent.messageservice.application.message.request.AddNewMessageRequest;
 import pl.polsl.krypczyk.apartmentsforrent.messageservice.application.message.response.AddNewMessageResponse;
 import pl.polsl.krypczyk.apartmentsforrent.messageservice.domain.message.MessageRepository;
@@ -39,6 +40,32 @@ class MessageServiceImplTest {
         //THEN
         Assertions.assertEquals(expected, actual);
 
+    }
+
+    @Test
+    @Transactional
+    void testGetConversation_WithNotEmptyConversation() {
+        //GIVEN
+        var addNewMessageRequest = this.addNewMessageRequest();
+        this.messageService.addNewMessage(addNewMessageRequest);
+
+        //WHEN
+        this.messageService.getConversation(1L, 1L);
+
+        //THEN
+        Assertions.assertFalse(this.messageRepository.findAll().isEmpty());
+    }
+
+    @Test
+    @Transactional
+    void testGetConversation_WithEmptyConversation() {
+        //GIVEN
+
+        //WHEN
+        this.messageService.getConversation(1L, 1L);
+
+        //THEN
+        Assertions.assertTrue(this.messageRepository.findAll().isEmpty());
     }
 
     private AddNewMessageRequest addNewMessageRequest() {
