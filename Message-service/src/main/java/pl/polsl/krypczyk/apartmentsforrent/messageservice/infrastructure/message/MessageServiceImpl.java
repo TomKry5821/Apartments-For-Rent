@@ -3,6 +3,7 @@ package pl.polsl.krypczyk.apartmentsforrent.messageservice.infrastructure.messag
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import pl.polsl.krypczyk.apartmentsforrent.messageservice.application.message.request.AddNewMessageRequest;
 import pl.polsl.krypczyk.apartmentsforrent.messageservice.application.message.response.AddNewMessageResponse;
 import pl.polsl.krypczyk.apartmentsforrent.messageservice.application.message.response.MessageDTO;
@@ -40,6 +41,7 @@ public class MessageServiceImpl implements MessageService {
     }
 
     @Override
+    @Transactional
     public Collection<MessageDTO> getConversation(Long senderId, Long receiverId) {
         log.info("Started retrieving conversation for sender with id " + senderId + " and receiver with id " + receiverId);
 
