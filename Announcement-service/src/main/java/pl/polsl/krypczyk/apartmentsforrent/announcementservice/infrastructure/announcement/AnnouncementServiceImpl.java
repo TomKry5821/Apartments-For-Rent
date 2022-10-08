@@ -33,7 +33,6 @@ import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announceme
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
-import java.util.concurrent.CompletableFuture;
 
 @Service
 @RequiredArgsConstructor
@@ -200,7 +199,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
         this.checkIsUserIdValidElseThrowInvalidUser(announcement.getUserId(), requesterId);
 
         announcement.setIsClosed(true);
-        CompletableFuture.runAsync(() -> this.observedAnnouncementRepository.removeObservedAnnouncementEntitiesByAnnouncementEntity_Id(announcementId));
+        this.observedAnnouncementRepository.removeObservedAnnouncementEntitiesByAnnouncementEntity_Id(announcementId);
 
         log.info("Successfully closed announcement with id - " + announcementId + " by user with id - " + requesterId);
         this.announcementRepository.save(announcement);
