@@ -13,6 +13,7 @@ public class KafkaMessageProducerImpl implements KafkaMessageProducer {
 
     private final String INACTIVATE_ANNOUNCEMENT_TOPIC = "inactivate-announcement";
     private final String DELETE_ANNOUNCEMENT_TOPIC = "delete-announcement";
+    private final String DELETE_OBSERVED_ANNOUNCEMENT_TOPIC = "delete-observed-announcement";
     private final KafkaTemplate<String, Long> kafkaWithUserIdTemplate;
 
     @Override
@@ -25,6 +26,12 @@ public class KafkaMessageProducerImpl implements KafkaMessageProducer {
     public  void sendDeleteAnnouncementMessage(Long userId){
         log.info("Sending delete announcements message for user with id " + userId + " on topic " + DELETE_ANNOUNCEMENT_TOPIC);
         this.kafkaWithUserIdTemplate.send(DELETE_ANNOUNCEMENT_TOPIC, userId);
+    }
+
+    @Override
+    public  void sendDeleteObservedAnnouncementMessage(Long userId){
+        log.info("Sending delete observed announcements message for user with id " + userId + " on topic " + DELETE_OBSERVED_ANNOUNCEMENT_TOPIC);
+        this.kafkaWithUserIdTemplate.send(DELETE_OBSERVED_ANNOUNCEMENT_TOPIC, userId);
     }
 
 }
