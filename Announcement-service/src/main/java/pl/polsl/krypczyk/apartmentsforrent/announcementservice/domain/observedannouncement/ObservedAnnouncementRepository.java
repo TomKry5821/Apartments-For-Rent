@@ -11,4 +11,6 @@ public interface ObservedAnnouncementRepository extends JpaRepository<ObservedAn
     void removeObservedAnnouncementEntityByAnnouncementEntityAndObservingUserId(AnnouncementEntity announcement, Long userId);
 
     void removeObservedAnnouncementEntitiesByObservingUserId(Long observingUserId);
+
+    void removeObservedAnnouncementEntitiesByAnnouncementEntity_Id(Long announcementId);
 }
