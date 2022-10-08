@@ -31,6 +31,8 @@ public class UserServiceApplication {
                            UserAuthorizationRepository userAuthorizationRepository,
                            RoleRepository roleRepository) {
         return args -> {
+            if(userRepository.existsById(1L))
+                return;
             UserEntity user = new UserEntity();
             UserDetailsEntity userDetails = setUserDetails();
             UserAuthorizationEntity userAuthorization = setUserAuthorization(roleRepository);
