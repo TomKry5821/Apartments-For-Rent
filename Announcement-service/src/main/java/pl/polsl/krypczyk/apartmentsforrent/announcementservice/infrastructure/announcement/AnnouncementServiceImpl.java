@@ -205,20 +205,22 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     }
 
     @Override
-    public ObserveAnnouncementResponse observeAnnouncement(Long announcementId, Long userId, Long requesterId) throws InvalidUserIdException, AnnouncementNotFoundException, AnnouncementAlreadyObservedException {
+    public ObserveAnnouncementResponse observeAnnouncement(Long announcementId, Long userId, Long requesterId) throws InvalidUserIdException, AnnouncementNotFoundException, AnnouncementAlreadyObservedException, ClosedAnnouncementException {
         log.info("Started observing announcement with id - " + announcementId + " by user with id - " + userId);
         this.checkIsUserIdValidElseThrowInvalidUser(userId, requesterId);
 
         var announcement = this.getAnnouncementElseThrowAnnouncementNotFound(announcementId);
         if (this.observedAnnouncementRepository.existsByAnnouncementEntityAndObservingUserId(announcement, userId))
             throw new AnnouncementAlreadyObservedException();
+        if(announcement.getIsClosed())
+            throw new ClosedAnnouncementException();
+
 
         var observedAnnouncement = this.entityFactory.createObservedAnnouncementEntity(announcement, userId);
 
         log.info("Successfully observed announcement with id - " + announcementId + " by user with id - " + userId);
         return this.responseFactory.createObserveAnnouncementResponse(observedAnnouncement.getObservingUserId(), announcementId);
     }
-
     @Override
     public void unobserveAnnouncement(Long announcementId, Long userId, Long requesterId) throws InvalidUserIdException, AnnouncementNotFoundException {
         log.info("Started unobserving announcement with id - " + announcementId + " by user with id - " + userId);
