@@ -97,6 +97,7 @@ public class UserServiceImpl implements UserService {
         this.userDetailsRepository.save(userDetails);
 
         CompletableFuture.runAsync(() -> this.kafkaMessageProducer.sendInactivateAnnouncementsMessage(userId));
+        CompletableFuture.runAsync(() -> this.kafkaMessageProducer.sendDeleteObservedAnnouncementMessage(userId));
 
         log.info("Successfully inactivated account with user id - " + userId);
     }
