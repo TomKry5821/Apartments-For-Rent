@@ -51,8 +51,8 @@ class MessageControllerTest {
         MediaType mediaType = new MediaType("multipart", "form-data", contentTypeParams);
 
         mvc.perform(multipart("/message/api/v1/messages").file("attachments", multipartFile.getBytes())
-                        .param("senderId", "0")
-                        .param("receiverId", "0")
+                        .param("senderId", "-1")
+                        .param("receiverId", "-1")
                         .param("message", "test")
                         .contentType(mediaType)
                         .accept(MediaType.ALL))
