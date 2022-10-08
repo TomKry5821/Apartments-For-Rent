@@ -33,6 +33,7 @@ import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announceme
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
 
 @Service
 @RequiredArgsConstructor
@@ -199,6 +200,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
         this.checkIsUserIdValidElseThrowInvalidUser(announcement.getUserId(), requesterId);
 
         announcement.setIsClosed(true);
+        CompletableFuture.runAsync(() -> this.observedAnnouncementRepository.removeObservedAnnouncementEntitiesByAnnouncementEntity_Id(announcementId));
 
         log.info("Successfully closed announcement with id - " + announcementId + " by user with id - " + requesterId);
         this.announcementRepository.save(announcement);
@@ -212,7 +214,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
         var announcement = this.getAnnouncementElseThrowAnnouncementNotFound(announcementId);
         if (this.observedAnnouncementRepository.existsByAnnouncementEntityAndObservingUserId(announcement, userId))
             throw new AnnouncementAlreadyObservedException();
-        if(announcement.getIsClosed())
+        if (announcement.getIsClosed())
             throw new ClosedAnnouncementException();
 
 
@@ -221,6 +223,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
         log.info("Successfully observed announcement with id - " + announcementId + " by user with id - " + userId);
         return this.responseFactory.createObserveAnnouncementResponse(observedAnnouncement.getObservingUserId(), announcementId);
     }
+
     @Override
     public void unobserveAnnouncement(Long announcementId, Long userId, Long requesterId) throws InvalidUserIdException, AnnouncementNotFoundException {
         log.info("Started unobserving announcement with id - " + announcementId + " by user with id - " + userId);
@@ -246,12 +249,12 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     }
 
     @Override
-    public void closeUserAnnouncements(Long userId){
+    public void closeUserAnnouncements(Long userId) {
         log.info("Started inactivating all announcements with user id " + userId);
 
         var announcementsToClose = this.announcementRepository.findAnnouncementEntitiesByUserId(userId);
 
-        for(var announcementToClose : announcementsToClose){
+        for (var announcementToClose : announcementsToClose) {
             log.info("Inactivating announcement with id " + announcementToClose.getId());
             announcementToClose.setIsClosed(true);
             this.announcementRepository.save(announcementToClose);
@@ -261,7 +264,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     }
 
     @Override
-    public void deleteUserAnnouncements(Long userId){
+    public void deleteUserAnnouncements(Long userId) {
         log.info("Started deleting all announcements with user id " + userId);
 
         this.announcementRepository.deleteAnnouncementEntitiesByUserId(userId);
@@ -270,7 +273,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     }
 
     @Override
-    public void deleteObservedAnnouncements(Long userId){
+    public void deleteObservedAnnouncements(Long userId) {
         log.info("Started deleting observed announcements with user id " + userId);
 
         this.observedAnnouncementRepository.removeObservedAnnouncementEntitiesByObservingUserId(userId);
