@@ -12,7 +12,9 @@ import pl.polsl.krypczyk.apartmentsforrent.messageservice.domain.message.Message
 import pl.polsl.krypczyk.apartmentsforrent.messageservice.domain.message.MessageRepository;
 import pl.polsl.krypczyk.apartmentsforrent.messageservice.domain.message.MessageService;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.List;
 import java.util.stream.Collectors;
 
 
