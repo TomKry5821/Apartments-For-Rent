@@ -16,6 +16,7 @@ import pl.polsl.krypczyk.apartmentsforrent.announcementservice.application.annou
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.application.announcement.request.UpdateAnnouncementRequest;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.application.announcement.response.GetAnnouncementWithAllDetailsResponse;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.application.announcement.response.UpdateAnnouncementResponse;
+import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.observedannouncement.ObservedAnnouncementRepository;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.observedannouncement.exception.AnnouncementAlreadyObservedException;
 
 import java.math.BigDecimal;
@@ -34,6 +35,9 @@ class AnnouncementServiceImplTest {
 
     @Autowired
     private AnnouncementRepository announcementRepository;
+
+    @Autowired
+    private ObservedAnnouncementRepository observedAnnouncementRepository;
 
     @BeforeEach
     void deleteDbContent() {
@@ -310,6 +314,22 @@ class AnnouncementServiceImplTest {
         //THEN
         Assertions.assertTrue(this.announcementRepository.findAll().isEmpty());
     }
+
+
+    @Test
+    void deleteUserObservedAnnouncementsListener_WithValidUserId() throws InvalidUserIdException, AnnouncementAlreadyObservedException, AnnouncementNotFoundException, ClosedAnnouncementException {
+        //GIVEN
+        var announcement = this.validAnnouncementRequest();
+        var addNewAnnouncementResponse = this.announcementService.addNewAnnouncement(announcement, 1L);
+        this.announcementService.observeAnnouncement(addNewAnnouncementResponse.getAnnouncementId(), 1L, 1L);
+
+        //WHEN
+        this.announcementService.deleteObservedAnnouncements(announcement.getUserId());
+
+        //THEN
+        Assertions.assertTrue(this.observedAnnouncementRepository.findAll().isEmpty());
+    }
+
 
     private AddNewAnnouncementRequest validAnnouncementRequest() {
         return AddNewAnnouncementRequest.builder()
