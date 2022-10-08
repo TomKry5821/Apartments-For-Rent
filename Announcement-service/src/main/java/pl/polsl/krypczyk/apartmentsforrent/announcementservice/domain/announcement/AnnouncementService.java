@@ -28,7 +28,7 @@ public interface AnnouncementService {
 
     void closeAnnouncement(Long announcementId, Long requesterId) throws AnnouncementNotFoundException, InvalidUserIdException;
 
-    ObserveAnnouncementResponse observeAnnouncement(Long announcementId, Long userId, Long requesterId) throws InvalidUserIdException, AnnouncementNotFoundException, AnnouncementAlreadyObservedException;
+    ObserveAnnouncementResponse observeAnnouncement(Long announcementId, Long userId, Long requesterId) throws InvalidUserIdException, AnnouncementNotFoundException, AnnouncementAlreadyObservedException, ClosedAnnouncementException;
 
     void unobserveAnnouncement(Long announcementId, Long userId, Long requesterId) throws InvalidUserIdException, AnnouncementNotFoundException;
 

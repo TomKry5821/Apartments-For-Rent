@@ -64,7 +64,7 @@ public class AnnouncementController {
     @ResponseStatus(HttpStatus.CREATED)
     public ObserveAnnouncementResponse observeAnnouncement(@NotNull @Min(value = 1) @PathVariable("announcementId") Long announcementId,
                                                            @NotNull @Min(value = 1) @PathVariable("userId") Long userId,
-                                                           @RequestHeader("requester-user-id") @NotNull Long requesterId) throws InvalidUserIdException, AnnouncementNotFoundException, AnnouncementAlreadyObservedException {
+                                                           @RequestHeader("requester-user-id") @NotNull Long requesterId) throws InvalidUserIdException, AnnouncementNotFoundException, AnnouncementAlreadyObservedException, ClosedAnnouncementException {
         return this.announcementService.observeAnnouncement(announcementId, userId, requesterId);
     }
 
