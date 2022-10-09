@@ -15,7 +15,6 @@ public class AnnouncementListener {
     private final String DELETE_ANNOUNCEMENT_TOPIC = "delete-announcement";
     private final String DELETE_OBSERVED_ANNOUNCEMENT_TOPIC = "delete-observed-announcement";
     private final AnnouncementService announcementService;
-
     private final ObservedAnnouncementService observedAnnouncementService;
 
     // IF DATA WILL BE OUR CUSTOM CLASS WE WILL PASS THERE THAT CLASS
