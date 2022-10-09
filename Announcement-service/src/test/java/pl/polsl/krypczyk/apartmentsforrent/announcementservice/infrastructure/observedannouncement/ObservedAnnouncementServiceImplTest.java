@@ -12,7 +12,7 @@ import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announceme
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.excpetion.AnnouncementNotFoundException;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.excpetion.ClosedAnnouncementException;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.excpetion.InvalidUserIdException;
-import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.observedannouncement.ObservedAnnouncementRepository;
+import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.observedannouncement.ObservedAnnouncementService;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.observedannouncement.exception.AnnouncementAlreadyObservedException;
 
 import java.math.BigDecimal;
@@ -23,13 +23,13 @@ import java.util.List;
 class ObservedAnnouncementServiceImplTest {
 
     @Autowired
+    private ObservedAnnouncementService observedAnnouncementService;
+
+    @Autowired
     private AnnouncementService announcementService;
 
     @Autowired
     private AnnouncementRepository announcementRepository;
-
-    @Autowired
-    private ObservedAnnouncementRepository observedAnnouncementRepository;
 
     @BeforeEach
     void deleteDbContent() {
@@ -44,7 +44,7 @@ class ObservedAnnouncementServiceImplTest {
         var expected = this.validObserveAnnouncementResponse(addNewAnnouncementResponse.getAnnouncementId(), addNewAnnouncementResponse.getUserId());
 
         //WHEN
-        var actual = this.announcementService.observeAnnouncement(addNewAnnouncementResponse.getAnnouncementId(), addNewAnnouncementResponse.getUserId(), addNewAnnouncementResponse.getUserId());
+        var actual = this.observedAnnouncementService.observeAnnouncement(addNewAnnouncementResponse.getAnnouncementId(), addNewAnnouncementResponse.getUserId(), addNewAnnouncementResponse.getUserId());
         //THEN
         Assertions.assertEquals(expected, actual);
     }
@@ -57,7 +57,7 @@ class ObservedAnnouncementServiceImplTest {
 
         //WHEN AND THEN
         Assertions.assertThrows(InvalidUserIdException.class, () ->
-                this.announcementService.observeAnnouncement(addNewAnnouncementResponse.getAnnouncementId(), 0L, 1L));
+                this.observedAnnouncementService.observeAnnouncement(addNewAnnouncementResponse.getAnnouncementId(), 0L, 1L));
     }
 
     @Test
@@ -68,7 +68,7 @@ class ObservedAnnouncementServiceImplTest {
 
         //WHEN AND THEN
         Assertions.assertThrows(AnnouncementNotFoundException.class, () ->
-                this.announcementService.observeAnnouncement(0L, addNewAnnouncementResponse.getUserId(), addNewAnnouncementResponse.getUserId()));
+                this.observedAnnouncementService.observeAnnouncement(0L, addNewAnnouncementResponse.getUserId(), addNewAnnouncementResponse.getUserId()));
     }
 
     @Test
@@ -76,11 +76,11 @@ class ObservedAnnouncementServiceImplTest {
         //GIVEN
         var addNewAnnouncementRequest = validAnnouncementRequest();
         var addNewAnnouncementResponse = this.announcementService.addNewAnnouncement(addNewAnnouncementRequest, addNewAnnouncementRequest.getUserId());
-        this.announcementService.observeAnnouncement(addNewAnnouncementResponse.getAnnouncementId(), addNewAnnouncementResponse.getUserId(), addNewAnnouncementResponse.getUserId());
+        this.observedAnnouncementService.observeAnnouncement(addNewAnnouncementResponse.getAnnouncementId(), addNewAnnouncementResponse.getUserId(), addNewAnnouncementResponse.getUserId());
 
         //WHEN AND THEN
         Assertions.assertThrows(AnnouncementAlreadyObservedException.class, () ->
-                this.announcementService.observeAnnouncement(addNewAnnouncementResponse.getAnnouncementId(), addNewAnnouncementResponse.getUserId(), addNewAnnouncementResponse.getUserId()));
+                this.observedAnnouncementService.observeAnnouncement(addNewAnnouncementResponse.getAnnouncementId(), addNewAnnouncementResponse.getUserId(), addNewAnnouncementResponse.getUserId()));
     }
 
     @Test
@@ -92,7 +92,7 @@ class ObservedAnnouncementServiceImplTest {
 
         //WHEN AND THEN
         Assertions.assertThrows(ClosedAnnouncementException.class, () ->
-                this.announcementService.observeAnnouncement(addNewAnnouncementResponse.getAnnouncementId(), addNewAnnouncementResponse.getUserId(), addNewAnnouncementResponse.getUserId()));
+                this.observedAnnouncementService.observeAnnouncement(addNewAnnouncementResponse.getAnnouncementId(), addNewAnnouncementResponse.getUserId(), addNewAnnouncementResponse.getUserId()));
     }
 
     @Test
@@ -100,10 +100,10 @@ class ObservedAnnouncementServiceImplTest {
         //GIVEN
         var addNewAnnouncementRequest = validAnnouncementRequest();
         var addNewAnnouncementResponse = this.announcementService.addNewAnnouncement(addNewAnnouncementRequest, addNewAnnouncementRequest.getUserId());
-        this.announcementService.observeAnnouncement(addNewAnnouncementResponse.getAnnouncementId(), addNewAnnouncementResponse.getUserId(), addNewAnnouncementResponse.getUserId());
+        this.observedAnnouncementService.observeAnnouncement(addNewAnnouncementResponse.getAnnouncementId(), addNewAnnouncementResponse.getUserId(), addNewAnnouncementResponse.getUserId());
 
         //WHEN
-        this.announcementService.unobserveAnnouncement(addNewAnnouncementResponse.getAnnouncementId(), addNewAnnouncementResponse.getUserId(), addNewAnnouncementResponse.getUserId());
+        this.observedAnnouncementService.unobserveAnnouncement(addNewAnnouncementResponse.getAnnouncementId(), addNewAnnouncementResponse.getUserId(), addNewAnnouncementResponse.getUserId());
 
         //THEN
         Assertions.assertDoesNotThrow(InvalidUserIdException::new);
@@ -115,11 +115,11 @@ class ObservedAnnouncementServiceImplTest {
         //GIVEN
         var addNewAnnouncementRequest = validAnnouncementRequest();
         var addNewAnnouncementResponse = this.announcementService.addNewAnnouncement(addNewAnnouncementRequest, addNewAnnouncementRequest.getUserId());
-        this.announcementService.observeAnnouncement(addNewAnnouncementResponse.getAnnouncementId(), addNewAnnouncementResponse.getUserId(), addNewAnnouncementResponse.getUserId());
+        this.observedAnnouncementService.observeAnnouncement(addNewAnnouncementResponse.getAnnouncementId(), addNewAnnouncementResponse.getUserId(), addNewAnnouncementResponse.getUserId());
 
         //WHEN AND THEN
         Assertions.assertThrows(InvalidUserIdException.class, () ->
-                this.announcementService.unobserveAnnouncement(addNewAnnouncementResponse.getAnnouncementId(), 0L, addNewAnnouncementResponse.getUserId()));
+                this.observedAnnouncementService.unobserveAnnouncement(addNewAnnouncementResponse.getAnnouncementId(), 0L, addNewAnnouncementResponse.getUserId()));
     }
 
     @Test
@@ -127,11 +127,11 @@ class ObservedAnnouncementServiceImplTest {
         //GIVEN
         var addNewAnnouncementRequest = validAnnouncementRequest();
         var addNewAnnouncementResponse = this.announcementService.addNewAnnouncement(addNewAnnouncementRequest, addNewAnnouncementRequest.getUserId());
-        this.announcementService.observeAnnouncement(addNewAnnouncementResponse.getAnnouncementId(), addNewAnnouncementResponse.getUserId(), addNewAnnouncementResponse.getUserId());
+        this.observedAnnouncementService.observeAnnouncement(addNewAnnouncementResponse.getAnnouncementId(), addNewAnnouncementResponse.getUserId(), addNewAnnouncementResponse.getUserId());
 
         //WHEN AND THEN
         Assertions.assertThrows(AnnouncementNotFoundException.class, () ->
-                this.announcementService.unobserveAnnouncement(0L, addNewAnnouncementResponse.getUserId(), addNewAnnouncementResponse.getUserId()));
+                this.observedAnnouncementService.unobserveAnnouncement(0L, addNewAnnouncementResponse.getUserId(), addNewAnnouncementResponse.getUserId()));
     }
 
     private AddNewAnnouncementRequest validAnnouncementRequest() {
