@@ -1,7 +1,6 @@
 package pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement;
 
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.application.announcement.dto.AnnouncementDTO;
-import pl.polsl.krypczyk.apartmentsforrent.announcementservice.application.announcement.response.ObserveAnnouncementResponse;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.excpetion.AnnouncementNotFoundException;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.excpetion.ClosedAnnouncementException;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.excpetion.InvalidUserIdException;
@@ -10,7 +9,6 @@ import pl.polsl.krypczyk.apartmentsforrent.announcementservice.application.annou
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.application.announcement.response.AddNewAnnouncementResponse;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.application.announcement.response.GetAnnouncementWithAllDetailsResponse;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.application.announcement.response.UpdateAnnouncementResponse;
-import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.observedannouncement.exception.AnnouncementAlreadyObservedException;
 
 import java.util.Collection;
 
@@ -27,10 +25,6 @@ public interface AnnouncementService {
                                                   Long requesterId) throws AnnouncementNotFoundException, ClosedAnnouncementException, InvalidUserIdException;
 
     void closeAnnouncement(Long announcementId, Long requesterId) throws AnnouncementNotFoundException, InvalidUserIdException;
-
-    ObserveAnnouncementResponse observeAnnouncement(Long announcementId, Long userId, Long requesterId) throws InvalidUserIdException, AnnouncementNotFoundException, AnnouncementAlreadyObservedException, ClosedAnnouncementException;
-
-    void unobserveAnnouncement(Long announcementId, Long userId, Long requesterId) throws InvalidUserIdException, AnnouncementNotFoundException;
 
     void closeUserAnnouncements(Long userId);
 
