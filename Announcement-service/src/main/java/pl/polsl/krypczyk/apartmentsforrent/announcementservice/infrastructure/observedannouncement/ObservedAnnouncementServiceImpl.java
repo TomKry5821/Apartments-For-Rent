@@ -3,10 +3,10 @@ package pl.polsl.krypczyk.apartmentsforrent.announcementservice.infrastructure.o
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.application.announcement.response.ObserveAnnouncementResponse;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.EntityFactory;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.ResponseFactory;
-import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.AnnouncementEntity;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.excpetion.AnnouncementNotFoundException;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.excpetion.ClosedAnnouncementException;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.excpetion.InvalidUserIdException;
@@ -18,6 +18,7 @@ import pl.polsl.krypczyk.apartmentsforrent.announcementservice.infrastructure.ut
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 @Slf4j
 public class ObservedAnnouncementServiceImpl implements ObservedAnnouncementService {
 
