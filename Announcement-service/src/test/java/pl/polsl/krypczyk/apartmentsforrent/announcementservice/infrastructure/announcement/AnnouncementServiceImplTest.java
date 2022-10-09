@@ -5,7 +5,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import pl.polsl.krypczyk.apartmentsforrent.announcementservice.application.announcement.response.ObserveAnnouncementResponse;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.AnnouncementRepository;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.AnnouncementService;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.application.announcement.dto.AnnouncementDTO;
@@ -212,22 +211,6 @@ class AnnouncementServiceImplTest {
         Assertions.assertTrue(this.announcementRepository.findAll().isEmpty());
     }
 
-
-    /*@Test
-    void deleteUserObservedAnnouncementsListener_WithValidUserId() throws InvalidUserIdException {
-        //GIVEN
-        var announcement = this.validAnnouncementRequest();
-        var addNewAnnouncementResponse = this.announcementService.addNewAnnouncement(announcement, 1L);
-        this.announcementService.observeAnnouncement(addNewAnnouncementResponse.getAnnouncementId(), 1L, 1L);
-
-        //WHEN
-        this.announcementService.deleteObservedAnnouncements(announcement.getUserId());
-
-        //THEN
-        Assertions.assertTrue(this.observedAnnouncementRepository.findAll().isEmpty());
-    }*/ //TODO WYDZIELIĆ OSOBNĄ KLASĘ DLA LISTENERA KAFKI
-
-
     private AddNewAnnouncementRequest validAnnouncementRequest() {
         return AddNewAnnouncementRequest.builder()
                 .city("City")
@@ -308,14 +291,6 @@ class AnnouncementServiceImplTest {
                 .roomsNumber(1)
                 .zipCode("11-111")
                 .rentalTerm(null)
-                .build();
-    }
-
-    private ObserveAnnouncementResponse validObserveAnnouncementResponse(Long announcementId, Long userId) {
-        return ObserveAnnouncementResponse
-                .builder()
-                .announcementId(announcementId)
-                .userId(userId)
                 .build();
     }
 

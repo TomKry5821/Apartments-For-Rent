@@ -12,6 +12,7 @@ import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announceme
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.excpetion.AnnouncementNotFoundException;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.excpetion.ClosedAnnouncementException;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.excpetion.InvalidUserIdException;
+import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.observedannouncement.ObservedAnnouncementRepository;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.observedannouncement.ObservedAnnouncementService;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.observedannouncement.exception.AnnouncementAlreadyObservedException;
 
@@ -24,6 +25,9 @@ class ObservedAnnouncementServiceImplTest {
 
     @Autowired
     private ObservedAnnouncementService observedAnnouncementService;
+
+    @Autowired
+    private ObservedAnnouncementRepository observedAnnouncementRepository;
 
     @Autowired
     private AnnouncementService announcementService;
@@ -132,6 +136,20 @@ class ObservedAnnouncementServiceImplTest {
         //WHEN AND THEN
         Assertions.assertThrows(AnnouncementNotFoundException.class, () ->
                 this.observedAnnouncementService.unobserveAnnouncement(0L, addNewAnnouncementResponse.getUserId(), addNewAnnouncementResponse.getUserId()));
+    }
+
+    @Test
+    void deleteUserObservedAnnouncementsListener_WithValidUserId() throws InvalidUserIdException, AnnouncementAlreadyObservedException, AnnouncementNotFoundException, ClosedAnnouncementException {
+        //GIVEN
+        var announcement = this.validAnnouncementRequest();
+        var addNewAnnouncementResponse = this.announcementService.addNewAnnouncement(announcement, 1L);
+        this.observedAnnouncementService.observeAnnouncement(addNewAnnouncementResponse.getAnnouncementId(), 1L, 1L);
+
+        //WHEN
+        this.observedAnnouncementService.deleteObservedAnnouncements(announcement.getUserId());
+
+        //THEN
+        Assertions.assertTrue(this.observedAnnouncementRepository.findAll().isEmpty());
     }
 
     private AddNewAnnouncementRequest validAnnouncementRequest() {
