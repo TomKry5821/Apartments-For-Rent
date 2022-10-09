@@ -12,4 +12,6 @@ public interface ObservedAnnouncementService {
 
     void unobserveAnnouncement(Long announcementId, Long userId, Long requesterId) throws InvalidUserIdException, AnnouncementNotFoundException;
 
+    void deleteObservedAnnouncements(Long userId);
+
 }

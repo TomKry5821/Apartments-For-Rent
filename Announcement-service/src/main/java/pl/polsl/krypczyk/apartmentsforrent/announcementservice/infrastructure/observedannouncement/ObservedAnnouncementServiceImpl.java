@@ -62,4 +62,13 @@ public class ObservedAnnouncementServiceImpl implements ObservedAnnouncementServ
         log.info("Successfully unobserved announcement with id" + announcementId + " by user with id - " + userId);
     }
 
+    @Override
+    public void deleteObservedAnnouncements(Long userId) {
+        log.info("Started deleting observed announcements with user id " + userId);
+
+        this.observedAnnouncementRepository.removeObservedAnnouncementEntitiesByObservingUserId(userId);
+
+        log.info("Successfully deleted observed announcements with user id " + userId);
+    }
+
 }
