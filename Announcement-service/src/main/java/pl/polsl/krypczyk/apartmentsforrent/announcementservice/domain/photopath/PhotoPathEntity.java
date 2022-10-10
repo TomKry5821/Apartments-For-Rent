@@ -10,7 +10,6 @@ import javax.persistence.*;
 @Getter
 @Setter
 @RequiredArgsConstructor
-@ToString
 @Entity
 @Table(name = "PHOTO_PATH")
 public class PhotoPathEntity {
