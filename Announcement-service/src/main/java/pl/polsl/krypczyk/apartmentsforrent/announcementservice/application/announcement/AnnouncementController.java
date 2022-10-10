@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*;
 
 
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.application.announcement.response.ObserveAnnouncementResponse;
+import pl.polsl.krypczyk.apartmentsforrent.announcementservice.application.observedannouncement.dto.ObservedAnnouncementDTO;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.AnnouncementService;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.application.announcement.dto.AnnouncementDTO;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.excpetion.AnnouncementNotFoundException;
@@ -77,6 +78,12 @@ public class AnnouncementController {
                                       @NotNull @Min(value = 1) @PathVariable("userId") Long userId,
                                       @RequestHeader("requester-user-id") @NotNull Long requesterId) throws InvalidUserIdException, AnnouncementNotFoundException {
         this.observedAnnouncementService.unobserveAnnouncement(announcementId, userId, requesterId);
+    }
+
+    @GetMapping("/announcements/observed/{userId}")
+    public Collection<ObservedAnnouncementDTO> getObservedAnnouncements(@NotNull @Min(value = 1) @PathVariable("userId") Long userId,
+                                                                        @RequestHeader("requester-user-id") @NotNull Long requesterId) throws InvalidUserIdException {
+        return this.observedAnnouncementService.getObservedAnnouncements(userId, requesterId);
     }
 
 }
