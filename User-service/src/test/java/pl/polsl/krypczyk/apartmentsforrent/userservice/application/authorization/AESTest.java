@@ -9,7 +9,7 @@ import java.util.Objects;
 class AESTest {
 
     @Test
-    void testEncryptPassword_WithValidData() {
+    void testEncryptPasswordWithValidDataShouldReturnEncryptedPassword() {
         //GIVEN
         var encryptedPassword = "H6LsgM/nxKwv+1yR3wlLxg==";
         var password = "Admin";
@@ -22,7 +22,7 @@ class AESTest {
     }
 
     @Test
-    void testEncryptPassword_WitInvalidData() {
+    void testEncryptPasswordWitInvalidDataShouldReturnNullPassword() {
         //GIVEN
         String password = null;
 
@@ -34,7 +34,7 @@ class AESTest {
     }
 
     @Test
-    void testDecryptPassword_WithValidData() {
+    void testDecryptPasswordWithValidDataShouldReturnDecryptedPassword() {
         //GIVEN
         var encryptedPassword = "H6LsgM/nxKwv+1yR3wlLxg==";
         var password = "Admin";
@@ -47,7 +47,7 @@ class AESTest {
     }
 
     @Test
-    void testDecryptPassword_WithInvalidData() {
+    void testDecryptPasswordWithInvalidDataShouldReturnNullPassword() {
         //GIVEN
         String password = null;
 

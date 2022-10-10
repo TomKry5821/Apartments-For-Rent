@@ -24,7 +24,7 @@ class AnnouncementControllerTest {
     private MockMvc mvc;
 
     @Test
-    void testGetAllAnnouncements_shouldReturn200() throws Exception {
+    void testGetAllAnnouncementsShouldReturn200() throws Exception {
         mvc.perform(
                         get("/announcement/api/v1/public/announcements")
                                 .contentType(MediaType.APPLICATION_JSON))
@@ -32,7 +32,7 @@ class AnnouncementControllerTest {
     }
 
     @Test
-    void testAddNewAnnouncement_WithValidBody_ShouldReturn200() throws Exception {
+    void testAddNewAnnouncementWithValidBodyShouldReturn200() throws Exception {
         mvc.perform(
                         post("/announcement/api/v1/announcements")
                                 .contentType(MediaType.APPLICATION_JSON)
@@ -62,7 +62,7 @@ class AnnouncementControllerTest {
     }
 
     @Test
-    void testAddNewAnnouncement_WithInvalidBody_ShouldReturn400() throws Exception {
+    void testAddNewAnnouncementWithInvalidBodyShouldReturn400() throws Exception {
         mvc.perform(
                         post("/announcement/api/v1/announcements")
                                 .contentType(MediaType.APPLICATION_JSON)
@@ -92,7 +92,7 @@ class AnnouncementControllerTest {
     }
 
     @Test
-    void testGetAnnouncement_WithAllDetailsWithInvalidAnnouncementId_ShouldReturn400() throws Exception {
+    void testGetAnnouncementWithAllDetailsWithInvalidAnnouncementIdShouldReturn400() throws Exception {
         mvc.perform(
                         get("/announcement/api/v1/public/announcements/10")
                                 .contentType(MediaType.APPLICATION_JSON))
@@ -100,7 +100,7 @@ class AnnouncementControllerTest {
     }
 
     @Test
-    void testGetAnnouncement_WithAllDetailsWithValidAnnouncementId_ShouldReturn200() throws Exception {
+    void testGetAnnouncementWithAllDetailsWithValidAnnouncementIdShouldReturn200() throws Exception {
         this.createAnnouncement();
 
         mvc.perform(
@@ -110,7 +110,7 @@ class AnnouncementControllerTest {
     }
 
     @Test
-    void testUpdateAnnouncement_WithValidBodyAndValidUserId_ShouldReturn200() throws Exception {
+    void testUpdateAnnouncementWithValidBodyAndValidUserIdShouldReturn200() throws Exception {
         this.createAnnouncement();
 
         mvc.perform(
@@ -141,7 +141,7 @@ class AnnouncementControllerTest {
     }
 
     @Test
-    void testUpdateAnnouncement_WithInvalidBodyAndValidUserId_ShouldReturn400() throws Exception {
+    void testUpdateAnnouncementWithInvalidBodyAndValidUserIdShouldReturn400() throws Exception {
         this.createAnnouncement();
 
         mvc.perform(
@@ -172,7 +172,7 @@ class AnnouncementControllerTest {
     }
 
     @Test
-    void testCloseAnnouncement_WithValidUserId_ShouldReturn204() throws Exception {
+    void testCloseAnnouncementWithValidUserIdShouldReturn204() throws Exception {
         this.createAnnouncement();
 
         mvc.perform(
@@ -183,7 +183,7 @@ class AnnouncementControllerTest {
     }
 
     @Test
-    void testCloseAnnouncement_WithInvalidUserId_ShouldReturn400() throws Exception {
+    void testCloseAnnouncementWithInvalidUserIdShouldReturn400() throws Exception {
         this.createAnnouncement();
 
         mvc.perform(
@@ -194,7 +194,7 @@ class AnnouncementControllerTest {
     }
 
     @Test
-    void testObserveAnnouncement_WithValidUserIdAndValidAnnouncementId_ShouldReturn201() throws Exception {
+    void testObserveAnnouncementWithValidUserIdAndValidAnnouncementIdShouldReturn201() throws Exception {
         this.createAnnouncement();
 
         mvc.perform(
@@ -205,7 +205,7 @@ class AnnouncementControllerTest {
     }
 
     @Test
-    void testObserveAnnouncement_WithInvalidUserIdAndValidAnnouncementId_ShouldReturn400() throws Exception {
+    void testObserveAnnouncementWithInvalidUserIdAndValidAnnouncementIdShouldReturn400() throws Exception {
         this.createAnnouncement();
 
         mvc.perform(
@@ -216,7 +216,7 @@ class AnnouncementControllerTest {
     }
 
     @Test
-    void testObserveAnnouncement_WithValidUserIdAndInvalidAnnouncementId_ShouldReturn400() throws Exception {
+    void testObserveAnnouncementWithValidUserIdAndInvalidAnnouncementIdShouldReturn400() throws Exception {
         this.createAnnouncement();
 
         mvc.perform(
@@ -227,7 +227,7 @@ class AnnouncementControllerTest {
     }
 
     @Test
-    void testUnobserveAnnouncement_WithValidUserIdAndValidAnnouncementId_ShouldReturn204() throws Exception {
+    void testUnobserveAnnouncementWithValidUserIdAndValidAnnouncementIdShouldReturn204() throws Exception {
         this.createAnnouncement();
         this.observeAnnouncement();
 
@@ -239,7 +239,7 @@ class AnnouncementControllerTest {
     }
 
     @Test
-    void testUnobserveAnnouncement_WithInvalidUserIdAndInvalidAnnouncementId_ShouldReturn400() throws Exception {
+    void testUnobserveAnnouncementWithInvalidUserIdAndInvalidAnnouncementIdShouldReturn400() throws Exception {
         this.createAnnouncement();
         this.observeAnnouncement();
 

@@ -22,7 +22,7 @@ class AuthorizationControllerTest {
     private MockMvc mvc;
 
     @Test
-    void testRegisterNewUser_WithValidUserDetails_ShouldReturn201() throws Exception {
+    void testRegisterNewUserWithValidUserDetailsShouldReturn201() throws Exception {
         //GIVEN AND WHEN
         var result = this.registerValidUser();
 
@@ -33,7 +33,7 @@ class AuthorizationControllerTest {
     }
 
     @Test
-    void testRegisterNewUser_WithInvalidUserDetails_ShouldReturn400() throws Exception {
+    void testRegisterNewUserWithInvalidUserDetailsShouldReturn400() throws Exception {
         mvc.perform(
                         post("/user/api/v1/auth/register")
                                 .contentType(MediaType.APPLICATION_JSON)
@@ -51,7 +51,7 @@ class AuthorizationControllerTest {
     }
 
     @Test
-    void testRegister_ExistingUser_ShouldReturn400() throws Exception {
+    void testRegisterExistingUserShouldReturn400() throws Exception {
         //GIVEN AND WHEN
         this.registerValidUser();
         var result = this.registerValidUser();
@@ -62,7 +62,7 @@ class AuthorizationControllerTest {
     }
 
     @Test
-    void test_LoginUser_WithValidCredentials_ShouldReturn200() throws Exception {
+    void test_LoginUserWithValidCredentialsShouldReturn200() throws Exception {
         //GIVEN
         this.registerValidUser();
 
@@ -83,7 +83,7 @@ class AuthorizationControllerTest {
     }
 
     @Test
-    void testLoginUser_WithInvalidCredentials_ShouldReturn400() throws Exception {
+    void testLoginUserWithInvalidCredentialsShouldReturn400() throws Exception {
         //GIVEN
         this.registerValidUser();
 
@@ -104,7 +104,7 @@ class AuthorizationControllerTest {
     }
 
     @Test
-    void testLoginUser_WithNullCredentials_ShouldReturn400() throws Exception {
+    void testLoginUserWithNullCredentialsShouldReturn400() throws Exception {
         //GIVEN
         this.registerValidUser();
 
@@ -125,7 +125,7 @@ class AuthorizationControllerTest {
     }
 
     @Test
-    void testLogoutUser_WithValidId_ShouldReturn204() throws Exception {
+    void testLogoutUserWithValidIdShouldReturn204() throws Exception {
         //GIVEN
         this.registerValidUser();
         //WHEN
@@ -139,7 +139,7 @@ class AuthorizationControllerTest {
     }
 
     @Test
-    void testLogoutUser_WithInvalidId_ShouldReturn400() throws Exception {
+    void testLogoutUserWithInvalidIdShouldReturn400() throws Exception {
         //GIVEN
         this.registerValidUser();
 

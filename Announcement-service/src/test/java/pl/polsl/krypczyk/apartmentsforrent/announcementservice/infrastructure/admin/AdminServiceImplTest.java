@@ -34,7 +34,7 @@ class AdminServiceImplTest {
     }
 
     @Test
-    void testDeleteAnnouncement_WithValidAnnouncementId() throws InvalidUserIdException, AnnouncementNotFoundException {
+    void testDeleteAnnouncementWithValidAnnouncementIdShouldReturnEmptyResponseAndShouldNotThrowAnnouncementNotfoundException() throws InvalidUserIdException, AnnouncementNotFoundException {
         //GIVEN
         var addNewAnnouncementRequest = validAnnouncementRequest();
         var addNewAnnouncementResponse = this.announcementService.addNewAnnouncement(addNewAnnouncementRequest, addNewAnnouncementRequest.getUserId());
@@ -48,7 +48,7 @@ class AdminServiceImplTest {
     }
 
     @Test
-    void testDeleteAnnouncement_WithInvalidAnnouncementId() throws InvalidUserIdException {
+    void testDeleteAnnouncementWithInvalidAnnouncementIdShouldReturnNotEmptyResponseAndShouldThrowAnnouncementNotFoundException() throws InvalidUserIdException {
         //GIVEN
         var addNewAnnouncementRequest = validAnnouncementRequest();
         this.announcementService.addNewAnnouncement(addNewAnnouncementRequest, addNewAnnouncementRequest.getUserId());

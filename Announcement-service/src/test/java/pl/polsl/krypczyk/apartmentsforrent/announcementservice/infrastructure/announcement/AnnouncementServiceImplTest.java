@@ -39,7 +39,7 @@ class AnnouncementServiceImplTest {
     }
 
     @Test
-    void testGetAllActiveAnnouncements_WithEmptyDatabase() {
+    void testGetAllActiveAnnouncementsWithEmptyDatabaseShouldReturnExpectedResponse() {
         //GIVEN
         Collection<AnnouncementDTO> announcementDTOS = new ArrayList<>();
 
@@ -51,7 +51,7 @@ class AnnouncementServiceImplTest {
     }
 
     @Test
-    void testGetAllActiveAnnouncements_WithNotEmptyDatabase() throws InvalidUserIdException {
+    void testGetAllActiveAnnouncementsWithNotEmptyDatabaseShouldReturnNotEmptyResponse() throws InvalidUserIdException {
         //GIVEN
         var addNewAnnouncementRequest = this.validAnnouncementRequest();
         this.announcementService.addNewAnnouncement(addNewAnnouncementRequest, addNewAnnouncementRequest.getUserId());
@@ -64,7 +64,7 @@ class AnnouncementServiceImplTest {
     }
 
     @Test
-    void testAddNewAnnouncement_WithValidRequestBody() throws InvalidUserIdException {
+    void testAddNewAnnouncementWithValidRequestBodyShouldReturnNotEmptyResponse() throws InvalidUserIdException {
         //GIVEN
         var addNewAnnouncementRequest = validAnnouncementRequest();
 
@@ -79,7 +79,7 @@ class AnnouncementServiceImplTest {
     }
 
     @Test
-    void testAddNewAnnouncement_WithInvalidRequestBody() {
+    void testAddNewAnnouncementWithInvalidRequestBodyShouldThrowInvalidUserIdException() {
         //GIVEN
         var addNewAnnouncementRequest = validAnnouncementRequest();
 
@@ -93,7 +93,7 @@ class AnnouncementServiceImplTest {
 
 
     @Test
-    void testGetAnnouncementWithAllDetails_WithValidAnnouncementId() throws InvalidUserIdException, AnnouncementNotFoundException {
+    void testGetAnnouncementWithAllDetailsWithValidAnnouncementIdShouldReturnExpectedResponse() throws InvalidUserIdException, AnnouncementNotFoundException {
         //GIVEN
         var addNewAnnouncementRequest = validAnnouncementRequest();
         var getAnnouncementDetailsResponse = validGetAnnouncementWithAllDetailsResponse();
@@ -109,7 +109,7 @@ class AnnouncementServiceImplTest {
     }
 
     @Test
-    void testGetAnnouncementWithAllDetails_WithInvalidAnnouncementId() throws InvalidUserIdException {
+    void testGetAnnouncementWithAllDetailsWithInvalidAnnouncementIdShouldThrowAnnouncementNotFoundException() throws InvalidUserIdException {
         //GIVEN
         var addNewAnnouncementRequest = validAnnouncementRequest();
         this.announcementService.addNewAnnouncement(addNewAnnouncementRequest, addNewAnnouncementRequest.getUserId());
@@ -120,7 +120,7 @@ class AnnouncementServiceImplTest {
     }
 
     @Test
-    void testUpdateAnnouncement_WithValidRequestBodyAndUserId() throws InvalidUserIdException, AnnouncementNotFoundException, ClosedAnnouncementException {
+    void testUpdateAnnouncementWithValidRequestBodyAndUserIdShouldReturnExpectedResponse() throws InvalidUserIdException, AnnouncementNotFoundException, ClosedAnnouncementException {
         //GIVEN
         var updateAnnouncementRequest = validUpdateAnnouncementRequest();
         var addNewAnnouncementRequest = validAnnouncementRequest();
@@ -135,7 +135,7 @@ class AnnouncementServiceImplTest {
     }
 
     @Test
-    void testUpdateAnnouncement_WithInvalidUserId() throws InvalidUserIdException {
+    void testUpdateAnnouncementWithInvalidUserIdShouldThrowInvalidUserIdException() throws InvalidUserIdException {
         //GIVEN
         var updateAnnouncementRequest = validUpdateAnnouncementRequest();
         var addNewAnnouncementRequest = validAnnouncementRequest();
@@ -147,7 +147,7 @@ class AnnouncementServiceImplTest {
     }
 
     @Test
-    void testUpdateAnnouncement_WithClosedAnnouncement() throws InvalidUserIdException, AnnouncementNotFoundException {
+    void testUpdateAnnouncementWithClosedAnnouncementShouldThrowClosedAnnouncementException() throws InvalidUserIdException, AnnouncementNotFoundException {
         //GIVEN
         var updateAnnouncementRequest = validUpdateAnnouncementRequest();
         var addNewAnnouncementRequest = validAnnouncementRequest();
@@ -160,7 +160,7 @@ class AnnouncementServiceImplTest {
     }
 
     @Test
-    void testCloseAnnouncement_WithValidUserId() throws InvalidUserIdException, AnnouncementNotFoundException {
+    void testCloseAnnouncementWithValidUserIdShouldNotThrowAnnouncementNotFoundException() throws InvalidUserIdException, AnnouncementNotFoundException {
         //GIVEN
         validUpdateAnnouncementRequest();
         var addNewAnnouncementRequest = validAnnouncementRequest();
@@ -174,7 +174,7 @@ class AnnouncementServiceImplTest {
     }
 
     @Test
-    void testCloseAnnouncement_WithInvalidUserId() throws InvalidUserIdException {
+    void testCloseAnnouncementWithInvalidUserIdShouldThrowInvalidUserIdException() throws InvalidUserIdException {
         //GIVEN
         validUpdateAnnouncementRequest();
         var addNewAnnouncementRequest = validAnnouncementRequest();
@@ -186,7 +186,7 @@ class AnnouncementServiceImplTest {
     }
 
     @Test
-    void testCloseUserAnnouncementsListener_WithValidUserId() throws InvalidUserIdException {
+    void testCloseUserAnnouncementsListenerWithValidUserIdShouldReturnEmptyActiveAnnouncementsList() throws InvalidUserIdException {
         //GIVEN
         var announcement = this.validAnnouncementRequest();
         this.announcementService.addNewAnnouncement(announcement, 1L);
@@ -199,7 +199,7 @@ class AnnouncementServiceImplTest {
     }
 
     @Test
-    void deleteUserAnnouncementsListener_WithValidUserId() throws InvalidUserIdException {
+    void deleteUserAnnouncementsListenerWithValidUserIdShouldReturnEmptyAnnouncementsList() throws InvalidUserIdException {
         //GIVEN
         var announcement = this.validAnnouncementRequest();
         this.announcementService.addNewAnnouncement(announcement, 1L);

@@ -40,7 +40,7 @@ class AdminServiceImplTest {
     }
 
     @Test
-    void testGetAllUsers_WithNotEmptyUsersList() throws UserAlreadyExistsException, BadCredentialsException {
+    void testGetAllUsersWithNotEmptyUsersListShouldReturnNotEmptyResponse() throws UserAlreadyExistsException, BadCredentialsException {
         //GIVEN
         var user = this.createValidUser();
         this.authorizationService.registerNewUser(user);
@@ -53,7 +53,7 @@ class AdminServiceImplTest {
     }
 
     @Test
-    void testGetAllUsers_WithEmptyUsersList() {
+    void testGetAllUsersWithEmptyUsersListShouldReturnEmptyResponse() {
         //GIVEN
         this.deleteDbContent();
         //WHEN
@@ -65,7 +65,7 @@ class AdminServiceImplTest {
 
 
     @Test
-    void testDeleteUser_WithValidUserId() throws UserNotFoundException, UserAlreadyExistsException, BadCredentialsException {
+    void testDeleteUserWithValidUserIdShouldNotThrowUserNotFoundException() throws UserNotFoundException, UserAlreadyExistsException, BadCredentialsException {
         //GIVEN
         var user = this.createValidUser();
         var response = this.authorizationService.registerNewUser(user);
@@ -78,7 +78,7 @@ class AdminServiceImplTest {
     }
 
     @Test
-    void testDeleteUser_WithInvalidUserId() {
+    void testDeleteUserWithInvalidUserIdShouldThrowUserNotFoundException() {
         //GIVEN
         this.createValidUser();
         var userId = INVALID_USER_ID;
@@ -90,7 +90,7 @@ class AdminServiceImplTest {
     }
 
     @Test
-    void testChangeUserDetails_WithValidUserId() throws UserAlreadyExistsException, BadCredentialsException, UserNotFoundException, InvalidUserDetailsException {
+    void testChangeUserDetailsWithValidUserIdShouldNotThrowUserNotFoundExceptionnnnnnnnnnnnnnnn() throws UserAlreadyExistsException, BadCredentialsException, UserNotFoundException, InvalidUserDetailsException {
         //GIVEN
         var user = this.createValidUser();
         var createUserResponse = this.authorizationService.registerNewUser(user);
@@ -104,7 +104,7 @@ class AdminServiceImplTest {
     }
 
     @Test
-    void testChangeUserDetails_WithInvalidUserId() throws UserAlreadyExistsException, BadCredentialsException {
+    void testChangeUserDetailsWithInvalidUserIdShouldThrowUserNotFoundException() throws UserAlreadyExistsException, BadCredentialsException {
         //GIVEN
         var user = this.createValidUser();
         this.authorizationService.registerNewUser(user);
@@ -117,7 +117,7 @@ class AdminServiceImplTest {
     }
 
     @Test
-    void testChangeUserDetails_WithNullUserDetails() throws UserAlreadyExistsException, BadCredentialsException {
+    void testChangeUserDetailsWithNullUserDetailsShouldThrowInvalidUserException() throws UserAlreadyExistsException, BadCredentialsException {
         //GIVEN
         var inactiveUser = this.createInactiveUser();
         var createUserResponse = this.authorizationService.registerNewUser(inactiveUser);
@@ -129,7 +129,7 @@ class AdminServiceImplTest {
     }
 
     @Test
-    void testActivateAccount_WithValidUserId() throws UserAlreadyExistsException, BadCredentialsException, UserNotFoundException {
+    void testActivateAccountWithValidUserIdShouldNotThrowUserNotFoundException() throws UserAlreadyExistsException, BadCredentialsException, UserNotFoundException {
         //GIVEN
         var inactiveUser = this.createInactiveUser();
         var createUserResponse = this.authorizationService.registerNewUser(inactiveUser);
@@ -143,7 +143,7 @@ class AdminServiceImplTest {
     }
 
     @Test
-    void testActivateAccount_WithInvalidUserId() throws UserAlreadyExistsException, BadCredentialsException {
+    void testActivateAccountWithInvalidUserIdUserNotFoundException() throws UserAlreadyExistsException, BadCredentialsException {
         //GIVEN
         var inactiveUser = this.createInactiveUser();
         this.authorizationService.registerNewUser(inactiveUser);

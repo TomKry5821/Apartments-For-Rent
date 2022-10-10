@@ -24,7 +24,7 @@ class MessageControllerTest {
     private MockMvc mvc;
 
     @Test
-    void testAddNewMessage_WithValidData_ShouldReturn204() throws Exception {
+    void testAddNewMessageWithValidDataShouldReturn204() throws Exception {
 
         MockMultipartFile multipartFile = new MockMultipartFile("file", "test".getBytes());
 
@@ -42,7 +42,7 @@ class MessageControllerTest {
     }
 
     @Test
-    void testAddNewMessage_WithInvalidData_ShouldReturn400() throws Exception {
+    void testAddNewMessageWithInvalidDataShouldReturn400() throws Exception {
 
         MockMultipartFile multipartFile = new MockMultipartFile("file", "test".getBytes());
 

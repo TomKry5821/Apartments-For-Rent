@@ -21,7 +21,7 @@ class AdminControllerTest {
     private MockMvc mvc;
 
     @Test
-    void testDeleteUser_WithInvalidUserIdAndValidRequesterId_shouldReturn401() throws Exception {
+    void testDeleteUserWithInvalidUserIdAndValidRequesterIdShouldReturn401() throws Exception {
         //GIVEN
         this.registerValidUser();
         //WHEN
@@ -33,7 +33,7 @@ class AdminControllerTest {
     }
 
     @Test
-    void testDeleteUser_WithInvalidUserIdAndInvalidRequesterId_shouldReturn401() throws Exception {
+    void testDeleteUserWithInvalidUserIdAndInvalidRequesterIdShouldReturn401() throws Exception {
         //GIVEN
         this.registerValidUser();
 
@@ -46,7 +46,7 @@ class AdminControllerTest {
     }
 
     @Test
-    void testGetAllUsers_WithInvalidUserIdAndValidRequesterId_shouldReturn401() throws Exception {
+    void testGetAllUsersWithInvalidUserIdAndValidRequesterIdShouldReturn401() throws Exception {
         //GIVEN
         this.registerValidUser();
         //WHEN
@@ -58,7 +58,7 @@ class AdminControllerTest {
     }
 
     @Test
-    void testGetAllUsers_WithInvalidUserIdAndInvalidRequesterId_shouldReturn401() throws Exception {
+    void testGetAllUsersWithInvalidUserIdAndInvalidRequesterIdShouldReturn401() throws Exception {
         //GIVEN
         this.registerValidUser();
 
@@ -71,7 +71,7 @@ class AdminControllerTest {
     }
 
     @Test
-    void testChangeUserDetails_WithInvalidUserIdAndValidRequesterId_shouldReturn401() throws Exception {
+    void testChangeUserDetailsWithInvalidUserIdAndValidRequesterIdShouldReturn401() throws Exception {
         //GIVEN
         this.registerValidUser();
         //WHEN
@@ -91,7 +91,7 @@ class AdminControllerTest {
     }
 
     @Test
-    void testChangeUserDetails_WithInvalidUserIdAndInvalidRequesterId_shouldReturn400() throws Exception {
+    void testChangeUserDetailsWithInvalidUserIdAndInvalidRequesterIdShouldReturn400() throws Exception {
         //GIVEN
         this.registerValidUser();
 
@@ -112,7 +112,7 @@ class AdminControllerTest {
     }
 
     @Test
-    void testActivateAccount_WithValidUserIdAndValidRequesterId_shouldReturn204() throws Exception {
+    void testActivateAccountWithValidUserIdAndValidRequesterIdShouldReturn204() throws Exception {
         //GIVEN
         this.registerValidUser();
 
@@ -126,7 +126,7 @@ class AdminControllerTest {
     }
 
     @Test
-    void testActivateAccount_WithInvalidUserIdAndValidRequesterId_shouldReturn204() throws Exception {
+    void testActivateAccountWithInvalidUserIdAndValidRequesterIdShouldReturn204() throws Exception {
         //GIVEN
         this.registerValidUser();
 

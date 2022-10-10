@@ -8,10 +8,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.ResultActions;
-
-import java.io.UnsupportedEncodingException;
-import java.util.UUID;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -25,7 +21,7 @@ class UserControllerTest {
     private MockMvc mvc;
 
     @Test
-    void testGetUserDetails_WithValidUserIdAndRequesterId_shouldReturn200() throws Exception {
+    void testGetUserDetailsWithValidUserIdAndRequesterIdShouldReturn200() throws Exception {
         //GIVEN
         this.registerValidUser();
 
@@ -39,7 +35,7 @@ class UserControllerTest {
     }
 
     @Test
-    void testGetUserDetails_WithInvalidUserIdAndValidRequesterId_shouldReturn401() throws Exception {
+    void testGetUserDetailsWithInvalidUserIdAndValidRequesterIdShouldReturn401() throws Exception {
         //GIVEN
         this.registerValidUser();
 
@@ -53,7 +49,7 @@ class UserControllerTest {
     }
 
     @Test
-    void testChangeUserDetails_WithValidUserIdAndValidRequesterId_shouldReturn200() throws Exception {
+    void testChangeUserDetailsWithValidUserIdAndValidRequesterIdShouldReturn200() throws Exception {
         //GIVEN
         this.registerValidUser();
 
@@ -74,7 +70,7 @@ class UserControllerTest {
     }
 
     @Test
-    void testChangeUserDetails_WithInvalidUserIdAndValidRequesterId_shouldReturn401() throws Exception {
+    void testChangeUserDetailsWithInvalidUserIdAndValidRequesterIdShouldReturn401() throws Exception {
         //GIVEN
         this.registerValidUser();
 
@@ -95,7 +91,7 @@ class UserControllerTest {
     }
 
     @Test
-    void testChangeUserDetails_WithInvalidUserIdAndInvalidRequesterId_shouldReturn400() throws Exception {
+    void testChangeUserDetailsWithInvalidUserIdAndInvalidRequesterIdShouldReturn400() throws Exception {
         //GIVEN
         this.registerValidUser();
 
@@ -116,7 +112,7 @@ class UserControllerTest {
     }
 
     @Test
-    void testInactivateAccount_WithValidUserIdAndValidRequesterId_shouldReturn204() throws Exception {
+    void testInactivateAccountWithValidUserIdAndValidRequesterIdShouldReturn204() throws Exception {
         //GIVEN
         this.registerValidUser();
 
@@ -129,7 +125,7 @@ class UserControllerTest {
     }
 
     @Test
-    void testInactivateAccount_WithInvalidUserIdAndValidRequesterId_shouldReturn401() throws Exception {
+    void testInactivateAccountWithInvalidUserIdAndValidRequesterIdShouldReturn401() throws Exception {
         //GIVEN
         this.registerValidUser();
 
@@ -142,7 +138,7 @@ class UserControllerTest {
     }
 
     @Test
-    void testInactivateAccount_WithInvalidUserIdAndInvalidRequesterId_shouldReturn400() throws Exception {
+    void testInactivateAccountWithInvalidUserIdAndInvalidRequesterIdShouldReturn400() throws Exception {
         //GIVEN
         this.registerValidUser();
 
@@ -154,8 +150,8 @@ class UserControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
-    private ResultActions registerValidUser() throws Exception {
-        return mvc.perform(
+    private void registerValidUser() throws Exception {
+        mvc.perform(
                 post("/user/api/v1/auth/register")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
