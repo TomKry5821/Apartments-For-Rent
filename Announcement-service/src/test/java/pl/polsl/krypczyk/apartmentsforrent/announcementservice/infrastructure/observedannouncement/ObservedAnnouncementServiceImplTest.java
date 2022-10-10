@@ -152,6 +152,45 @@ class ObservedAnnouncementServiceImplTest {
         Assertions.assertTrue(this.observedAnnouncementRepository.findAll().isEmpty());
     }
 
+    @Test
+    void getObservedAnnouncementWithValidUserIdShouldReturnNotEmptyResult() throws InvalidUserIdException, AnnouncementAlreadyObservedException, AnnouncementNotFoundException, ClosedAnnouncementException {
+        //GIVEN
+        var announcement = this.validAnnouncementRequest();
+        var addNewAnnouncementResponse = this.announcementService.addNewAnnouncement(announcement, 1L);
+        this.observedAnnouncementService.observeAnnouncement(addNewAnnouncementResponse.getAnnouncementId(), 1L, 1L);
+
+        //WHEN
+        var result = this.observedAnnouncementService.getObservedAnnouncements(1L, 1L);
+
+        //THEN
+        Assertions.assertFalse(result.isEmpty());
+    }
+
+    @Test
+    void getObservedAnnouncementWithValidUserIdAndEmptyObservedAnnouncementsShouldReturnEmptyResult() throws InvalidUserIdException {
+        //GIVEN
+        var announcement = this.validAnnouncementRequest();
+        this.announcementService.addNewAnnouncement(announcement, 1L);
+
+        //WHEN
+        var result = this.observedAnnouncementService.getObservedAnnouncements(1L, 1L);
+
+        //THEN
+        Assertions.assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void getObservedAnnouncementWithInvalidUserIdShouldThrowInvalidUserException() throws InvalidUserIdException, AnnouncementAlreadyObservedException, AnnouncementNotFoundException, ClosedAnnouncementException {
+        //GIVEN
+        var announcement = this.validAnnouncementRequest();
+        var addNewAnnouncementResponse = this.announcementService.addNewAnnouncement(announcement, 1L);
+        this.observedAnnouncementService.observeAnnouncement(addNewAnnouncementResponse.getAnnouncementId(), 1L, 1L);
+
+        //WHEN AND THEN
+        Assertions.assertThrows(InvalidUserIdException.class, () ->
+                this.observedAnnouncementService.getObservedAnnouncements(0L, 1L));
+    }
+
     private AddNewAnnouncementRequest validAnnouncementRequest() {
         return AddNewAnnouncementRequest.builder()
                 .city("City")
