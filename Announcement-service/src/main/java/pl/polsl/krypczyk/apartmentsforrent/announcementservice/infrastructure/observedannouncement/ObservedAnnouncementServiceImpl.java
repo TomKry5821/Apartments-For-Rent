@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.application.announcement.response.ObserveAnnouncementResponse;
+import pl.polsl.krypczyk.apartmentsforrent.announcementservice.application.observedannouncement.dto.ObservedAnnouncementDTO;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.EntityFactory;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.ResponseFactory;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.excpetion.AnnouncementNotFoundException;
@@ -15,6 +16,9 @@ import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.observedan
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.observedannouncement.exception.AnnouncementAlreadyObservedException;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.infrastructure.utils.AnnouncementUtils;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.infrastructure.utils.UserUtils;
+
+import java.util.ArrayList;
+import java.util.Collection;
 
 @Service
 @RequiredArgsConstructor
@@ -69,6 +73,21 @@ public class ObservedAnnouncementServiceImpl implements ObservedAnnouncementServ
         this.observedAnnouncementRepository.removeObservedAnnouncementEntitiesByObservingUserId(userId);
 
         log.info("Successfully deleted observed announcements with user id " + userId);
+    }
+
+    @Override
+    public Collection<ObservedAnnouncementDTO> getObservedAnnouncements(Long userId, Long requesterId) throws InvalidUserIdException {
+        log.info("Started retrieving observed announcements for user with id " + userId);
+
+        this.userUtils.checkIsUserIdValidElseThrowInvalidUser(userId, requesterId);
+
+        var observedAnnouncements = this.observedAnnouncementRepository.findObservedAnnouncementEntitiesByObservingUserId(userId);
+        Collection<ObservedAnnouncementDTO> observedAnnouncementDTOS = new ArrayList<>();
+
+        observedAnnouncements.forEach(oa -> observedAnnouncementDTOS.add(this.responseFactory.createObservedAnnouncementDTO(oa.getAnnouncementEntity())));
+
+        log.info("Successfully retrieved observed announcements for user with id " + userId);
+        return observedAnnouncementDTOS;
     }
 
 }
