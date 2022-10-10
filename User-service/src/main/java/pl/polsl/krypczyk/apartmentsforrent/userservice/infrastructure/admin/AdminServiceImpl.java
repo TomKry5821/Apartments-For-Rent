@@ -51,6 +51,8 @@ public class AdminServiceImpl implements AdminService {
             throw new UserNotFoundException();
 
         CompletableFuture.runAsync(() -> this.kafkaMessageProducer.sendDeleteAnnouncementMessage(userId));
+        CompletableFuture.runAsync(() -> this.kafkaMessageProducer.sendDeleteObservedAnnouncementMessage(userId));
+
         this.userRepository.delete(user);
         log.info("Started deleting user with id - " + userId);
     }

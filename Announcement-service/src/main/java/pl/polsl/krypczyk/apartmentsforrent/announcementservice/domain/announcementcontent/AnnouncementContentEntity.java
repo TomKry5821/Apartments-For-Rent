@@ -12,7 +12,6 @@ import java.util.Collection;
 @Getter
 @Setter
 @RequiredArgsConstructor
-@ToString
 @Entity
 @Table(name = "ANNOUNCEMENT_CONTENT")
 public class AnnouncementContentEntity {

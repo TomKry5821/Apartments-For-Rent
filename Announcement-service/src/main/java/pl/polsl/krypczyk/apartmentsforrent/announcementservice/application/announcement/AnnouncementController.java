@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*;
 
 
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.application.announcement.response.ObserveAnnouncementResponse;
+import pl.polsl.krypczyk.apartmentsforrent.announcementservice.application.observedannouncement.dto.ObservedAnnouncementDTO;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.AnnouncementService;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.application.announcement.dto.AnnouncementDTO;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.excpetion.AnnouncementNotFoundException;
@@ -16,6 +17,7 @@ import pl.polsl.krypczyk.apartmentsforrent.announcementservice.application.annou
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.application.announcement.response.AddNewAnnouncementResponse;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.application.announcement.response.GetAnnouncementWithAllDetailsResponse;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.application.announcement.response.UpdateAnnouncementResponse;
+import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.observedannouncement.ObservedAnnouncementService;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.observedannouncement.exception.AnnouncementAlreadyObservedException;
 
 import javax.validation.Valid;
@@ -29,6 +31,8 @@ import java.util.Collection;
 public class AnnouncementController {
 
     private final AnnouncementService announcementService;
+
+    private final ObservedAnnouncementService observedAnnouncementService;
 
     @GetMapping("/public/announcements")
     public Collection<AnnouncementDTO> getAllActiveAnnouncements() {
@@ -64,8 +68,8 @@ public class AnnouncementController {
     @ResponseStatus(HttpStatus.CREATED)
     public ObserveAnnouncementResponse observeAnnouncement(@NotNull @Min(value = 1) @PathVariable("announcementId") Long announcementId,
                                                            @NotNull @Min(value = 1) @PathVariable("userId") Long userId,
-                                                           @RequestHeader("requester-user-id") @NotNull Long requesterId) throws InvalidUserIdException, AnnouncementNotFoundException, AnnouncementAlreadyObservedException {
-        return this.announcementService.observeAnnouncement(announcementId, userId, requesterId);
+                                                           @RequestHeader("requester-user-id") @NotNull Long requesterId) throws InvalidUserIdException, AnnouncementNotFoundException, AnnouncementAlreadyObservedException, ClosedAnnouncementException {
+        return this.observedAnnouncementService.observeAnnouncement(announcementId, userId, requesterId);
     }
 
     @DeleteMapping("/announcements/{announcementId}/unobserve/{userId}")
@@ -73,7 +77,13 @@ public class AnnouncementController {
     public void unobserveAnnouncement(@NotNull @Min(value = 1) @PathVariable("announcementId") Long announcementId,
                                       @NotNull @Min(value = 1) @PathVariable("userId") Long userId,
                                       @RequestHeader("requester-user-id") @NotNull Long requesterId) throws InvalidUserIdException, AnnouncementNotFoundException {
-        this.announcementService.unobserveAnnouncement(announcementId, userId, requesterId);
+        this.observedAnnouncementService.unobserveAnnouncement(announcementId, userId, requesterId);
+    }
+
+    @GetMapping("/announcements/observed/{userId}")
+    public Collection<ObservedAnnouncementDTO> getObservedAnnouncements(@NotNull @Min(value = 1) @PathVariable("userId") Long userId,
+                                                                        @RequestHeader("requester-user-id") @NotNull Long requesterId) throws InvalidUserIdException {
+        return this.observedAnnouncementService.getObservedAnnouncements(userId, requesterId);
     }
 
 }

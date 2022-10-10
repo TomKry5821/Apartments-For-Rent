@@ -19,4 +19,9 @@ class AnnouncementListenerTest {
     void deleteUserAnnouncementsListener_WithValidUserId() {
         this.announcementListener.deleteUserAnnouncementsListener(1L);
     }
+
+    @Test
+    void deleteUserObservedAnnouncementsListener_WithValidUserId() {
+        this.announcementListener.deleteObservedAnnouncementListener(1L);
+    }
 }

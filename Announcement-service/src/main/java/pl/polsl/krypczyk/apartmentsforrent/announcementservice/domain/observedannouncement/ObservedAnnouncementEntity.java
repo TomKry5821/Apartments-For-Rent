@@ -14,7 +14,6 @@ import javax.persistence.*;
 @Getter
 @Setter
 @RequiredArgsConstructor
-@ToString
 @Entity
 @Table(name = "OBSERVED_ANNOUNCEMENT")
 public class ObservedAnnouncementEntity {

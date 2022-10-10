@@ -10,7 +10,6 @@ import javax.persistence.*;
 @Getter
 @Setter
 @RequiredArgsConstructor
-@ToString
 @Entity
 @Table(name = "ADDRESS_DETAILS")
 public class AddressDetailsEntity {

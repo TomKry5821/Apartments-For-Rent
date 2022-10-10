@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import pl.polsl.krypczyk.apartmentsforrent.announcementservice.application.announcement.response.ObserveAnnouncementResponse;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.EntityFactory;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.ResponseFactory;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.adressdetails.AddressDetailsEntity;
@@ -24,11 +23,12 @@ import pl.polsl.krypczyk.apartmentsforrent.announcementservice.application.annou
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcementcontent.AnnouncementContentEntity;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcementcontent.AnnouncementContentRepository;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.observedannouncement.ObservedAnnouncementRepository;
-import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.observedannouncement.exception.AnnouncementAlreadyObservedException;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.photopath.PhotoPathEntity;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.photopath.PhotoPathRepository;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcementdetails.AnnouncementDetailsEntity;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcementdetails.AnnouncementDetailsRepository;
+import pl.polsl.krypczyk.apartmentsforrent.announcementservice.infrastructure.utils.AnnouncementUtils;
+import pl.polsl.krypczyk.apartmentsforrent.announcementservice.infrastructure.utils.UserUtils;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -48,6 +48,8 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     private final ObservedAnnouncementRepository observedAnnouncementRepository;
     private final ResponseFactory responseFactory;
     private final EntityFactory entityFactory;
+    private final UserUtils userUtils;
+    private final AnnouncementUtils announcementUtils;
 
     @Override
     public Collection<AnnouncementDTO> getAllActiveAnnouncements() {
@@ -67,7 +69,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
                                                          Long requesterId) throws InvalidUserIdException {
         log.info("Started creating announcement");
 
-        this.checkIsUserIdValidElseThrowInvalidUser(addNewAnnouncementRequest.getUserId(), requesterId);
+        this.userUtils.checkIsUserIdValidElseThrowInvalidUser(addNewAnnouncementRequest.getUserId(), requesterId);
 
         var announcement = this.entityFactory.createAnnouncementEntity(addNewAnnouncementRequest);
         var response = this.responseFactory.createAddNewAnnouncementResponse(announcement, addNewAnnouncementRequest);
@@ -79,7 +81,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     @Override
     public GetAnnouncementWithAllDetailsResponse getAnnouncementWithAllDetails(Long announcementId) throws AnnouncementNotFoundException {
         log.info("Started retrieving announcement details with provided id - " + announcementId);
-        var announcement = this.getAnnouncementElseThrowAnnouncementNotFound(announcementId);
+        var announcement = this.announcementUtils.getAnnouncementElseThrowAnnouncementNotFound(announcementId);
 
         var getAnnouncementWithDetailsResponse = this.responseFactory.createGetAnnouncementWithAllDetailsResponse(announcement);
 
@@ -93,8 +95,8 @@ public class AnnouncementServiceImpl implements AnnouncementService {
                                                          Long requesterId) throws AnnouncementNotFoundException, ClosedAnnouncementException, InvalidUserIdException {
         log.info("Started updating announcement with id - " + announcementId + " By user with id - " + requesterId);
 
-        var announcement = this.getAnnouncementElseThrowAnnouncementNotFound(announcementId);
-        this.checkIsUserIdValidElseThrowInvalidUser(announcement.getUserId(), requesterId);
+        var announcement = this.announcementUtils.getAnnouncementElseThrowAnnouncementNotFound(announcementId);
+        this.userUtils.checkIsUserIdValidElseThrowInvalidUser(announcement.getUserId(), requesterId);
         if (announcement.getIsClosed().equals(true))
             throw new ClosedAnnouncementException();
 
@@ -195,61 +197,23 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     public void closeAnnouncement(Long announcementId, Long requesterId) throws AnnouncementNotFoundException, InvalidUserIdException {
         log.info("Started closing announcement with id - " + announcementId + " by user with id - " + requesterId);
 
-        var announcement = this.getAnnouncementElseThrowAnnouncementNotFound(announcementId);
-        this.checkIsUserIdValidElseThrowInvalidUser(announcement.getUserId(), requesterId);
+        var announcement = this.announcementUtils.getAnnouncementElseThrowAnnouncementNotFound(announcementId);
+        this.userUtils.checkIsUserIdValidElseThrowInvalidUser(announcement.getUserId(), requesterId);
 
         announcement.setIsClosed(true);
+        this.observedAnnouncementRepository.removeObservedAnnouncementEntitiesByAnnouncementEntity_Id(announcementId);
 
         log.info("Successfully closed announcement with id - " + announcementId + " by user with id - " + requesterId);
         this.announcementRepository.save(announcement);
     }
 
     @Override
-    public ObserveAnnouncementResponse observeAnnouncement(Long announcementId, Long userId, Long requesterId) throws InvalidUserIdException, AnnouncementNotFoundException, AnnouncementAlreadyObservedException {
-        log.info("Started observing announcement with id - " + announcementId + " by user with id - " + userId);
-        this.checkIsUserIdValidElseThrowInvalidUser(userId, requesterId);
-
-        var announcement = this.getAnnouncementElseThrowAnnouncementNotFound(announcementId);
-        if (this.observedAnnouncementRepository.existsByAnnouncementEntityAndObservingUserId(announcement, userId))
-            throw new AnnouncementAlreadyObservedException();
-
-        var observedAnnouncement = this.entityFactory.createObservedAnnouncementEntity(announcement, userId);
-
-        log.info("Successfully observed announcement with id - " + announcementId + " by user with id - " + userId);
-        return this.responseFactory.createObserveAnnouncementResponse(observedAnnouncement.getObservingUserId(), announcementId);
-    }
-
-    @Override
-    public void unobserveAnnouncement(Long announcementId, Long userId, Long requesterId) throws InvalidUserIdException, AnnouncementNotFoundException {
-        log.info("Started unobserving announcement with id - " + announcementId + " by user with id - " + userId);
-
-        this.checkIsUserIdValidElseThrowInvalidUser(userId, requesterId);
-        var announcement = this.getAnnouncementElseThrowAnnouncementNotFound(announcementId);
-
-        this.observedAnnouncementRepository.removeObservedAnnouncementEntityByAnnouncementEntityAndObservingUserId(announcement, userId);
-
-        log.info("Successfully unobserved announcement with id" + announcementId + " by user with id - " + userId);
-    }
-
-    private void checkIsUserIdValidElseThrowInvalidUser(Long userId, Long requesterId) throws InvalidUserIdException {
-        if (!userId.equals(requesterId))
-            throw new InvalidUserIdException();
-    }
-
-    private AnnouncementEntity getAnnouncementElseThrowAnnouncementNotFound(Long announcementId) throws AnnouncementNotFoundException {
-        var announcement = this.announcementRepository.findById(announcementId);
-        if (announcement.isEmpty())
-            throw new AnnouncementNotFoundException();
-        return announcement.get();
-    }
-
-    @Override
-    public void closeUserAnnouncements(Long userId){
+    public void closeUserAnnouncements(Long userId) {
         log.info("Started inactivating all announcements with user id " + userId);
 
         var announcementsToClose = this.announcementRepository.findAnnouncementEntitiesByUserId(userId);
 
-        for(var announcementToClose : announcementsToClose){
+        for (var announcementToClose : announcementsToClose) {
             log.info("Inactivating announcement with id " + announcementToClose.getId());
             announcementToClose.setIsClosed(true);
             this.announcementRepository.save(announcementToClose);
@@ -259,7 +223,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     }
 
     @Override
-    public void deleteUserAnnouncements(Long userId){
+    public void deleteUserAnnouncements(Long userId) {
         log.info("Started deleting all announcements with user id " + userId);
 
         this.announcementRepository.deleteAnnouncementEntitiesByUserId(userId);

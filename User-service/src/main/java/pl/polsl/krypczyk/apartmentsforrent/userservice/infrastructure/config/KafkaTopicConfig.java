@@ -10,6 +10,7 @@ public class KafkaTopicConfig {
 
     private final String INACTIVATE_ANNOUNCEMENT_TOPIC = "inactivate-announcement";
     private final String DELETE_ANNOUNCEMENT_TOPIC = "delete-announcement";
+    private final String DELETE_OBSERVED_ANNOUNCEMENT_TOPIC = "delete-observed-announcement";
 
     @Bean
     public NewTopic inactivateAnnouncementTopic() {
@@ -19,5 +20,10 @@ public class KafkaTopicConfig {
     @Bean
     public NewTopic deleteAnnouncementTopic() {
         return TopicBuilder.name(DELETE_ANNOUNCEMENT_TOPIC).build();
+    }
+
+    @Bean
+    public NewTopic deleteObservedAnnouncementTopic() {
+        return TopicBuilder.name(DELETE_OBSERVED_ANNOUNCEMENT_TOPIC).build();
     }
 }
