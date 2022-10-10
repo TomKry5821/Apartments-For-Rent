@@ -10,6 +10,7 @@ import pl.polsl.krypczyk.apartmentsforrent.announcementservice.application.annou
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.application.announcement.response.GetAnnouncementWithAllDetailsResponse;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.application.announcement.response.ObserveAnnouncementResponse;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.application.announcement.response.UpdateAnnouncementResponse;
+import pl.polsl.krypczyk.apartmentsforrent.announcementservice.application.observedannouncement.dto.ObservedAnnouncementDTO;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.ResponseFactory;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.AnnouncementEntity;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.AnnouncementMapper;
@@ -89,5 +90,16 @@ public class ResponseFactoryImpl implements ResponseFactory {
                 .userId(userId)
                 .announcementId(announcementId)
                 .build();
+    }
+
+    @Override
+    public ObservedAnnouncementDTO createObservedAnnouncementDTO(AnnouncementEntity announcement) {
+        var observedAnnouncementDTO = new ObservedAnnouncementDTO();
+
+        observedAnnouncementDTO.setTitle(announcement.getAnnouncementDetailsEntity().getTitle());
+        observedAnnouncementDTO.setUserId(announcement.getUserId());
+        observedAnnouncementDTO.setMainPhotoPath(announcement.getAnnouncementDetailsEntity().getMainPhotoPath());
+
+        return observedAnnouncementDTO;
     }
 }
