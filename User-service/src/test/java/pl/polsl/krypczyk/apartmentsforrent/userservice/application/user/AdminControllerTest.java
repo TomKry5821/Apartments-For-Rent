@@ -27,7 +27,7 @@ class AdminControllerTest {
         //WHEN
         mvc.perform(
                         delete("/user/api/v1/admin/users/194")
-                                .header("requester-user-id", 2L))
+                                .header("X-USER-ID", 2L))
                 //THEN
                 .andExpect(status().isUnauthorized());
     }
@@ -52,7 +52,7 @@ class AdminControllerTest {
         //WHEN
         mvc.perform(
                         get("/user/api/v1/admin/users")
-                                .header("requester-user-id", 2L))
+                                .header("X-USER-ID", 2L))
                 //THEN
                 .andExpect(status().isUnauthorized());
     }
@@ -65,7 +65,7 @@ class AdminControllerTest {
         //WHEN
         mvc.perform(
                         get("/user/api/v1/admin/users")
-                                .header("Authorization", "sdsd"))
+                                .header("X-USER-ID", "sdsd"))
                 //THEN
                 .andExpect(status().isBadRequest());
     }
@@ -85,7 +85,7 @@ class AdminControllerTest {
                                             "email": "test@test.pl",
                                             "password": "Test"
                                         }""")
-                                .header("requester-user-id", 2L))
+                                .header("X-USER-ID", 2L))
                 //THEN
                 .andExpect(status().isUnauthorized());
     }
@@ -120,7 +120,7 @@ class AdminControllerTest {
         mvc.perform(
                         post("/user/api/v1/admin/users/1/activate")
                                 .header("Authorization", "1")
-                                .header("requester-user-id", 1L))
+                                .header("X-USER-ID", 1L))
                 //THEN
                 .andExpect(status().isNoContent());
     }
@@ -134,7 +134,7 @@ class AdminControllerTest {
         mvc.perform(
                         post("/user/api/v1/admin/users/0/activate")
                                 .header("Authorization", "1")
-                                .header("requester-user-id", 1L))
+                                .header("X-USER-ID", 1L))
                 //THEN
                 .andExpect(status().isBadRequest());
     }

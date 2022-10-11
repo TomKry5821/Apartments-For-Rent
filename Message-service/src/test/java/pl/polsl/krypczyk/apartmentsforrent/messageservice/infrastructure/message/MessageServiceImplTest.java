@@ -36,6 +36,7 @@ class MessageServiceImplTest {
 
         //WHEN
         var actual = this.messageService.addNewMessage(addNewMessageRequest);
+        expected.setId(2L);
 
         //THEN
         Assertions.assertEquals(expected, actual);

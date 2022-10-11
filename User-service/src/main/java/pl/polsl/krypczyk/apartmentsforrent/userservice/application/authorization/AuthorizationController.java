@@ -38,7 +38,7 @@ public class AuthorizationController {
     @PostMapping("{userId}/logout")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void logoutUser(@PathVariable("userId") Long userId,
-                           @RequestHeader("requester-user-id") @NotNull Long requesterId) throws UnauthorizedUserException, UserNotFoundException {
+                           @RequestHeader("X-USER-ID") @NotNull Long requesterId) throws UnauthorizedUserException, UserNotFoundException {
         this.authorizationService.authorizeUser(userId, requesterId);
         this.authorizationService.logoutUser(userId);
     }

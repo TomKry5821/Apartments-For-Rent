@@ -27,7 +27,7 @@ public class UserController {
 
     @GetMapping("users/{userId}/details")
     public GetUserDetailsResponse getUserDetails(@PathVariable("userId") @NotNull Long userId,
-                                                 @RequestHeader("requester-user-id") @NotNull Long requesterId) throws UnauthorizedUserException, UserNotFoundException {
+                                                 @RequestHeader("X-USER-ID") @NotNull Long requesterId) throws UnauthorizedUserException, UserNotFoundException {
         this.authorizationService.authorizeUser(userId, requesterId);
         return this.userService.getUserDetails(userId);
     }
@@ -35,7 +35,7 @@ public class UserController {
     @PutMapping("users/{userId}/details")
     public ChangeUserDetailsResponse changeUserDetails(@RequestBody @Valid ChangeUserDetailsRequest changeUserDetailsRequest,
                                                        @PathVariable("userId") @NotNull @Min(value = 1) Long userId,
-                                                       @RequestHeader("requester-user-id") @NotNull @Min(value = 1) Long requesterId) throws UnauthorizedUserException, UserNotFoundException, InvalidUserDetailsException, UserAlreadyExistsException {
+                                                       @RequestHeader("X-USER-ID") @NotNull @Min(value = 1) Long requesterId) throws UnauthorizedUserException, UserNotFoundException, InvalidUserDetailsException, UserAlreadyExistsException {
         this.authorizationService.authorizeUser(userId, requesterId);
         return this.userService.changeUserDetails(changeUserDetailsRequest, userId);
     }
@@ -43,7 +43,7 @@ public class UserController {
     @PostMapping("users/{userId}/inactivate")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void inactivateAccount(@PathVariable("userId") @NotNull Long userId,
-                                  @RequestHeader("requester-user-id") @NotNull Long requesterId) throws UnauthorizedUserException, UserNotFoundException {
+                                  @RequestHeader("X-USER-ID") @NotNull Long requesterId) throws UnauthorizedUserException, UserNotFoundException {
         this.authorizationService.authorizeUser(userId, requesterId);
         this.userService.inactivateAccount(userId);
     }

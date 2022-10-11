@@ -26,7 +26,7 @@ public class MessageController {
     }
 
     @GetMapping(value = "/messages/{receiverId}")
-    public Collection<MessageDTO> getConversation(@RequestHeader("requester-user-id") Long requesterId,
+    public Collection<MessageDTO> getConversation(@RequestHeader("X-USER-ID") Long requesterId,
                                                   @PathVariable Long receiverId) {
         return this.messageService.getConversation(requesterId, receiverId);
     }

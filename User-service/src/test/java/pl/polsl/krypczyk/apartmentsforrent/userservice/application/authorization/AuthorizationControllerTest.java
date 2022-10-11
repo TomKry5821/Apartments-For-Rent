@@ -132,7 +132,7 @@ class AuthorizationControllerTest {
         mvc.perform(
                         post("/user/api/v1/auth/2/logout")
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .header("requester-user-id", 2))
+                                .header("X-USER-ID", 2))
                 //THEN
                 .andExpect(status().isNoContent());
 

@@ -57,7 +57,7 @@ class AnnouncementControllerTest {
                                            "buildingNumber":"1A",
                                            "localNumber":3
                                         }""")
-                                .header("requester-user-id",1L))
+                                .header("X-USER-ID",1L))
                 .andExpect(status().isOk());
     }
 
@@ -87,7 +87,7 @@ class AnnouncementControllerTest {
                                            "buildingNumber":"1A",
                                            "localNumber":3
                                         }""")
-                                .header("requester-user-id",1L))
+                                .header("X-USER-ID",1L))
                 .andExpect(status().isBadRequest());
     }
 
@@ -136,7 +136,7 @@ class AnnouncementControllerTest {
                                                  "buildingNumber":"1A",
                                                  "localNumber":3
                                                  }""")
-                                .header("requester-user-id",1L))
+                                .header("X-USER-ID",1L))
                 .andExpect(status().isOk());
     }
 
@@ -167,7 +167,7 @@ class AnnouncementControllerTest {
                                                  "buildingNumber":"1A",
                                                  "localNumber":3
                                                  }""")
-                                .header("requester-user-id",1L))
+                                .header("X-USER-ID",1L))
                 .andExpect(status().isBadRequest());
     }
 
@@ -178,7 +178,7 @@ class AnnouncementControllerTest {
         mvc.perform(
                         post("/announcement/api/v1/announcements/1/close")
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .header("requester-user-id",1L))
+                                .header("X-USER-ID",1L))
                 .andExpect(status().isNoContent());
     }
 
@@ -189,7 +189,7 @@ class AnnouncementControllerTest {
         mvc.perform(
                         post("/announcement/api/v1/announcements/10/close")
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .header("requester-user-id",1L))
+                                .header("X-USER-ID",1L))
                 .andExpect(status().isBadRequest());
     }
 
@@ -200,7 +200,7 @@ class AnnouncementControllerTest {
         mvc.perform(
                         post("/announcement/api/v1/announcements/1/observe/1")
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .header("requester-user-id",1L))
+                                .header("X-USER-ID",1L))
                 .andExpect(status().isCreated());
     }
 
@@ -211,7 +211,7 @@ class AnnouncementControllerTest {
         mvc.perform(
                         post("/announcement/api/v1/announcements/1/observe/100")
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .header("requester-user-id",1L))
+                                .header("X-USER-ID",1L))
                 .andExpect(status().isBadRequest());
     }
 
@@ -222,7 +222,7 @@ class AnnouncementControllerTest {
         mvc.perform(
                         post("/announcement/api/v1/announcements/100/observe/1")
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .header("requester-user-id",1L))
+                                .header("X-USER-ID",1L))
                 .andExpect(status().isBadRequest());
     }
 
@@ -234,7 +234,7 @@ class AnnouncementControllerTest {
         mvc.perform(
                         delete("/announcement/api/v1/announcements/1/unobserve/1")
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .header("requester-user-id",1L))
+                                .header("X-USER-ID",1L))
                 .andExpect(status().isNoContent());
     }
 
@@ -246,7 +246,7 @@ class AnnouncementControllerTest {
         mvc.perform(
                         delete("/announcement/api/v1/announcements/10/unobserve/10")
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .header("requester-user-id",1L))
+                                .header("X-USER-ID",1L))
                 .andExpect(status().isBadRequest());
     }
 
@@ -258,7 +258,7 @@ class AnnouncementControllerTest {
         mvc.perform(
                         get("/announcement/api/v1/announcements/observed/1")
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .header("requester-user-id",1L))
+                                .header("X-USER-ID",1L))
                 .andExpect(status().isOk());
     }
 
@@ -270,7 +270,7 @@ class AnnouncementControllerTest {
         mvc.perform(
                         get("/announcement/api/v1/announcements/observed/0")
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .header("requester-user-id",1L))
+                                .header("X-USER-ID",1L))
                 .andExpect(status().isBadRequest());
     }
 
@@ -300,14 +300,14 @@ class AnnouncementControllerTest {
                                    "buildingNumber":"1A",
                                    "localNumber":3
                                 }""")
-                        .header("requester-user-id", 1L));
+                        .header("X-USER-ID", 1L));
     }
 
     private void observeAnnouncement() throws Exception {
         mvc.perform(
                         post("/announcement/api/v1/announcements/1/observe/1")
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .header("requester-user-id",1L));
+                                .header("X-USER-ID",1L));
     }
 }
 

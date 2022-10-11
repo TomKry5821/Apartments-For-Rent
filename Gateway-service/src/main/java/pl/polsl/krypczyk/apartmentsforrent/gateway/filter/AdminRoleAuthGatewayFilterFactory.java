@@ -50,7 +50,7 @@ public class AdminRoleAuthGatewayFilterFactory extends AbstractGatewayFilterFact
             }
             request = exchange.getRequest()
                     .mutate()
-                    .header("requester-user-id", userRoles.getUserId().toString())
+                    .header("X-USER-ID", userRoles.getUserId().toString())
                     .build();
             exchange = exchange.mutate().request(request).build();
             return chain.filter(exchange);

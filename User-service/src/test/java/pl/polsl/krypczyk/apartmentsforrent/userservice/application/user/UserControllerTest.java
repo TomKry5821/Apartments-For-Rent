@@ -29,7 +29,7 @@ class UserControllerTest {
         mvc.perform(
                         get("/user/api/v1/users/2/details")
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .header("requester-user-id", 2))
+                                .header("X-USER-ID", 2))
                 //THEN
                 .andExpect(status().isOk());
     }
@@ -43,7 +43,7 @@ class UserControllerTest {
         mvc.perform(
                         get("/user/api/v1/users/100/details")
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .header("requester-user-id", 2))
+                                .header("X-USER-ID", 2))
                 //THEN
                 .andExpect(status().isUnauthorized());
     }
@@ -64,7 +64,7 @@ class UserControllerTest {
                                             "email": "test@2test.pl",
                                             "password": "Test"
                                         }""")
-                                .header("requester-user-id", 2))
+                                .header("X-USER-ID", 2))
                 //THEN
                 .andExpect(status().isOk());
     }
@@ -85,7 +85,7 @@ class UserControllerTest {
                                             "email": "test@test.pl",
                                             "password": "Test"
                                         }""")
-                                .header("requester-user-id", 2))
+                                .header("X-USER-ID", 2))
                 //THEN
                 .andExpect(status().isUnauthorized());
     }
@@ -119,7 +119,7 @@ class UserControllerTest {
         //WHEN
         mvc.perform(
                         post("/user/api/v1/users/2/inactivate")
-                                .header("requester-user-id", 2))
+                                .header("X-USER-ID", 2))
                 //THEN
                 .andExpect(status().isNoContent());
     }
@@ -132,7 +132,7 @@ class UserControllerTest {
         //WHEN
         mvc.perform(
                         post("/user/api/v1/users/192/inactivate")
-                                .header("requester-user-id", 2))
+                                .header("X-USER-ID", 2))
                 //THEN
                 .andExpect(status().isUnauthorized());
     }

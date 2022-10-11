@@ -46,21 +46,21 @@ public class AnnouncementController {
 
     @PostMapping("/announcements")
     public AddNewAnnouncementResponse addNewAnnouncement(@RequestBody @Valid AddNewAnnouncementRequest addNewAnnouncementRequest,
-                                                         @RequestHeader("requester-user-id") @NotNull Long requesterId) throws InvalidUserIdException {
+                                                         @RequestHeader("X-USER-ID") @NotNull Long requesterId) throws InvalidUserIdException {
         return this.announcementService.addNewAnnouncement(addNewAnnouncementRequest, requesterId);
     }
 
     @PutMapping("/announcements/{announcementId}")
     public UpdateAnnouncementResponse updateAnnouncement(@RequestBody @Valid UpdateAnnouncementRequest updateAnnouncementRequest,
                                                          @PathVariable("announcementId") @NotNull Long announcementId,
-                                                         @RequestHeader("requester-user-id") @NotNull Long requesterId) throws AnnouncementNotFoundException, ClosedAnnouncementException, InvalidUserIdException {
+                                                         @RequestHeader("X-USER-ID") @NotNull Long requesterId) throws AnnouncementNotFoundException, ClosedAnnouncementException, InvalidUserIdException {
         return this.announcementService.updateAnnouncement(updateAnnouncementRequest, announcementId, requesterId);
     }
 
     @PostMapping("/announcements/{announcementId}/close")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void closeAnnouncement(@PathVariable("announcementId") @NotNull Long announcementId,
-                                  @RequestHeader("requester-user-id") @NotNull Long requesterId) throws AnnouncementNotFoundException, InvalidUserIdException {
+                                  @RequestHeader("X-USER-ID") @NotNull Long requesterId) throws AnnouncementNotFoundException, InvalidUserIdException {
         this.announcementService.closeAnnouncement(announcementId, requesterId);
     }
 
@@ -68,7 +68,7 @@ public class AnnouncementController {
     @ResponseStatus(HttpStatus.CREATED)
     public ObserveAnnouncementResponse observeAnnouncement(@NotNull @Min(value = 1) @PathVariable("announcementId") Long announcementId,
                                                            @NotNull @Min(value = 1) @PathVariable("userId") Long userId,
-                                                           @RequestHeader("requester-user-id") @NotNull Long requesterId) throws InvalidUserIdException, AnnouncementNotFoundException, AnnouncementAlreadyObservedException, ClosedAnnouncementException {
+                                                           @RequestHeader("X-USER-ID") @NotNull Long requesterId) throws InvalidUserIdException, AnnouncementNotFoundException, AnnouncementAlreadyObservedException, ClosedAnnouncementException {
         return this.observedAnnouncementService.observeAnnouncement(announcementId, userId, requesterId);
     }
 
@@ -76,13 +76,13 @@ public class AnnouncementController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void unobserveAnnouncement(@NotNull @Min(value = 1) @PathVariable("announcementId") Long announcementId,
                                       @NotNull @Min(value = 1) @PathVariable("userId") Long userId,
-                                      @RequestHeader("requester-user-id") @NotNull Long requesterId) throws InvalidUserIdException, AnnouncementNotFoundException {
+                                      @RequestHeader("X-USER-ID") @NotNull Long requesterId) throws InvalidUserIdException, AnnouncementNotFoundException {
         this.observedAnnouncementService.unobserveAnnouncement(announcementId, userId, requesterId);
     }
 
     @GetMapping("/announcements/observed/{userId}")
     public Collection<ObservedAnnouncementDTO> getObservedAnnouncements(@NotNull @Min(value = 1) @PathVariable("userId") Long userId,
-                                                                        @RequestHeader("requester-user-id") @NotNull Long requesterId) throws InvalidUserIdException {
+                                                                        @RequestHeader("X-USER-ID") @NotNull Long requesterId) throws InvalidUserIdException {
         return this.observedAnnouncementService.getObservedAnnouncements(userId, requesterId);
     }
 

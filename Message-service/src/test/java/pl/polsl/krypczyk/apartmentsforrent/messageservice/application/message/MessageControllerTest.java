@@ -64,7 +64,7 @@ class MessageControllerTest {
         this.addNewMessage();
 
         mvc.perform(get("/message/api/v1/messages/1")
-                        .header("requester-user-id", 1L))
+                        .header("X-USER-ID", 1L))
                 .andExpect(status().isOk());
 
     }
@@ -74,7 +74,7 @@ class MessageControllerTest {
         this.addNewMessage();
 
         mvc.perform(get("/message/api/v1/messages/1")
-                        .header("requester-user-id", 0L))
+                        .header("X-USER-ID", 0L))
                 .andExpect(status().isOk());
 
     }
