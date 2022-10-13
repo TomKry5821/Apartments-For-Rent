@@ -118,6 +118,7 @@ class AnnouncementControllerTest {
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content("""
                                         {
+                                                "userId": 1,
                                                  "title":"Title",
                                                  "mainPhotoPath":"Main/photo/path",
                                                  "roomsNumber":3,

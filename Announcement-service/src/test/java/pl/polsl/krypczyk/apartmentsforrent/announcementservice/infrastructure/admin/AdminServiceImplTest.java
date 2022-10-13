@@ -9,7 +9,6 @@ import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.admin.Admi
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.AnnouncementRepository;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.AnnouncementService;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.excpetion.AnnouncementNotFoundException;
-import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.excpetion.InvalidUserIdException;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.application.announcement.request.AddNewAnnouncementRequest;
 
 import java.math.BigDecimal;
@@ -34,10 +33,10 @@ class AdminServiceImplTest {
     }
 
     @Test
-    void testDeleteAnnouncementWithValidAnnouncementIdShouldReturnEmptyResponseAndShouldNotThrowAnnouncementNotfoundException() throws InvalidUserIdException, AnnouncementNotFoundException {
+    void testDeleteAnnouncementWithValidAnnouncementIdShouldReturnEmptyResponseAndShouldNotThrowAnnouncementNotfoundException() throws AnnouncementNotFoundException {
         //GIVEN
         var addNewAnnouncementRequest = validAnnouncementRequest();
-        var addNewAnnouncementResponse = this.announcementService.addNewAnnouncement(addNewAnnouncementRequest, addNewAnnouncementRequest.getUserId());
+        var addNewAnnouncementResponse = this.announcementService.addNewAnnouncement(addNewAnnouncementRequest);
 
         //WHEN
         this.adminService.deleteAnnouncement(addNewAnnouncementResponse.getAnnouncementId());
@@ -48,10 +47,10 @@ class AdminServiceImplTest {
     }
 
     @Test
-    void testDeleteAnnouncementWithInvalidAnnouncementIdShouldReturnNotEmptyResponseAndShouldThrowAnnouncementNotFoundException() throws InvalidUserIdException {
+    void testDeleteAnnouncementWithInvalidAnnouncementIdShouldReturnNotEmptyResponseAndShouldThrowAnnouncementNotFoundException() {
         //GIVEN
         var addNewAnnouncementRequest = validAnnouncementRequest();
-        this.announcementService.addNewAnnouncement(addNewAnnouncementRequest, addNewAnnouncementRequest.getUserId());
+        this.announcementService.addNewAnnouncement(addNewAnnouncementRequest);
 
         //WHEN AND THEN
         Assertions.assertThrows(AnnouncementNotFoundException.class, () ->
