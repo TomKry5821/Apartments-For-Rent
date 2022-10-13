@@ -91,7 +91,7 @@ class UserControllerTest {
     }
 
     @Test
-    void testChangeUserDetailsWithInvalidUserIdAndInvalidRequesterIdShouldReturn400() throws Exception {
+    void testChangeUserDetailsWithInvalidUserIdAndInvalidRequesterIdShouldReturn401() throws Exception {
         //GIVEN
         this.registerValidUser();
 
@@ -108,7 +108,7 @@ class UserControllerTest {
                                         }""")
                                 .header("Authorization", "sfsf"))
                 //THEN
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isUnauthorized());
     }
 
     @Test
@@ -138,7 +138,7 @@ class UserControllerTest {
     }
 
     @Test
-    void testInactivateAccountWithInvalidUserIdAndInvalidRequesterIdShouldReturn400() throws Exception {
+    void testInactivateAccountWithInvalidUserIdAndInvalidRequesterIdShouldReturn401() throws Exception {
         //GIVEN
         this.registerValidUser();
 
@@ -147,7 +147,7 @@ class UserControllerTest {
                         post("/user/api/v1/users/192/inactivate")
                                 .header("Authorization", "sdds"))
                 //THEN
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isUnauthorized());
     }
 
     private void registerValidUser() throws Exception {

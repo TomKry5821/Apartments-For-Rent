@@ -139,7 +139,7 @@ class AuthorizationControllerTest {
     }
 
     @Test
-    void testLogoutUserWithInvalidIdShouldReturn400() throws Exception {
+    void testLogoutUserWithInvalidIdShouldReturn401() throws Exception {
         //GIVEN
         this.registerValidUser();
 
@@ -149,7 +149,7 @@ class AuthorizationControllerTest {
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .header("Authorization", "kjnjghy"))
                 //THEN
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isUnauthorized());
 
     }
 
