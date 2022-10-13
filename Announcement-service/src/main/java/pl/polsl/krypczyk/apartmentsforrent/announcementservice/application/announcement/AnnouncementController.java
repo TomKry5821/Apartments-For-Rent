@@ -11,12 +11,13 @@ import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announceme
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.application.announcement.dto.AnnouncementDTO;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.excpetion.AnnouncementNotFoundException;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.excpetion.ClosedAnnouncementException;
-import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.excpetion.InvalidUserIdException;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.application.announcement.request.AddNewAnnouncementRequest;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.application.announcement.request.UpdateAnnouncementRequest;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.application.announcement.response.AddNewAnnouncementResponse;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.application.announcement.response.GetAnnouncementWithAllDetailsResponse;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.application.announcement.response.UpdateAnnouncementResponse;
+import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.authorization.AuthorizationService;
+import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.authorization.exception.UnauthorizedUserException;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.observedannouncement.ObservedAnnouncementService;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.observedannouncement.exception.AnnouncementAlreadyObservedException;
 
@@ -34,6 +35,8 @@ public class AnnouncementController {
 
     private final ObservedAnnouncementService observedAnnouncementService;
 
+    private final AuthorizationService authorizationService;
+
     @GetMapping("/public/announcements")
     public Collection<AnnouncementDTO> getAllActiveAnnouncements() {
         return this.announcementService.getAllActiveAnnouncements();
@@ -45,45 +48,46 @@ public class AnnouncementController {
     }
 
     @PostMapping("/announcements")
-    public AddNewAnnouncementResponse addNewAnnouncement(@RequestBody @Valid AddNewAnnouncementRequest addNewAnnouncementRequest,
-                                                         @RequestHeader("X-USER-ID") @NotNull Long requesterId) throws InvalidUserIdException {
-        return this.announcementService.addNewAnnouncement(addNewAnnouncementRequest, requesterId);
+    public AddNewAnnouncementResponse addNewAnnouncement(@RequestBody @Valid AddNewAnnouncementRequest addNewAnnouncementRequest) throws UnauthorizedUserException {
+        this.authorizationService.authorizeUser(addNewAnnouncementRequest.getUserId());
+        return this.announcementService.addNewAnnouncement(addNewAnnouncementRequest);
     }
 
     @PutMapping("/announcements/{announcementId}")
     public UpdateAnnouncementResponse updateAnnouncement(@RequestBody @Valid UpdateAnnouncementRequest updateAnnouncementRequest,
-                                                         @PathVariable("announcementId") @NotNull Long announcementId,
-                                                         @RequestHeader("X-USER-ID") @NotNull Long requesterId) throws AnnouncementNotFoundException, ClosedAnnouncementException, InvalidUserIdException {
-        return this.announcementService.updateAnnouncement(updateAnnouncementRequest, announcementId, requesterId);
+                                                         @PathVariable("announcementId") @NotNull Long announcementId) throws AnnouncementNotFoundException, ClosedAnnouncementException, UnauthorizedUserException {
+        this.authorizationService.authorizeUser(updateAnnouncementRequest.getUserId());
+        return this.announcementService.updateAnnouncement(updateAnnouncementRequest, announcementId);
     }
 
-    @PostMapping("/announcements/{announcementId}/close")
+    @PostMapping("/announcements/{announcementId}/close/{userId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void closeAnnouncement(@PathVariable("announcementId") @NotNull Long announcementId,
-                                  @RequestHeader("X-USER-ID") @NotNull Long requesterId) throws AnnouncementNotFoundException, InvalidUserIdException {
-        this.announcementService.closeAnnouncement(announcementId, requesterId);
+                                  @PathVariable("userId") @NotNull Long userId) throws AnnouncementNotFoundException, UnauthorizedUserException {
+        this.authorizationService.authorizeUser(userId);
+        this.announcementService.closeAnnouncement(announcementId, userId);
     }
 
     @PostMapping("/announcements/{announcementId}/observe/{userId}")
     @ResponseStatus(HttpStatus.CREATED)
     public ObserveAnnouncementResponse observeAnnouncement(@NotNull @Min(value = 1) @PathVariable("announcementId") Long announcementId,
-                                                           @NotNull @Min(value = 1) @PathVariable("userId") Long userId,
-                                                           @RequestHeader("X-USER-ID") @NotNull Long requesterId) throws InvalidUserIdException, AnnouncementNotFoundException, AnnouncementAlreadyObservedException, ClosedAnnouncementException {
-        return this.observedAnnouncementService.observeAnnouncement(announcementId, userId, requesterId);
+                                                           @NotNull @Min(value = 1) @PathVariable("userId") Long userId) throws AnnouncementNotFoundException, AnnouncementAlreadyObservedException, ClosedAnnouncementException, UnauthorizedUserException {
+        this.authorizationService.authorizeUser(userId);
+        return this.observedAnnouncementService.observeAnnouncement(announcementId, userId);
     }
 
     @DeleteMapping("/announcements/{announcementId}/unobserve/{userId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void unobserveAnnouncement(@NotNull @Min(value = 1) @PathVariable("announcementId") Long announcementId,
-                                      @NotNull @Min(value = 1) @PathVariable("userId") Long userId,
-                                      @RequestHeader("X-USER-ID") @NotNull Long requesterId) throws InvalidUserIdException, AnnouncementNotFoundException {
-        this.observedAnnouncementService.unobserveAnnouncement(announcementId, userId, requesterId);
+                                      @NotNull @Min(value = 1) @PathVariable("userId") Long userId) throws AnnouncementNotFoundException, UnauthorizedUserException {
+        this.authorizationService.authorizeUser(userId);
+        this.observedAnnouncementService.unobserveAnnouncement(announcementId, userId);
     }
 
     @GetMapping("/announcements/observed/{userId}")
-    public Collection<ObservedAnnouncementDTO> getObservedAnnouncements(@NotNull @Min(value = 1) @PathVariable("userId") Long userId,
-                                                                        @RequestHeader("X-USER-ID") @NotNull Long requesterId) throws InvalidUserIdException {
-        return this.observedAnnouncementService.getObservedAnnouncements(userId, requesterId);
+    public Collection<ObservedAnnouncementDTO> getObservedAnnouncements(@NotNull @Min(value = 1) @PathVariable("userId") Long userId) throws UnauthorizedUserException {
+        this.authorizationService.authorizeUser(userId);
+        return this.observedAnnouncementService.getObservedAnnouncements(userId);
     }
 
 }

@@ -3,7 +3,6 @@ package pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcem
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.application.announcement.dto.AnnouncementDTO;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.excpetion.AnnouncementNotFoundException;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.excpetion.ClosedAnnouncementException;
-import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.excpetion.InvalidUserIdException;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.application.announcement.request.AddNewAnnouncementRequest;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.application.announcement.request.UpdateAnnouncementRequest;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.application.announcement.response.AddNewAnnouncementResponse;
@@ -17,14 +16,12 @@ public interface AnnouncementService {
 
     GetAnnouncementWithAllDetailsResponse getAnnouncementWithAllDetails(Long announcementId) throws AnnouncementNotFoundException;
 
-    AddNewAnnouncementResponse addNewAnnouncement(AddNewAnnouncementRequest addNewAnnouncementRequest,
-                                                  Long requesterId) throws InvalidUserIdException;
+    AddNewAnnouncementResponse addNewAnnouncement(AddNewAnnouncementRequest addNewAnnouncementRequest);
 
     UpdateAnnouncementResponse updateAnnouncement(UpdateAnnouncementRequest updateAnnouncementRequest,
-                                                  Long announcementId,
-                                                  Long requesterId) throws AnnouncementNotFoundException, ClosedAnnouncementException, InvalidUserIdException;
+                                                  Long announcementId) throws AnnouncementNotFoundException, ClosedAnnouncementException;
 
-    void closeAnnouncement(Long announcementId, Long requesterId) throws AnnouncementNotFoundException, InvalidUserIdException;
+    void closeAnnouncement(Long announcementId, Long userId) throws AnnouncementNotFoundException;
 
     void closeUserAnnouncements(Long userId);
 

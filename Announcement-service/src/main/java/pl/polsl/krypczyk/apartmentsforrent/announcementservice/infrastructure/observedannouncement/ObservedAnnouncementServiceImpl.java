@@ -10,12 +10,10 @@ import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.EntityFact
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.ResponseFactory;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.excpetion.AnnouncementNotFoundException;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.excpetion.ClosedAnnouncementException;
-import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.excpetion.InvalidUserIdException;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.observedannouncement.ObservedAnnouncementRepository;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.observedannouncement.ObservedAnnouncementService;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.observedannouncement.exception.AnnouncementAlreadyObservedException;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.infrastructure.utils.AnnouncementUtils;
-import pl.polsl.krypczyk.apartmentsforrent.announcementservice.infrastructure.utils.UserUtils;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -32,14 +30,11 @@ public class ObservedAnnouncementServiceImpl implements ObservedAnnouncementServ
 
     private final ResponseFactory responseFactory;
 
-    private final UserUtils userUtils;
-
     private final AnnouncementUtils announcementUtils;
 
     @Override
-    public ObserveAnnouncementResponse observeAnnouncement(Long announcementId, Long userId, Long requesterId) throws InvalidUserIdException, AnnouncementNotFoundException, AnnouncementAlreadyObservedException, ClosedAnnouncementException {
+    public ObserveAnnouncementResponse observeAnnouncement(Long announcementId, Long userId) throws AnnouncementNotFoundException, AnnouncementAlreadyObservedException, ClosedAnnouncementException {
         log.info("Started observing announcement with id - " + announcementId + " by user with id - " + userId);
-        this.userUtils.checkIsUserIdValidElseThrowInvalidUser(userId, requesterId);
 
         var announcement = this.announcementUtils.getAnnouncementElseThrowAnnouncementNotFound(announcementId);
         if (this.observedAnnouncementRepository.existsByAnnouncementEntityAndObservingUserId(announcement, userId))
@@ -55,10 +50,9 @@ public class ObservedAnnouncementServiceImpl implements ObservedAnnouncementServ
     }
 
     @Override
-    public void unobserveAnnouncement(Long announcementId, Long userId, Long requesterId) throws InvalidUserIdException, AnnouncementNotFoundException {
+    public void unobserveAnnouncement(Long announcementId, Long userId) throws AnnouncementNotFoundException {
         log.info("Started unobserving announcement with id - " + announcementId + " by user with id - " + userId);
 
-        this.userUtils.checkIsUserIdValidElseThrowInvalidUser(userId, requesterId);
         var announcement = this.announcementUtils.getAnnouncementElseThrowAnnouncementNotFound(announcementId);
 
         this.observedAnnouncementRepository.removeObservedAnnouncementEntityByAnnouncementEntityAndObservingUserId(announcement, userId);
@@ -76,10 +70,8 @@ public class ObservedAnnouncementServiceImpl implements ObservedAnnouncementServ
     }
 
     @Override
-    public Collection<ObservedAnnouncementDTO> getObservedAnnouncements(Long userId, Long requesterId) throws InvalidUserIdException {
+    public Collection<ObservedAnnouncementDTO> getObservedAnnouncements(Long userId) {
         log.info("Started retrieving observed announcements for user with id " + userId);
-
-        this.userUtils.checkIsUserIdValidElseThrowInvalidUser(userId, requesterId);
 
         var observedAnnouncements = this.observedAnnouncementRepository.findObservedAnnouncementEntitiesByObservingUserId(userId);
         Collection<ObservedAnnouncementDTO> observedAnnouncementDTOS = new ArrayList<>();
