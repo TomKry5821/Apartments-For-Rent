@@ -121,9 +121,7 @@ public class AuthorizationServiceImpl implements AuthorizationService {
 
     @Override
     public void authorizeUser(Long userId) throws UnauthorizedUserException {
-        var request =
-                ((ServletRequestAttributes) Objects.requireNonNull(RequestContextHolder.getRequestAttributes()))
-                        .getRequest();
+        var request = getRequest();
         var requesterId = this.getUserIdFromRequestOrThrowUnauthorizedException(request);
         log.info("Started user authorization with provided id - " + userId);
 
@@ -136,9 +134,7 @@ public class AuthorizationServiceImpl implements AuthorizationService {
 
     @Override
     public void authorizeAdmin() throws UnauthorizedUserException {
-        var request =
-                ((ServletRequestAttributes) Objects.requireNonNull(RequestContextHolder.getRequestAttributes()))
-                        .getRequest();
+        var request = getRequest();
         var requesterId = this.getUserIdFromRequestOrThrowUnauthorizedException(request);
         log.info("Started admin authorization with provided id - " + requesterId);
 
@@ -149,6 +145,11 @@ public class AuthorizationServiceImpl implements AuthorizationService {
             throw new UnauthorizedUserException();
 
         log.info("Successfully authorized admin with provided id - " + requesterId);
+    }
+
+    private HttpServletRequest getRequest() {
+        return ((ServletRequestAttributes) Objects.requireNonNull(RequestContextHolder.getRequestAttributes()))
+                .getRequest();
     }
 
     private Long getUserIdFromRequestOrThrowUnauthorizedException(HttpServletRequest request) throws UnauthorizedUserException {
