@@ -25,32 +25,29 @@ public class AdminController {
     private final AuthorizationService authorizationService;
 
     @GetMapping("/users")
-    public Collection<UserDTO> getAllUsers(@RequestHeader("X-USER-ID") @NotNull Long requesterId) throws UnauthorizedUserException {
-        this.authorizationService.authorizeAdmin(requesterId);
+    public Collection<UserDTO> getAllUsers() throws UnauthorizedUserException {
+        this.authorizationService.authorizeAdmin();
         return this.adminService.getAllUsers();
     }
 
     @DeleteMapping("/users/{userId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void DeleteUser(@PathVariable("userId") @NotNull Long userId,
-                           @RequestHeader("X-USER-ID") @NotNull Long requesterId) throws UnauthorizedUserException, UserNotFoundException {
-        this.authorizationService.authorizeAdmin(requesterId);
+    public void DeleteUser(@PathVariable("userId") @NotNull Long userId) throws UnauthorizedUserException, UserNotFoundException {
+        this.authorizationService.authorizeAdmin();
         this.adminService.deleteUser(userId);
     }
 
     @PutMapping("users/{userId}/details")
     public ChangeUserDetailsResponse changeUserDetails(@RequestBody @Valid ChangeUserDetailsRequest changeUserDetailsRequest,
-                                                       @PathVariable("userId") @NotNull Long userId,
-                                                       @RequestHeader("X-USER-ID") @NotNull Long requesterId) throws UnauthorizedUserException, UserNotFoundException, InvalidUserDetailsException {
-        this.authorizationService.authorizeAdmin(requesterId);
+                                                       @PathVariable("userId") @NotNull Long userId) throws UnauthorizedUserException, UserNotFoundException, InvalidUserDetailsException {
+        this.authorizationService.authorizeAdmin();
         return this.adminService.changeUserDetails(changeUserDetailsRequest, userId);
     }
 
     @PostMapping("users/{userId}/activate")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void activateAccount(@PathVariable("userId") @NotNull Long userId,
-                                @RequestHeader("X-USER-ID") @NotNull Long requesterId) throws UnauthorizedUserException, UserNotFoundException {
-        this.authorizationService.authorizeAdmin(requesterId);
+    public void activateAccount(@PathVariable("userId") @NotNull Long userId) throws UnauthorizedUserException, UserNotFoundException {
+        this.authorizationService.authorizeAdmin();
         this.adminService.activateAccount(userId);
     }
 }
