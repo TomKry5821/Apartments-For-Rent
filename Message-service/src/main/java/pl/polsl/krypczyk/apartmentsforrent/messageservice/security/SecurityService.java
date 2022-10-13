@@ -21,9 +21,9 @@ public class SecurityService {
                 ((ServletRequestAttributes) Objects.requireNonNull(RequestContextHolder.getRequestAttributes()))
                         .getRequest();
         var userId = this.getUserIdFromRequest(request);
-        log.info("Started authorization for user with id " + userId);
-
         var userRoles = this.getUserRolesFromRequest(request);
+
+        log.info("Started authorization for user with id " + userId + " with roles " + userRoles);
 
         for(var role : roles){
             if(userRoles.contains(role)) {
