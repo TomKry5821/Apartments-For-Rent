@@ -3,6 +3,8 @@ package pl.polsl.krypczyk.apartmentsforrent.userservice.infrastructure.authoriza
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.application.user.request.CreateUserRequest;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.application.user.request.UserLoginRequest;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.application.user.response.CreateUserResponse;
@@ -21,6 +23,7 @@ import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.userauthorization.
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.userdetails.UserDetailsEntity;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.userdetails.UserDetailsRepository;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -117,7 +120,11 @@ public class AuthorizationServiceImpl implements AuthorizationService {
     }
 
     @Override
-    public void authorizeUser(Long userId, Long requesterId) throws UnauthorizedUserException {
+    public void authorizeUser(Long userId) throws UnauthorizedUserException {
+        var request =
+                ((ServletRequestAttributes) Objects.requireNonNull(RequestContextHolder.getRequestAttributes()))
+                        .getRequest();
+        var requesterId = this.getUserIdFromRequestOrThrowUnauthorizedException(request);
         log.info("Started user authorization with provided id - " + userId);
 
         var user = this.userRepository.findUserEntityById(userId);
@@ -128,7 +135,11 @@ public class AuthorizationServiceImpl implements AuthorizationService {
     }
 
     @Override
-    public void authorizeAdmin(Long requesterId) throws UnauthorizedUserException {
+    public void authorizeAdmin() throws UnauthorizedUserException {
+        var request =
+                ((ServletRequestAttributes) Objects.requireNonNull(RequestContextHolder.getRequestAttributes()))
+                        .getRequest();
+        var requesterId = this.getUserIdFromRequestOrThrowUnauthorizedException(request);
         log.info("Started admin authorization with provided id - " + requesterId);
 
         var user = this.userRepository.findUserEntityById(requesterId);
@@ -138,5 +149,13 @@ public class AuthorizationServiceImpl implements AuthorizationService {
             throw new UnauthorizedUserException();
 
         log.info("Successfully authorized admin with provided id - " + requesterId);
+    }
+
+    private Long getUserIdFromRequestOrThrowUnauthorizedException(HttpServletRequest request) throws UnauthorizedUserException {
+        try{
+            return Long.parseLong(request.getHeader("X-USER-ID"));
+        }catch(NumberFormatException e){
+            throw new UnauthorizedUserException();
+        }
     }
 }
