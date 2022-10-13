@@ -42,7 +42,7 @@ class AdminControllerTest {
                         delete("/user/api/v1/admin/users/194")
                                 .header("Authorization", "sdsd"))
                 //THEN
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isUnauthorized());
     }
 
     @Test
@@ -67,7 +67,7 @@ class AdminControllerTest {
                         get("/user/api/v1/admin/users")
                                 .header("X-USER-ID", "sdsd"))
                 //THEN
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isUnauthorized());
     }
 
     @Test
@@ -91,7 +91,7 @@ class AdminControllerTest {
     }
 
     @Test
-    void testChangeUserDetailsWithInvalidUserIdAndInvalidRequesterIdShouldReturn400() throws Exception {
+    void testChangeUserDetailsWithInvalidUserIdAndInvalidRequesterIdShouldReturn401() throws Exception {
         //GIVEN
         this.registerValidUser();
 
@@ -108,7 +108,7 @@ class AdminControllerTest {
                                         }""")
                                 .header("Authorization", "sfsf"))
                 //THEN
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isUnauthorized());
     }
 
     @Test
