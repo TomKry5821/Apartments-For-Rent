@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.excpetion.AnnouncementNotFoundException;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.excpetion.ClosedAnnouncementException;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.excpetion.InvalidUserIdException;
+import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.authorization.exception.UnauthorizedUserException;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.observedannouncement.exception.AnnouncementAlreadyObservedException;
 
 @ControllerAdvice
@@ -61,6 +62,15 @@ public class AnnouncementControllerAdvice {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
     public String handleException(AnnouncementAlreadyObservedException e) {
+        e.printStackTrace();
+        log.error(e.getMessage());
+        return e.getMessage();
+    }
+
+    @ExceptionHandler(UnauthorizedUserException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ResponseBody
+    public String handleException(UnauthorizedUserException e){
         e.printStackTrace();
         log.error(e.getMessage());
         return e.getMessage();
