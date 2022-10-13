@@ -177,21 +177,21 @@ class AnnouncementControllerTest {
         this.createAnnouncement();
 
         mvc.perform(
-                        post("/announcement/api/v1/announcements/1/close")
+                        post("/announcement/api/v1/announcements/1/close/1")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .header("X-USER-ID",1L))
                 .andExpect(status().isNoContent());
     }
 
     @Test
-    void testCloseAnnouncementWithInvalidUserIdShouldReturn400() throws Exception {
+    void testCloseAnnouncementWithInvalidUserIdShouldReturn401() throws Exception {
         this.createAnnouncement();
 
         mvc.perform(
-                        post("/announcement/api/v1/announcements/10/close")
+                        post("/announcement/api/v1/announcements/10/close/0")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .header("X-USER-ID",1L))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isUnauthorized());
     }
 
     @Test
@@ -206,14 +206,14 @@ class AnnouncementControllerTest {
     }
 
     @Test
-    void testObserveAnnouncementWithInvalidUserIdAndValidAnnouncementIdShouldReturn400() throws Exception {
+    void testObserveAnnouncementWithInvalidUserIdAndValidAnnouncementIdShouldReturn401() throws Exception {
         this.createAnnouncement();
 
         mvc.perform(
                         post("/announcement/api/v1/announcements/1/observe/100")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .header("X-USER-ID",1L))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isUnauthorized());
     }
 
     @Test
@@ -240,7 +240,7 @@ class AnnouncementControllerTest {
     }
 
     @Test
-    void testUnobserveAnnouncementWithInvalidUserIdAndInvalidAnnouncementIdShouldReturn400() throws Exception {
+    void testUnobserveAnnouncementWithInvalidUserIdAndInvalidAnnouncementIdShouldReturn401() throws Exception {
         this.createAnnouncement();
         this.observeAnnouncement();
 
@@ -248,7 +248,7 @@ class AnnouncementControllerTest {
                         delete("/announcement/api/v1/announcements/10/unobserve/10")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .header("X-USER-ID",1L))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isUnauthorized());
     }
 
     @Test
@@ -264,7 +264,7 @@ class AnnouncementControllerTest {
     }
 
     @Test
-    void testGetObservedAnnouncementsWithInvalidUserIdShouldReturn400() throws Exception {
+    void testGetObservedAnnouncementsWithInvalidUserIdShouldReturn401() throws Exception {
         this.createAnnouncement();
         this.observeAnnouncement();
 
@@ -272,7 +272,7 @@ class AnnouncementControllerTest {
                         get("/announcement/api/v1/announcements/observed/0")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .header("X-USER-ID",1L))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isUnauthorized());
     }
 
 

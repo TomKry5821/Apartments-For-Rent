@@ -10,7 +10,6 @@ import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announceme
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.application.announcement.dto.AnnouncementDTO;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.excpetion.AnnouncementNotFoundException;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.excpetion.ClosedAnnouncementException;
-import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.excpetion.InvalidUserIdException;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.application.announcement.request.AddNewAnnouncementRequest;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.application.announcement.request.UpdateAnnouncementRequest;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.application.announcement.response.GetAnnouncementWithAllDetailsResponse;
@@ -122,7 +121,7 @@ class AnnouncementServiceImplTest {
     }
 
     @Test
-    void testUpdateAnnouncementWithClosedAnnouncementShouldThrowClosedAnnouncementException() throws InvalidUserIdException, AnnouncementNotFoundException {
+    void testUpdateAnnouncementWithClosedAnnouncementShouldThrowClosedAnnouncementException() throws AnnouncementNotFoundException {
         //GIVEN
         var updateAnnouncementRequest = validUpdateAnnouncementRequest();
         var addNewAnnouncementRequest = validAnnouncementRequest();
@@ -135,7 +134,7 @@ class AnnouncementServiceImplTest {
     }
 
     @Test
-    void testCloseAnnouncementWithValidUserIdShouldNotThrowAnnouncementNotFoundException() throws InvalidUserIdException, AnnouncementNotFoundException {
+    void testCloseAnnouncementWithValidUserIdShouldNotThrowAnnouncementNotFoundException() throws AnnouncementNotFoundException {
         //GIVEN
         validUpdateAnnouncementRequest();
         var addNewAnnouncementRequest = validAnnouncementRequest();
@@ -146,18 +145,6 @@ class AnnouncementServiceImplTest {
 
         //THEN
         Assertions.assertDoesNotThrow(AnnouncementNotFoundException::new);
-    }
-
-    @Test
-    void testCloseAnnouncementWithInvalidUserIdShouldThrowInvalidUserIdException() {
-        //GIVEN
-        validUpdateAnnouncementRequest();
-        var addNewAnnouncementRequest = validAnnouncementRequest();
-        var addNewAnnouncementResponse = this.announcementService.addNewAnnouncement(addNewAnnouncementRequest);
-
-        //WHEN AND THEN
-        Assertions.assertThrows(InvalidUserIdException.class, () ->
-                this.announcementService.closeAnnouncement(addNewAnnouncementResponse.getAnnouncementId(), 0L));
     }
 
     @Test
