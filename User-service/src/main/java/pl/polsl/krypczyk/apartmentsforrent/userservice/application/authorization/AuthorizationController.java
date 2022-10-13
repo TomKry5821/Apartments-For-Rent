@@ -14,7 +14,6 @@ import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.user.exception.Use
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.user.exception.UserNotFoundException;
 
 import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 
 @RestController
 @RequestMapping("/user/api/v1/auth")
@@ -37,9 +36,8 @@ public class AuthorizationController {
 
     @PostMapping("{userId}/logout")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void logoutUser(@PathVariable("userId") Long userId,
-                           @RequestHeader("X-USER-ID") @NotNull Long requesterId) throws UnauthorizedUserException, UserNotFoundException {
-        this.authorizationService.authorizeUser(userId, requesterId);
+    public void logoutUser(@PathVariable("userId") Long userId) throws UnauthorizedUserException, UserNotFoundException {
+        this.authorizationService.authorizeUser(userId);
         this.authorizationService.logoutUser(userId);
     }
 

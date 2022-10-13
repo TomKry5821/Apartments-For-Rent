@@ -17,7 +17,7 @@ public interface AuthorizationService {
 
     void logoutUser(Long userId) throws UserNotFoundException;
 
-    void authorizeUser(Long userId, Long requesterId) throws UnauthorizedUserException;
+    void authorizeUser(Long userId) throws UnauthorizedUserException;
 
-    void authorizeAdmin(Long requesterId) throws UnauthorizedUserException;
+    void authorizeAdmin() throws UnauthorizedUserException;
 }
