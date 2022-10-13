@@ -47,6 +47,7 @@ public class UserRoleAuthGatewayFilterFactory extends AbstractGatewayFilterFacto
             request = exchange.getRequest()
                     .mutate()
                     .header("X-USER-ID", userRoles.getUserId().toString())
+                    .header("X-USER-ROLES", userRoles.getRoles().toString())
                     .build();
             exchange = exchange.mutate().request(request).build();
             return chain.filter(exchange);
