@@ -12,6 +12,10 @@ import java.util.Collection;
 @Builder
 public class UpdateAnnouncementRequest {
 
+    @NotNull(message = "Invalid user id")
+    @Min(value = 1, message = "Invalid user id")
+    private Long userId;
+
     @NotEmpty(message = "Invalid announcement title")
     private String title;
 
