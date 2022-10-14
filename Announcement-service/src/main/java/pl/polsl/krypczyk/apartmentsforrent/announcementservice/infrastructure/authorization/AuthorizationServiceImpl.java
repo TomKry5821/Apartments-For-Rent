@@ -26,10 +26,7 @@ public class AuthorizationServiceImpl implements AuthorizationService {
 
         log.info("Started user authorization with provided id - " + userId);
 
-        if (!userId.equals(requesterId))
-            throw new UnauthorizedUserException();
-
-        if(!roles.contains(ROLE_USER))
+        if (!userId.equals(requesterId) || !roles.contains(ROLE_USER))
             throw new UnauthorizedUserException();
 
         log.info("Successfully authorized user with provided id - " + userId);
@@ -42,7 +39,7 @@ public class AuthorizationServiceImpl implements AuthorizationService {
 
         log.info("Started admin authorization");
 
-        if(!roles.contains(ROLE_ADMIN))
+        if (!roles.contains(ROLE_ADMIN))
             throw new UnauthorizedUserException();
 
         log.info("Successfully authorized admin");
@@ -54,9 +51,9 @@ public class AuthorizationServiceImpl implements AuthorizationService {
     }
 
     private Long getUserIdFromRequestOrThrowUnauthorizedException(HttpServletRequest request) throws UnauthorizedUserException {
-        try{
+        try {
             return Long.parseLong(request.getHeader("X-USER-ID"));
-        }catch(NumberFormatException e){
+        } catch (NumberFormatException e) {
             throw new UnauthorizedUserException();
         }
     }
