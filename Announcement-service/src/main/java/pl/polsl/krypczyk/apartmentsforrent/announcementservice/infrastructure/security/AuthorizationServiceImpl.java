@@ -1,11 +1,11 @@
-package pl.polsl.krypczyk.apartmentsforrent.announcementservice.infrastructure.authorization;
+package pl.polsl.krypczyk.apartmentsforrent.announcementservice.infrastructure.security;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
-import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.authorization.AuthorizationService;
-import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.authorization.exception.UnauthorizedUserException;
+import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.security.AuthorizationService;
+import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.security.exception.UnauthorizedUserException;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Collection;
