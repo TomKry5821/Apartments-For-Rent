@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.application.user.request.CreateUserRequest;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.security.AuthorizationService;
-import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.security.exception.BadCredentialsException;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.user.UserRepository;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.user.UserService;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.user.exception.UserAlreadyExistsException;
@@ -39,19 +38,7 @@ class AuthorizationServiceImplTest {
     }
 
     @Test
-    void testRegisterNewUserWithValidUserInformationShouldNotThrowBadCredentialsException() throws UserAlreadyExistsException, BadCredentialsException {
-        //GIVEN
-        var createUserRequest = createValidUser();
-
-        //WHEN
-        this.userService.createUser(createUserRequest);
-
-        //THEN
-        Assertions.assertDoesNotThrow(BadCredentialsException::new);
-    }
-
-    @Test
-    void testRegisterAlreadyExistingUserShouldThrowUserAlreadyExistsException() throws UserAlreadyExistsException, BadCredentialsException {
+    void testRegisterAlreadyExistingUserShouldThrowUserAlreadyExistsException() throws UserAlreadyExistsException {
         //GIVEN
         var createUserRequest = createValidUser();
 
@@ -64,17 +51,7 @@ class AuthorizationServiceImplTest {
     }
 
     @Test
-    void testRegisterNewUserWithInvalidNullUserInformationShouldThrowBadCredentialsException() {
-        //GIVEN
-        CreateUserRequest createUserRequest = null;
-
-        //WHEN AND THEN
-        Assertions.assertThrows(BadCredentialsException.class, () ->
-                this.userService.createUser(createUserRequest));
-    }
-
-    @Test
-    void testLoginUserWithValidCredentialsShouldNotThrowBadCredentialsException() throws UserNotFoundException, BadCredentialsException, UserAlreadyExistsException {
+    void testLoginUserWithValidCredentialsShouldNotThrowUserNotFoundException() throws UserNotFoundException, UserAlreadyExistsException {
         //GIVEN
         var createUserRequest = createValidUser();
         this.userService.createUser(createUserRequest);
@@ -86,25 +63,11 @@ class AuthorizationServiceImplTest {
         this.authorizationService.loginUser(userLoginRequest);
 
         //THEN
-        Assertions.assertDoesNotThrow(BadCredentialsException::new);
+        Assertions.assertDoesNotThrow(UserNotFoundException::new);
     }
 
     @Test
-    void testLoginUserWithNullCredentialsShouldThrowBadCredentialsException() throws UserAlreadyExistsException, BadCredentialsException {
-        //GIVEN
-        var createUserRequest = createValidUser();
-        this.userService.createUser(createUserRequest);
-
-        //WHEN
-        UserLoginRequest userLoginRequest = null;
-
-        //THEN
-        Assertions.assertThrows(BadCredentialsException.class, () ->
-                this.authorizationService.loginUser(userLoginRequest));
-    }
-
-    @Test
-    void testLoginUserThatDoesNotExistsShouldThrowUserNotFoundException() throws UserAlreadyExistsException, BadCredentialsException {
+    void testLoginUserThatDoesNotExistsShouldThrowUserNotFoundException() throws UserAlreadyExistsException {
         //GIVEN
         var createUserRequest = createValidUser();
         this.userService.createUser(createUserRequest);
@@ -120,7 +83,7 @@ class AuthorizationServiceImplTest {
     }
 
     @Test
-    void testLogoutUserThatExistsShouldThrowUserNotFoundException() throws UserNotFoundException, UserAlreadyExistsException, BadCredentialsException {
+    void testLogoutUserThatExistsShouldThrowUserNotFoundException() throws UserNotFoundException, UserAlreadyExistsException {
         //GIVEN
         var createUserRequest = this.createValidUser();
         var createUserResponse = this.userService.createUser(createUserRequest);
@@ -134,7 +97,7 @@ class AuthorizationServiceImplTest {
     }
 
     @Test
-    void testLogoutUserThatDoesNotExistsShouldThrowUserNotFoundException() throws UserAlreadyExistsException, BadCredentialsException {
+    void testLogoutUserThatDoesNotExistsShouldThrowUserNotFoundException() throws UserAlreadyExistsException {
         //GIVEN
         var createUserRequest = this.createValidUser();
         this.userService.createUser(createUserRequest);
