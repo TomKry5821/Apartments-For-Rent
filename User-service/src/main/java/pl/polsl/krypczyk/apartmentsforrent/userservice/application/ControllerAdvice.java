@@ -1,9 +1,8 @@
-package pl.polsl.krypczyk.apartmentsforrent.userservice.application.authorization;
+package pl.polsl.krypczyk.apartmentsforrent.userservice.application;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -12,9 +11,9 @@ import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.authorization.exce
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.user.exception.UserAlreadyExistsException;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.user.exception.UserNotFoundException;
 
-@ControllerAdvice
+@org.springframework.web.bind.annotation.ControllerAdvice
 @Slf4j
-public class AuthorizationControllerAdvice {
+public class ControllerAdvice {
 
     @ExceptionHandler(UserNotFoundException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
