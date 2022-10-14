@@ -5,18 +5,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
-import pl.polsl.krypczyk.apartmentsforrent.userservice.application.user.request.CreateUserRequest;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.application.user.request.UserLoginRequest;
-import pl.polsl.krypczyk.apartmentsforrent.userservice.application.user.response.CreateUserResponse;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.application.user.response.LoginUserResponse;
-import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.EntityFactory;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.ResponseFactory;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.security.AuthorizationService;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.security.exception.BadCredentialsException;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.security.exception.UnauthorizedUserException;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.user.UserEntity;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.user.UserRepository;
-import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.user.exception.UserAlreadyExistsException;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.user.exception.UserNotFoundException;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.userauthorization.UserAuthorizationEntity;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.userauthorization.UserAuthorizationRepository;
@@ -41,32 +37,6 @@ public class AuthorizationServiceImpl implements AuthorizationService {
     private final UserDetailsRepository userDetailsRepository;
     private final UserAuthorizationRepository userAuthorizationRepository;
     private final ResponseFactory responseFactory;
-    private final EntityFactory entityFactory;
-
-
-    @Override
-    public CreateUserResponse registerNewUser(CreateUserRequest createUserRequest) throws BadCredentialsException, UserAlreadyExistsException {
-        log.info("Started creating new user with details - " + createUserRequest);
-
-        if (Objects.isNull(createUserRequest))
-            throw new BadCredentialsException();
-        if (this.userAlreadyExists(createUserRequest.getEmail()))
-            throw new UserAlreadyExistsException();
-
-        var role = this.entityFactory.createUserRoleEntity();
-        var userDetails = this.entityFactory.createUserDetailsEntity(createUserRequest);
-        var userAuthorization = this.entityFactory.createUserAuthorizationEntity(role);
-        var user = this.entityFactory.createUserEntity(userDetails, userAuthorization);
-
-        var createUserResponse = this.responseFactory.createCreateUserResponse(createUserRequest, userAuthorization, user.getId());
-
-        log.info("Successfully created user - " + createUserResponse);
-        return createUserResponse;
-    }
-
-    private Boolean userAlreadyExists(String email) {
-        return this.userDetailsRepository.existsByEmail(email);
-    }
 
     @Override
     public LoginUserResponse loginUser(UserLoginRequest userLoginRequest) throws BadCredentialsException, UserNotFoundException {
