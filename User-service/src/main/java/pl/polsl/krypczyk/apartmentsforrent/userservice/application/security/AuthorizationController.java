@@ -1,4 +1,4 @@
-package pl.polsl.krypczyk.apartmentsforrent.userservice.application.authorization;
+package pl.polsl.krypczyk.apartmentsforrent.userservice.application.security;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
