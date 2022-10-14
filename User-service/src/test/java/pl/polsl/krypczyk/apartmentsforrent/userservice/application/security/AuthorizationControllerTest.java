@@ -23,7 +23,7 @@ class AuthorizationControllerTest {
     @Test
     void test_LoginUserWithValidCredentialsShouldReturn200() throws Exception {
         //GIVEN
-        this.registerValidUser();
+        this.createValidUser();
 
         //WHEN
         mvc.perform(
@@ -44,7 +44,7 @@ class AuthorizationControllerTest {
     @Test
     void testLoginUserWithInvalidCredentialsShouldReturn400() throws Exception {
         //GIVEN
-        this.registerValidUser();
+        this.createValidUser();
 
         //WHEN
         mvc.perform(
@@ -65,7 +65,7 @@ class AuthorizationControllerTest {
     @Test
     void testLoginUserWithNullCredentialsShouldReturn400() throws Exception {
         //GIVEN
-        this.registerValidUser();
+        this.createValidUser();
 
         //WHEN
         mvc.perform(
@@ -86,7 +86,7 @@ class AuthorizationControllerTest {
     @Test
     void testLogoutUserWithValidIdShouldReturn204() throws Exception {
         //GIVEN
-        this.registerValidUser();
+        this.createValidUser();
         //WHEN
         mvc.perform(
                         post("/user/api/v1/auth/2/logout")
@@ -101,7 +101,7 @@ class AuthorizationControllerTest {
     @Test
     void testLogoutUserWithInvalidIdShouldReturn401() throws Exception {
         //GIVEN
-        this.registerValidUser();
+        this.createValidUser();
 
         //WHEN
         mvc.perform(
@@ -113,9 +113,9 @@ class AuthorizationControllerTest {
 
     }
 
-    private void registerValidUser() throws Exception {
+    private void createValidUser() throws Exception {
         mvc.perform(
-                post("/user/api/v1/auth/register")
+                post("/user/api/v1/users")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {

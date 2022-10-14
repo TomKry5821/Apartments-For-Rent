@@ -25,7 +25,7 @@ class UserControllerTest {
     @Test
     void testCreateUserWithValidUserDetailsShouldReturn201() throws Exception {
         //GIVEN AND WHEN
-        var result = this.registerValidUser();
+        var result = this.createValidUser();
 
         //THEN
         result.andExpect(status().isCreated())
@@ -54,8 +54,8 @@ class UserControllerTest {
     @Test
     void testCreaterExistingUserShouldReturn400() throws Exception {
         //GIVEN AND WHEN
-        this.registerValidUser();
-        var result = this.registerValidUser();
+        this.createValidUser();
+        var result = this.createValidUser();
         //THEN
         result.andExpect(status().isBadRequest())
                 .andExpect(content()
@@ -65,7 +65,7 @@ class UserControllerTest {
     @Test
     void testGetUserDetailsWithValidUserIdAndRequesterIdShouldReturn200() throws Exception {
         //GIVEN
-        this.registerValidUser();
+        this.createValidUser();
 
         //WHEN
         mvc.perform(
@@ -80,7 +80,7 @@ class UserControllerTest {
     @Test
     void testGetUserDetailsWithInvalidUserIdAndValidRequesterIdShouldReturn401() throws Exception {
         //GIVEN
-        this.registerValidUser();
+        this.createValidUser();
 
         //WHEN
         mvc.perform(
@@ -95,7 +95,7 @@ class UserControllerTest {
     @Test
     void testChangeUserDetailsWithValidUserIdAndValidRequesterIdShouldReturn200() throws Exception {
         //GIVEN
-        this.registerValidUser();
+        this.createValidUser();
 
         //WHEN
         mvc.perform(
@@ -117,7 +117,7 @@ class UserControllerTest {
     @Test
     void testChangeUserDetailsWithInvalidUserIdAndValidRequesterIdShouldReturn401() throws Exception {
         //GIVEN
-        this.registerValidUser();
+        this.createValidUser();
 
         //WHEN
         mvc.perform(
@@ -139,7 +139,7 @@ class UserControllerTest {
     @Test
     void testChangeUserDetailsWithInvalidUserIdAndInvalidRequesterIdShouldReturn401() throws Exception {
         //GIVEN
-        this.registerValidUser();
+        this.createValidUser();
 
         //WHEN
         mvc.perform(
@@ -160,7 +160,7 @@ class UserControllerTest {
     @Test
     void testInactivateAccountWithValidUserIdAndValidRequesterIdShouldReturn204() throws Exception {
         //GIVEN
-        this.registerValidUser();
+        this.createValidUser();
 
         //WHEN
         mvc.perform(
@@ -174,7 +174,7 @@ class UserControllerTest {
     @Test
     void testInactivateAccountWithInvalidUserIdAndValidRequesterIdShouldReturn401() throws Exception {
         //GIVEN
-        this.registerValidUser();
+        this.createValidUser();
 
         //WHEN
         mvc.perform(
@@ -188,7 +188,7 @@ class UserControllerTest {
     @Test
     void testInactivateAccountWithInvalidUserIdAndInvalidRequesterIdShouldReturn401() throws Exception {
         //GIVEN
-        this.registerValidUser();
+        this.createValidUser();
 
         //WHEN
         mvc.perform(
@@ -199,9 +199,9 @@ class UserControllerTest {
                 .andExpect(status().isUnauthorized());
     }
 
-    private ResultActions registerValidUser() throws Exception {
+    private ResultActions createValidUser() throws Exception {
         return mvc.perform(
-                post("/user/api/v1/auth/register")
+                post("/user/api/v1/users")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {
