@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.application.user.request.CreateUserRequest;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.application.user.response.CreateUserResponse;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.EntityFactory;
-import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.security.exception.BadCredentialsException;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.infrastructure.security.config.AES;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.application.security.userdetails.request.ChangeUserDetailsRequest;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.application.security.userdetails.response.ChangeUserDetailsResponse;
@@ -36,11 +35,9 @@ public class UserServiceImpl implements UserService {
     private final EntityFactory entityFactory;
 
     @Override
-    public CreateUserResponse createUser(CreateUserRequest createUserRequest) throws BadCredentialsException, UserAlreadyExistsException {
+    public CreateUserResponse createUser(CreateUserRequest createUserRequest) throws UserAlreadyExistsException {
         log.info("Started creating new user with details - " + createUserRequest);
 
-        if (Objects.isNull(createUserRequest))
-            throw new BadCredentialsException();
         if (this.userAlreadyExists(createUserRequest.getEmail()))
             throw new UserAlreadyExistsException();
 

@@ -9,7 +9,6 @@ import pl.polsl.krypczyk.apartmentsforrent.userservice.application.user.request.
 import pl.polsl.krypczyk.apartmentsforrent.userservice.application.user.response.LoginUserResponse;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.ResponseFactory;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.security.AuthorizationService;
-import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.security.exception.BadCredentialsException;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.security.exception.UnauthorizedUserException;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.user.UserEntity;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.user.UserRepository;
@@ -39,10 +38,8 @@ public class AuthorizationServiceImpl implements AuthorizationService {
     private final ResponseFactory responseFactory;
 
     @Override
-    public LoginUserResponse loginUser(UserLoginRequest userLoginRequest) throws BadCredentialsException, UserNotFoundException {
+    public LoginUserResponse loginUser(UserLoginRequest userLoginRequest) throws UserNotFoundException {
         log.info("Started logging user with details -" + userLoginRequest);
-        if (Objects.isNull(userLoginRequest))
-            throw new BadCredentialsException();
 
         userLoginRequest.setPassword(AES.encrypt(userLoginRequest.getPassword()));
         var userDetails = retrieveUserDetailsByEmailAndPassword(userLoginRequest.getEmail(), userLoginRequest.getPassword());
