@@ -1,17 +1,16 @@
-package pl.polsl.krypczyk.apartmentsforrent.messageservice.application.message;
+package pl.polsl.krypczyk.apartmentsforrent.messageservice.application;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import pl.polsl.krypczyk.apartmentsforrent.messageservice.domain.security.exception.UnauthorizedUserException;
 
-@ControllerAdvice
+@org.springframework.web.bind.annotation.ControllerAdvice
 @Slf4j
-public class MessageControllerAdvice {
+public class ControllerAdvice {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
