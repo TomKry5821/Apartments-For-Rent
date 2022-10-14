@@ -8,7 +8,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.ResultActions;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -20,46 +19,6 @@ class AuthorizationControllerTest {
 
     @Autowired
     private MockMvc mvc;
-
-    @Test
-    void testRegisterNewUserWithValidUserDetailsShouldReturn201() throws Exception {
-        //GIVEN AND WHEN
-        var result = this.registerValidUser();
-
-        //THEN
-        result.andExpect(status().isCreated())
-                .andExpect(content()
-                        .contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
-    }
-
-    @Test
-    void testRegisterNewUserWithInvalidUserDetailsShouldReturn400() throws Exception {
-        mvc.perform(
-                        post("/user/api/v1/auth/register")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content("""
-                                        {
-                                            "name": "",
-                                            "surname": "]",
-                                            "email": "testtest.pl",
-                                            "isActive": null,
-                                            "password": "Test"
-                                        }"""))
-                .andExpect(status().isBadRequest())
-                .andExpect(content()
-                        .contentTypeCompatibleWith(MediaType.TEXT_PLAIN));
-    }
-
-    @Test
-    void testRegisterExistingUserShouldReturn400() throws Exception {
-        //GIVEN AND WHEN
-        this.registerValidUser();
-        var result = this.registerValidUser();
-        //THEN
-        result.andExpect(status().isBadRequest())
-                .andExpect(content()
-                        .contentTypeCompatibleWith(MediaType.TEXT_PLAIN));
-    }
 
     @Test
     void test_LoginUserWithValidCredentialsShouldReturn200() throws Exception {
@@ -154,8 +113,8 @@ class AuthorizationControllerTest {
 
     }
 
-    private ResultActions registerValidUser() throws Exception {
-        return mvc.perform(
+    private void registerValidUser() throws Exception {
+        mvc.perform(
                 post("/user/api/v1/auth/register")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""

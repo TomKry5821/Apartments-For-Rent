@@ -10,6 +10,7 @@ import pl.polsl.krypczyk.apartmentsforrent.userservice.application.user.request.
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.security.AuthorizationService;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.security.exception.BadCredentialsException;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.user.UserRepository;
+import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.user.UserService;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.user.exception.UserAlreadyExistsException;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.user.exception.UserNotFoundException;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.application.user.request.UserLoginRequest;
@@ -17,11 +18,14 @@ import pl.polsl.krypczyk.apartmentsforrent.userservice.application.user.request.
 @SpringBootTest("spring.autoconfigure.exclude=org.springframework.boot.autoconfigure.kafka.KafkaAutoConfiguration")
 class AuthorizationServiceImplTest {
 
-    private final String VALID_USER_SURNAME = "surname";
-    private final String VALID_USER_PASSWORD = "password";
-    private final String VALID_USER_NAME = "name";
-    private final String VALID_USER_EMAIL = "user@user.com";
-    private final boolean VALID_USER_IS_ACTIVE = true;
+    private static final String VALID_USER_SURNAME = "surname";
+    private static final String VALID_USER_PASSWORD = "password";
+    private static final String VALID_USER_NAME = "name";
+    private static final String VALID_USER_EMAIL = "user@user.com";
+    private static final boolean VALID_USER_IS_ACTIVE = true;
+
+    @Autowired
+    private UserService userService;
 
     @Autowired
     private AuthorizationService authorizationService;
@@ -40,7 +44,7 @@ class AuthorizationServiceImplTest {
         var createUserRequest = createValidUser();
 
         //WHEN
-        this.authorizationService.registerNewUser(createUserRequest);
+        this.userService.createUser(createUserRequest);
 
         //THEN
         Assertions.assertDoesNotThrow(BadCredentialsException::new);
@@ -52,11 +56,11 @@ class AuthorizationServiceImplTest {
         var createUserRequest = createValidUser();
 
         //WHEN
-        this.authorizationService.registerNewUser(createUserRequest);
+        this.userService.createUser(createUserRequest);
 
         //THEN
         Assertions.assertThrows(UserAlreadyExistsException.class, () ->
-                this.authorizationService.registerNewUser(createUserRequest));
+                this.userService.createUser(createUserRequest));
     }
 
     @Test
@@ -66,14 +70,14 @@ class AuthorizationServiceImplTest {
 
         //WHEN AND THEN
         Assertions.assertThrows(BadCredentialsException.class, () ->
-                this.authorizationService.registerNewUser(createUserRequest));
+                this.userService.createUser(createUserRequest));
     }
 
     @Test
     void testLoginUserWithValidCredentialsShouldNotThrowBadCredentialsException() throws UserNotFoundException, BadCredentialsException, UserAlreadyExistsException {
         //GIVEN
         var createUserRequest = createValidUser();
-        this.authorizationService.registerNewUser(createUserRequest);
+        this.userService.createUser(createUserRequest);
 
         //WHEN
         UserLoginRequest userLoginRequest = new UserLoginRequest();
@@ -89,7 +93,7 @@ class AuthorizationServiceImplTest {
     void testLoginUserWithNullCredentialsShouldThrowBadCredentialsException() throws UserAlreadyExistsException, BadCredentialsException {
         //GIVEN
         var createUserRequest = createValidUser();
-        this.authorizationService.registerNewUser(createUserRequest);
+        this.userService.createUser(createUserRequest);
 
         //WHEN
         UserLoginRequest userLoginRequest = null;
@@ -103,7 +107,7 @@ class AuthorizationServiceImplTest {
     void testLoginUserThatDoesNotExistsShouldThrowUserNotFoundException() throws UserAlreadyExistsException, BadCredentialsException {
         //GIVEN
         var createUserRequest = createValidUser();
-        this.authorizationService.registerNewUser(createUserRequest);
+        this.userService.createUser(createUserRequest);
 
         //WHEN
         UserLoginRequest userLoginRequest = new UserLoginRequest();
@@ -119,7 +123,7 @@ class AuthorizationServiceImplTest {
     void testLogoutUserThatExistsShouldThrowUserNotFoundException() throws UserNotFoundException, UserAlreadyExistsException, BadCredentialsException {
         //GIVEN
         var createUserRequest = this.createValidUser();
-        var createUserResponse = this.authorizationService.registerNewUser(createUserRequest);
+        var createUserResponse = this.userService.createUser(createUserRequest);
         var id = createUserResponse.getId();
 
         //WHEN
@@ -133,7 +137,7 @@ class AuthorizationServiceImplTest {
     void testLogoutUserThatDoesNotExistsShouldThrowUserNotFoundException() throws UserAlreadyExistsException, BadCredentialsException {
         //GIVEN
         var createUserRequest = this.createValidUser();
-        this.authorizationService.registerNewUser(createUserRequest);
+        this.userService.createUser(createUserRequest);
 
         // WHEN AND THEN
         Assertions.assertThrows(UserNotFoundException.class, () ->

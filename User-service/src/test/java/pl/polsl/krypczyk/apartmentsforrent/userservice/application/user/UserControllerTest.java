@@ -8,8 +8,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest("spring.autoconfigure.exclude=org.springframework.boot.autoconfigure.kafka.KafkaAutoConfiguration")
@@ -19,6 +21,46 @@ class UserControllerTest {
 
     @Autowired
     private MockMvc mvc;
+
+    @Test
+    void testCreateUserWithValidUserDetailsShouldReturn201() throws Exception {
+        //GIVEN AND WHEN
+        var result = this.registerValidUser();
+
+        //THEN
+        result.andExpect(status().isCreated())
+                .andExpect(content()
+                        .contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
+    }
+
+    @Test
+    void testCreateUserWithInvalidUserDetailsShouldReturn400() throws Exception {
+        mvc.perform(
+                        post("/user/api/v1/auth/register")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content("""
+                                        {
+                                            "name": "",
+                                            "surname": "]",
+                                            "email": "testtest.pl",
+                                            "isActive": null,
+                                            "password": "Test"
+                                        }"""))
+                .andExpect(status().isBadRequest())
+                .andExpect(content()
+                        .contentTypeCompatibleWith(MediaType.TEXT_PLAIN));
+    }
+
+    @Test
+    void testCreaterExistingUserShouldReturn400() throws Exception {
+        //GIVEN AND WHEN
+        this.registerValidUser();
+        var result = this.registerValidUser();
+        //THEN
+        result.andExpect(status().isBadRequest())
+                .andExpect(content()
+                        .contentTypeCompatibleWith(MediaType.TEXT_PLAIN));
+    }
 
     @Test
     void testGetUserDetailsWithValidUserIdAndRequesterIdShouldReturn200() throws Exception {
@@ -157,8 +199,8 @@ class UserControllerTest {
                 .andExpect(status().isUnauthorized());
     }
 
-    private void registerValidUser() throws Exception {
-        mvc.perform(
+    private ResultActions registerValidUser() throws Exception {
+        return mvc.perform(
                 post("/user/api/v1/auth/register")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
