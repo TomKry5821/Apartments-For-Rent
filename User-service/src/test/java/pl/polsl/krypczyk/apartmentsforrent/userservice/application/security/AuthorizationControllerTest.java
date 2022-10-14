@@ -115,7 +115,7 @@ class AuthorizationControllerTest {
 
     private void createValidUser() throws Exception {
         mvc.perform(
-                post("/user/api/v1/users")
+                post("/user/api/v1/public/users")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {
