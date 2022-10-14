@@ -25,6 +25,8 @@ import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.userdetails.UserDe
 import pl.polsl.krypczyk.apartmentsforrent.userservice.infrastructure.security.config.AES;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -32,6 +34,9 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @Slf4j
 public class AuthorizationServiceImpl implements AuthorizationService {
+
+    private static final String ROLE_USER = "ROLE_USER";
+    private static final String ROLE_ADMIN = "ROLE_ADMIN";
     private final UserRepository userRepository;
     private final UserDetailsRepository userDetailsRepository;
     private final UserAuthorizationRepository userAuthorizationRepository;
@@ -124,10 +129,11 @@ public class AuthorizationServiceImpl implements AuthorizationService {
     public void authorizeUser(Long userId) throws UnauthorizedUserException {
         var request = getRequest();
         var requesterId = this.getUserIdFromRequestOrThrowUnauthorizedException(request);
+        var roles = this.getUserRolesFromRequest(request);
+
         log.info("Started user authorization with provided id - " + userId);
 
-        var user = this.userRepository.findUserEntityById(userId);
-        if (Objects.isNull(user) || !userId.equals(requesterId))
+        if (!userId.equals(requesterId) || !roles.contains(ROLE_USER))
             throw new UnauthorizedUserException();
 
         log.info("Successfully authorized user with provided id - " + userId);
@@ -136,16 +142,14 @@ public class AuthorizationServiceImpl implements AuthorizationService {
     @Override
     public void authorizeAdmin() throws UnauthorizedUserException {
         var request = getRequest();
-        var requesterId = this.getUserIdFromRequestOrThrowUnauthorizedException(request);
-        log.info("Started admin authorization with provided id - " + requesterId);
+        var roles = this.getUserRolesFromRequest(request);
 
-        var user = this.userRepository.findUserEntityById(requesterId);
-        if (user.getUserAuthorizationEntity().getRoles()
-                .stream()
-                .noneMatch(r -> r.getName().equals("ROLE_ADMIN")))
+        log.info("Started admin authorization");
+
+        if (!roles.contains(ROLE_ADMIN))
             throw new UnauthorizedUserException();
 
-        log.info("Successfully authorized admin with provided id - " + requesterId);
+        log.info("Successfully authorized admin");
     }
 
     private HttpServletRequest getRequest() {
@@ -154,10 +158,20 @@ public class AuthorizationServiceImpl implements AuthorizationService {
     }
 
     private Long getUserIdFromRequestOrThrowUnauthorizedException(HttpServletRequest request) throws UnauthorizedUserException {
-        try{
+        try {
             return Long.parseLong(request.getHeader("X-USER-ID"));
-        }catch(NumberFormatException e){
+        } catch (NumberFormatException e) {
             throw new UnauthorizedUserException();
         }
+    }
+
+    private Collection<String> getUserRolesFromRequest(HttpServletRequest request) {
+
+        var userRoles = request.getHeader("X-USER-ROLES")
+                .replace("[", "")
+                .replace("]", "")
+                .split(", ");
+
+        return List.of(userRoles);
     }
 }
