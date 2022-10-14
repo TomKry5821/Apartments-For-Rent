@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import pl.polsl.krypczyk.apartmentsforrent.messageservice.domain.security.exception.UnauthorizedUserException;
 
 @ControllerAdvice
 @Slf4j
@@ -24,5 +25,14 @@ public class MessageControllerAdvice {
         e.printStackTrace();
         log.error(errorMessage.toString());
         return errorMessage.toString();
+    }
+
+    @ExceptionHandler(UnauthorizedUserException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ResponseBody
+    public String handleException(UnauthorizedUserException e) {
+        e.printStackTrace();
+        log.error(e.getMessage());
+        return e.getMessage();
     }
 }
