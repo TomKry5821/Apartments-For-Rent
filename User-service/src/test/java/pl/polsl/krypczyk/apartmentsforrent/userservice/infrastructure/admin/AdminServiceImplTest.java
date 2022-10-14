@@ -8,7 +8,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.application.user.request.CreateUserRequest;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.application.security.userdetails.request.ChangeUserDetailsRequest;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.admin.AdminService;
-import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.security.exception.BadCredentialsException;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.user.UserRepository;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.user.UserService;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.user.exception.InvalidUserDetailsException;
@@ -40,7 +39,7 @@ class AdminServiceImplTest {
     }
 
     @Test
-    void testGetAllUsersWithNotEmptyUsersListShouldReturnNotEmptyResponse() throws UserAlreadyExistsException, BadCredentialsException {
+    void testGetAllUsersWithNotEmptyUsersListShouldReturnNotEmptyResponse() throws UserAlreadyExistsException {
         //GIVEN
         var user = this.createValidUser();
         this.userService.createUser(user);
@@ -65,7 +64,7 @@ class AdminServiceImplTest {
 
 
     @Test
-    void testDeleteUserWithValidUserIdShouldNotThrowUserNotFoundException() throws UserNotFoundException, UserAlreadyExistsException, BadCredentialsException {
+    void testDeleteUserWithValidUserIdShouldNotThrowUserNotFoundException() throws UserNotFoundException, UserAlreadyExistsException {
         //GIVEN
         var user = this.createValidUser();
         var response = this.userService.createUser(user);
@@ -81,16 +80,15 @@ class AdminServiceImplTest {
     void testDeleteUserWithInvalidUserIdShouldThrowUserNotFoundException() {
         //GIVEN
         this.createValidUser();
-        var userId = INVALID_USER_ID;
 
 
         //WHEN AND THEN
         Assertions.assertThrows(UserNotFoundException.class, () ->
-                this.adminService.deleteUser(userId));
+                this.adminService.deleteUser(INVALID_USER_ID));
     }
 
     @Test
-    void testChangeUserDetailsWithValidUserIdShouldNotThrowUserNotFoundException() throws UserAlreadyExistsException, BadCredentialsException, UserNotFoundException, InvalidUserDetailsException {
+    void testChangeUserDetailsWithValidUserIdShouldNotThrowUserNotFoundException() throws UserAlreadyExistsException, UserNotFoundException, InvalidUserDetailsException {
         //GIVEN
         var user = this.createValidUser();
         var createUserResponse = this.userService.createUser(user);
@@ -104,20 +102,19 @@ class AdminServiceImplTest {
     }
 
     @Test
-    void testChangeUserDetailsWithInvalidUserIdShouldThrowUserNotFoundException() throws UserAlreadyExistsException, BadCredentialsException {
+    void testChangeUserDetailsWithInvalidUserIdShouldThrowUserNotFoundException() throws UserAlreadyExistsException {
         //GIVEN
         var user = this.createValidUser();
         this.userService.createUser(user);
-        var userId = INVALID_USER_ID;
         var changeUserDetailsRequest = this.createValidChangeUserDetailsRequest();
 
         //WHEN AND THEN
         Assertions.assertThrows(UserNotFoundException.class, () ->
-                this.adminService.changeUserDetails(changeUserDetailsRequest, userId));
+                this.adminService.changeUserDetails(changeUserDetailsRequest, INVALID_USER_ID));
     }
 
     @Test
-    void testChangeUserDetailsWithNullUserDetailsShouldThrowInvalidUserException() throws UserAlreadyExistsException, BadCredentialsException {
+    void testChangeUserDetailsWithNullUserDetailsShouldThrowInvalidUserException() throws UserAlreadyExistsException {
         //GIVEN
         var inactiveUser = this.createInactiveUser();
         var createUserResponse = this.userService.createUser(inactiveUser);
@@ -129,7 +126,7 @@ class AdminServiceImplTest {
     }
 
     @Test
-    void testActivateAccountWithValidUserIdShouldNotThrowUserNotFoundException() throws UserAlreadyExistsException, BadCredentialsException, UserNotFoundException {
+    void testActivateAccountWithValidUserIdShouldNotThrowUserNotFoundException() throws UserAlreadyExistsException, UserNotFoundException {
         //GIVEN
         var inactiveUser = this.createInactiveUser();
         var createUserResponse = this.userService.createUser(inactiveUser);
@@ -143,7 +140,7 @@ class AdminServiceImplTest {
     }
 
     @Test
-    void testActivateAccountWithInvalidUserIdUserNotFoundException() throws UserAlreadyExistsException, BadCredentialsException {
+    void testActivateAccountWithInvalidUserIdUserNotFoundException() throws UserAlreadyExistsException {
         //GIVEN
         var inactiveUser = this.createInactiveUser();
         this.userService.createUser(inactiveUser);
