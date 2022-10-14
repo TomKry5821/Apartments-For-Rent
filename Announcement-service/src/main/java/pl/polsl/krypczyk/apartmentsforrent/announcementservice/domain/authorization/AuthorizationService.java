@@ -5,4 +5,6 @@ import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.authorizat
 public interface AuthorizationService {
 
     void authorizeUser(Long userId) throws UnauthorizedUserException;
+
+    void authorizeAdmin() throws UnauthorizedUserException;
 }
