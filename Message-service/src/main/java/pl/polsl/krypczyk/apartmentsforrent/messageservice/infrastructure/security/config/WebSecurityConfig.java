@@ -1,4 +1,4 @@
-package pl.polsl.krypczyk.apartmentsforrent.messageservice.security.config;
+package pl.polsl.krypczyk.apartmentsforrent.messageservice.infrastructure.security.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
