@@ -5,14 +5,13 @@ import pl.polsl.krypczyk.apartmentsforrent.userservice.application.security.user
 import pl.polsl.krypczyk.apartmentsforrent.userservice.application.security.userdetails.response.GetUserDetailsResponse;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.application.user.request.CreateUserRequest;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.application.user.response.CreateUserResponse;
-import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.security.exception.BadCredentialsException;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.user.exception.InvalidUserDetailsException;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.user.exception.UserAlreadyExistsException;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.user.exception.UserNotFoundException;
 
 public interface UserService {
 
-    CreateUserResponse createUser(CreateUserRequest createUserRequest) throws BadCredentialsException, UserAlreadyExistsException;
+    CreateUserResponse createUser(CreateUserRequest createUserRequest) throws UserAlreadyExistsException;
 
     GetUserDetailsResponse getUserDetails(Long userId) throws UserNotFoundException;
 

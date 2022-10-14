@@ -9,7 +9,6 @@ import pl.polsl.krypczyk.apartmentsforrent.userservice.application.security.user
 import pl.polsl.krypczyk.apartmentsforrent.userservice.application.user.request.CreateUserRequest;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.application.user.response.CreateUserResponse;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.security.AuthorizationService;
-import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.security.exception.BadCredentialsException;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.security.exception.UnauthorizedUserException;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.user.UserService;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.user.exception.InvalidUserDetailsException;
@@ -30,7 +29,7 @@ public class UserController {
 
     @PostMapping("/users")
     @ResponseStatus(HttpStatus.CREATED)
-    public CreateUserResponse registerNewUser(@Valid @RequestBody CreateUserRequest createUserRequest) throws UserAlreadyExistsException, BadCredentialsException {
+    public CreateUserResponse registerNewUser(@Valid @RequestBody CreateUserRequest createUserRequest) throws UserAlreadyExistsException {
         return this.userService.createUser(createUserRequest);
     }
 

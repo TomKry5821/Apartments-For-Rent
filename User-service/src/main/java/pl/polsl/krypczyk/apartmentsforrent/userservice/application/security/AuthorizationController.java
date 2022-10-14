@@ -6,7 +6,6 @@ import org.springframework.web.bind.annotation.*;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.application.user.request.UserLoginRequest;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.application.user.response.LoginUserResponse;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.security.AuthorizationService;
-import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.security.exception.BadCredentialsException;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.security.exception.UnauthorizedUserException;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.user.exception.UserNotFoundException;
 
@@ -21,7 +20,7 @@ public class AuthorizationController {
 
     @PostMapping("/login")
     @ResponseStatus(HttpStatus.OK)
-    public LoginUserResponse loginUser(@Valid @RequestBody UserLoginRequest userLoginRequest) throws UserNotFoundException, BadCredentialsException {
+    public LoginUserResponse loginUser(@Valid @RequestBody UserLoginRequest userLoginRequest) throws UserNotFoundException {
         return this.authorizationService.loginUser(userLoginRequest);
     }
 
