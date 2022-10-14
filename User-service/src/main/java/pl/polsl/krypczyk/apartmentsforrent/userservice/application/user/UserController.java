@@ -6,7 +6,10 @@ import org.springframework.web.bind.annotation.*;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.application.security.userdetails.request.ChangeUserDetailsRequest;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.application.security.userdetails.response.ChangeUserDetailsResponse;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.application.security.userdetails.response.GetUserDetailsResponse;
+import pl.polsl.krypczyk.apartmentsforrent.userservice.application.user.request.CreateUserRequest;
+import pl.polsl.krypczyk.apartmentsforrent.userservice.application.user.response.CreateUserResponse;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.security.AuthorizationService;
+import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.security.exception.BadCredentialsException;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.security.exception.UnauthorizedUserException;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.user.UserService;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.user.exception.InvalidUserDetailsException;
@@ -24,6 +27,12 @@ public class UserController {
 
     private final UserService userService;
     private final AuthorizationService authorizationService;
+
+    @PostMapping("/users")
+    @ResponseStatus(HttpStatus.CREATED)
+    public CreateUserResponse registerNewUser(@Valid @RequestBody CreateUserRequest createUserRequest) throws UserAlreadyExistsException, BadCredentialsException {
+        return this.userService.createUser(createUserRequest);
+    }
 
     @GetMapping("users/{userId}/details")
     public GetUserDetailsResponse getUserDetails(@PathVariable("userId") @NotNull Long userId) throws UnauthorizedUserException, UserNotFoundException {
