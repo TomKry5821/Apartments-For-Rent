@@ -36,7 +36,7 @@ class UserControllerTest {
     @Test
     void testCreateUserWithInvalidUserDetailsShouldReturn400() throws Exception {
         mvc.perform(
-                        post("/user/api/v1/auth/register")
+                        post("/user/api/v1/users")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content("""
                                         {
