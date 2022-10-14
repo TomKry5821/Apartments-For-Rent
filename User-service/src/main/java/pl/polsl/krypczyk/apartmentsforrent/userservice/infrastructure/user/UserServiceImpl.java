@@ -3,6 +3,10 @@ package pl.polsl.krypczyk.apartmentsforrent.userservice.infrastructure.user;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import pl.polsl.krypczyk.apartmentsforrent.userservice.application.user.request.CreateUserRequest;
+import pl.polsl.krypczyk.apartmentsforrent.userservice.application.user.response.CreateUserResponse;
+import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.EntityFactory;
+import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.security.exception.BadCredentialsException;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.infrastructure.security.config.AES;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.application.security.userdetails.request.ChangeUserDetailsRequest;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.application.security.userdetails.response.ChangeUserDetailsResponse;
@@ -29,6 +33,31 @@ public class UserServiceImpl implements UserService {
     private final UserDetailsRepository userDetailsRepository;
     private final ResponseFactory responseFactory;
     private final KafkaMessageProducer kafkaMessageProducer;
+    private final EntityFactory entityFactory;
+
+    @Override
+    public CreateUserResponse createUser(CreateUserRequest createUserRequest) throws BadCredentialsException, UserAlreadyExistsException {
+        log.info("Started creating new user with details - " + createUserRequest);
+
+        if (Objects.isNull(createUserRequest))
+            throw new BadCredentialsException();
+        if (this.userAlreadyExists(createUserRequest.getEmail()))
+            throw new UserAlreadyExistsException();
+
+        var role = this.entityFactory.createUserRoleEntity();
+        var userDetails = this.entityFactory.createUserDetailsEntity(createUserRequest);
+        var userAuthorization = this.entityFactory.createUserAuthorizationEntity(role);
+        var user = this.entityFactory.createUserEntity(userDetails, userAuthorization);
+
+        var createUserResponse = this.responseFactory.createCreateUserResponse(createUserRequest, userAuthorization, user.getId());
+
+        log.info("Successfully created user - " + createUserResponse);
+        return createUserResponse;
+    }
+
+    private Boolean userAlreadyExists(String email) {
+        return this.userDetailsRepository.existsByEmail(email);
+    }
 
     @Override
     public GetUserDetailsResponse getUserDetails(Long userId) throws UserNotFoundException {
