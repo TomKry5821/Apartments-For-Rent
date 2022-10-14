@@ -14,7 +14,6 @@ import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announceme
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.application.announcement.dto.AnnouncementDTO;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.excpetion.AnnouncementNotFoundException;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.excpetion.ClosedAnnouncementException;
-import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.excpetion.InvalidUserIdException;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.application.announcement.request.AddNewAnnouncementRequest;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.application.announcement.request.UpdateAnnouncementRequest;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.application.announcement.response.AddNewAnnouncementResponse;
@@ -28,7 +27,6 @@ import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.photopath.
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcementdetails.AnnouncementDetailsEntity;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcementdetails.AnnouncementDetailsRepository;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.infrastructure.utils.AnnouncementUtils;
-import pl.polsl.krypczyk.apartmentsforrent.announcementservice.infrastructure.utils.UserUtils;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -48,7 +46,6 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     private final ObservedAnnouncementRepository observedAnnouncementRepository;
     private final ResponseFactory responseFactory;
     private final EntityFactory entityFactory;
-    private final UserUtils userUtils;
     private final AnnouncementUtils announcementUtils;
 
     @Override
@@ -65,11 +62,8 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     }
 
     @Override
-    public AddNewAnnouncementResponse addNewAnnouncement(AddNewAnnouncementRequest addNewAnnouncementRequest,
-                                                         Long requesterId) throws InvalidUserIdException {
+    public AddNewAnnouncementResponse addNewAnnouncement(AddNewAnnouncementRequest addNewAnnouncementRequest) {
         log.info("Started creating announcement");
-
-        this.userUtils.checkIsUserIdValidElseThrowInvalidUser(addNewAnnouncementRequest.getUserId(), requesterId);
 
         var announcement = this.entityFactory.createAnnouncementEntity(addNewAnnouncementRequest);
         var response = this.responseFactory.createAddNewAnnouncementResponse(announcement, addNewAnnouncementRequest);
@@ -91,12 +85,10 @@ public class AnnouncementServiceImpl implements AnnouncementService {
 
     @Override
     public UpdateAnnouncementResponse updateAnnouncement(UpdateAnnouncementRequest updateAnnouncementRequest,
-                                                         Long announcementId,
-                                                         Long requesterId) throws AnnouncementNotFoundException, ClosedAnnouncementException, InvalidUserIdException {
-        log.info("Started updating announcement with id - " + announcementId + " By user with id - " + requesterId);
+                                                         Long announcementId) throws AnnouncementNotFoundException, ClosedAnnouncementException {
+        log.info("Started updating announcement with id - " + announcementId + " By user with id - " + updateAnnouncementRequest.getUserId());
 
         var announcement = this.announcementUtils.getAnnouncementElseThrowAnnouncementNotFound(announcementId);
-        this.userUtils.checkIsUserIdValidElseThrowInvalidUser(announcement.getUserId(), requesterId);
         if (announcement.getIsClosed().equals(true))
             throw new ClosedAnnouncementException();
 
@@ -194,16 +186,15 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     }
 
     @Override
-    public void closeAnnouncement(Long announcementId, Long requesterId) throws AnnouncementNotFoundException, InvalidUserIdException {
-        log.info("Started closing announcement with id - " + announcementId + " by user with id - " + requesterId);
+    public void closeAnnouncement(Long announcementId, Long userId) throws AnnouncementNotFoundException {
+        log.info("Started closing announcement with id - " + announcementId + " by user with id - " + userId);
 
         var announcement = this.announcementUtils.getAnnouncementElseThrowAnnouncementNotFound(announcementId);
-        this.userUtils.checkIsUserIdValidElseThrowInvalidUser(announcement.getUserId(), requesterId);
-
         announcement.setIsClosed(true);
+
         this.observedAnnouncementRepository.removeObservedAnnouncementEntitiesByAnnouncementEntity_Id(announcementId);
 
-        log.info("Successfully closed announcement with id - " + announcementId + " by user with id - " + requesterId);
+        log.info("Successfully closed announcement with id - " + announcementId + " by user with id - " + userId);
         this.announcementRepository.save(announcement);
     }
 

@@ -24,7 +24,7 @@ class MessageControllerTest {
     private MockMvc mvc;
 
     @Test
-    void testAddNewMessage_WithValidData_ShouldReturn204() throws Exception {
+    void testAddNewMessageWithValidDataShouldReturn204() throws Exception {
 
         MockMultipartFile multipartFile = new MockMultipartFile("file", "test".getBytes());
 
@@ -36,13 +36,15 @@ class MessageControllerTest {
                         .param("senderId", "1")
                         .param("receiverId", "1")
                         .param("message", "test")
+                        .header("X-USER-ID", 1L)
+                        .header("X-USER-ROLES", "ROLE_ADMIN, ROLE_USER]")
                         .contentType(mediaType)
                         .accept(MediaType.ALL))
                 .andExpect(status().isNoContent());
     }
 
     @Test
-    void testAddNewMessage_WithInvalidData_ShouldReturn400() throws Exception {
+    void testAddNewMessageWithInvalidDataShouldReturn400() throws Exception {
 
         MockMultipartFile multipartFile = new MockMultipartFile("file", "test".getBytes());
 
@@ -54,6 +56,8 @@ class MessageControllerTest {
                         .param("senderId", "-1")
                         .param("receiverId", "-1")
                         .param("message", "test")
+                        .header("X-USER-ID", 1L)
+                        .header("X-USER-ROLES", "ROLE_ADMIN, ROLE_USER]")
                         .contentType(mediaType)
                         .accept(MediaType.ALL))
                 .andExpect(status().isBadRequest());
@@ -63,8 +67,9 @@ class MessageControllerTest {
     void testGetConversationWithValidSenderIdShouldReturn200() throws Exception {
         this.addNewMessage();
 
-        mvc.perform(get("/message/api/v1/messages/1")
-                        .header("requester-user-id", 1L))
+        mvc.perform(get("/message/api/v1/messages/1/conversation/1")
+                        .header("X-USER-ID", 1L)
+                        .header("X-USER-ROLES", "ROLE_ADMIN, ROLE_USER]"))
                 .andExpect(status().isOk());
 
     }
@@ -73,9 +78,10 @@ class MessageControllerTest {
     void testGetConversationWithInvalidSenderIdShouldReturn401() throws Exception {
         this.addNewMessage();
 
-        mvc.perform(get("/message/api/v1/messages/1")
-                        .header("requester-user-id", 0L))
-                .andExpect(status().isOk());
+        mvc.perform(get("/message/api/v1/messages/0/conversation/1")
+                        .header("X-USER-ID", "K")
+                        .header("X-USER-ROLES", "ROLE_ADMIN, ROLE_USER]"))
+                .andExpect(status().isUnauthorized());
 
     }
 
@@ -87,9 +93,11 @@ class MessageControllerTest {
         MediaType mediaType = new MediaType("multipart", "form-data", contentTypeParams);
 
         mvc.perform(multipart("/message/api/v1/messages").file("attachments", multipartFile.getBytes())
-                .param("senderId", "0")
-                .param("receiverId", "0")
+                .param("senderId", "1")
+                .param("receiverId", "1")
                 .param("message", "test")
+                .header("X-USER-ID", 1L)
+                .header("X-USER-ROLES", "ROLE_ADMIN, ROLE_USER]")
                 .contentType(mediaType)
                 .accept(MediaType.ALL));
     }

@@ -6,11 +6,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.application.user.request.CreateUserRequest;
-import pl.polsl.krypczyk.apartmentsforrent.userservice.application.authorization.userdetails.request.ChangeUserDetailsRequest;
+import pl.polsl.krypczyk.apartmentsforrent.userservice.application.security.userdetails.request.ChangeUserDetailsRequest;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.admin.AdminService;
-import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.authorization.AuthorizationService;
-import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.authorization.exception.BadCredentialsException;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.user.UserRepository;
+import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.user.UserService;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.user.exception.InvalidUserDetailsException;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.user.exception.UserAlreadyExistsException;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.user.exception.UserNotFoundException;
@@ -18,18 +17,18 @@ import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.user.exception.Use
 @SpringBootTest("spring.autoconfigure.exclude=org.springframework.boot.autoconfigure.kafka.KafkaAutoConfiguration")
 class AdminServiceImplTest {
 
-    private final String VALID_USER_SURNAME = "surname";
-    private final String VALID_USER_PASSWORD = "password";
-    private final String VALID_USER_NAME = "name";
-    private final String VALID_USER_EMAIL = "user@user.com";
-    private final boolean VALID_USER_IS_ACTIVE = true;
-    private final boolean INACTIVE_USER_IS_ACTIVE = false;
-    private final Long INVALID_USER_ID = 12L;
+    private static final String VALID_USER_SURNAME = "surname";
+    private static final String VALID_USER_PASSWORD = "password";
+    private static final String VALID_USER_NAME = "name";
+    private static final String VALID_USER_EMAIL = "user@user.com";
+    private static final boolean VALID_USER_IS_ACTIVE = true;
+    private static final boolean INACTIVE_USER_IS_ACTIVE = false;
+    private static final Long INVALID_USER_ID = 12L;
 
     @Autowired
     private AdminService adminService;
     @Autowired
-    private AuthorizationService authorizationService;
+    private UserService userService;
 
     @Autowired
     private UserRepository userRepository;
@@ -40,10 +39,10 @@ class AdminServiceImplTest {
     }
 
     @Test
-    void testGetAllUsers_WithNotEmptyUsersList() throws UserAlreadyExistsException, BadCredentialsException {
+    void testGetAllUsersWithNotEmptyUsersListShouldReturnNotEmptyResponse() throws UserAlreadyExistsException {
         //GIVEN
         var user = this.createValidUser();
-        this.authorizationService.registerNewUser(user);
+        this.userService.createUser(user);
 
         //WHEN
         var response = this.adminService.getAllUsers();
@@ -53,7 +52,7 @@ class AdminServiceImplTest {
     }
 
     @Test
-    void testGetAllUsers_WithEmptyUsersList() {
+    void testGetAllUsersWithEmptyUsersListShouldReturnEmptyResponse() {
         //GIVEN
         this.deleteDbContent();
         //WHEN
@@ -65,10 +64,10 @@ class AdminServiceImplTest {
 
 
     @Test
-    void testDeleteUser_WithValidUserId() throws UserNotFoundException, UserAlreadyExistsException, BadCredentialsException {
+    void testDeleteUserWithValidUserIdShouldNotThrowUserNotFoundException() throws UserNotFoundException, UserAlreadyExistsException {
         //GIVEN
         var user = this.createValidUser();
-        var response = this.authorizationService.registerNewUser(user);
+        var response = this.userService.createUser(user);
         var userId = response.getId();
 
         //WHEN
@@ -78,22 +77,21 @@ class AdminServiceImplTest {
     }
 
     @Test
-    void testDeleteUser_WithInvalidUserId() {
+    void testDeleteUserWithInvalidUserIdShouldThrowUserNotFoundException() {
         //GIVEN
         this.createValidUser();
-        var userId = INVALID_USER_ID;
 
 
         //WHEN AND THEN
         Assertions.assertThrows(UserNotFoundException.class, () ->
-                this.adminService.deleteUser(userId));
+                this.adminService.deleteUser(INVALID_USER_ID));
     }
 
     @Test
-    void testChangeUserDetails_WithValidUserId() throws UserAlreadyExistsException, BadCredentialsException, UserNotFoundException, InvalidUserDetailsException {
+    void testChangeUserDetailsWithValidUserIdShouldNotThrowUserNotFoundException() throws UserAlreadyExistsException, UserNotFoundException, InvalidUserDetailsException {
         //GIVEN
         var user = this.createValidUser();
-        var createUserResponse = this.authorizationService.registerNewUser(user);
+        var createUserResponse = this.userService.createUser(user);
         var userId = createUserResponse.getId();
         var changeUserDetailsRequest = this.createValidChangeUserDetailsRequest();
 
@@ -104,23 +102,22 @@ class AdminServiceImplTest {
     }
 
     @Test
-    void testChangeUserDetails_WithInvalidUserId() throws UserAlreadyExistsException, BadCredentialsException {
+    void testChangeUserDetailsWithInvalidUserIdShouldThrowUserNotFoundException() throws UserAlreadyExistsException {
         //GIVEN
         var user = this.createValidUser();
-        this.authorizationService.registerNewUser(user);
-        var userId = INVALID_USER_ID;
+        this.userService.createUser(user);
         var changeUserDetailsRequest = this.createValidChangeUserDetailsRequest();
 
         //WHEN AND THEN
         Assertions.assertThrows(UserNotFoundException.class, () ->
-                this.adminService.changeUserDetails(changeUserDetailsRequest, userId));
+                this.adminService.changeUserDetails(changeUserDetailsRequest, INVALID_USER_ID));
     }
 
     @Test
-    void testChangeUserDetails_WithNullUserDetails() throws UserAlreadyExistsException, BadCredentialsException {
+    void testChangeUserDetailsWithNullUserDetailsShouldThrowInvalidUserException() throws UserAlreadyExistsException {
         //GIVEN
         var inactiveUser = this.createInactiveUser();
-        var createUserResponse = this.authorizationService.registerNewUser(inactiveUser);
+        var createUserResponse = this.userService.createUser(inactiveUser);
         var userId = createUserResponse.getId();
 
         //WHEN AND THEN
@@ -129,10 +126,10 @@ class AdminServiceImplTest {
     }
 
     @Test
-    void testActivateAccount_WithValidUserId() throws UserAlreadyExistsException, BadCredentialsException, UserNotFoundException {
+    void testActivateAccountWithValidUserIdShouldNotThrowUserNotFoundException() throws UserAlreadyExistsException, UserNotFoundException {
         //GIVEN
         var inactiveUser = this.createInactiveUser();
-        var createUserResponse = this.authorizationService.registerNewUser(inactiveUser);
+        var createUserResponse = this.userService.createUser(inactiveUser);
         var userId = createUserResponse.getId();
 
         //WHEN
@@ -143,10 +140,10 @@ class AdminServiceImplTest {
     }
 
     @Test
-    void testActivateAccount_WithInvalidUserId() throws UserAlreadyExistsException, BadCredentialsException {
+    void testActivateAccountWithInvalidUserIdUserNotFoundException() throws UserAlreadyExistsException {
         //GIVEN
         var inactiveUser = this.createInactiveUser();
-        this.authorizationService.registerNewUser(inactiveUser);
+        this.userService.createUser(inactiveUser);
 
         //WHEN AND THEN
         Assertions.assertThrows(UserNotFoundException.class, () -> this.adminService.activateAccount(0L));

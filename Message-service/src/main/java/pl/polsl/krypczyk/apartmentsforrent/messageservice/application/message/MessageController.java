@@ -8,6 +8,8 @@ import pl.polsl.krypczyk.apartmentsforrent.messageservice.application.message.re
 import pl.polsl.krypczyk.apartmentsforrent.messageservice.application.message.response.AddNewMessageResponse;
 import pl.polsl.krypczyk.apartmentsforrent.messageservice.application.message.response.MessageDTO;
 import pl.polsl.krypczyk.apartmentsforrent.messageservice.domain.message.MessageService;
+import pl.polsl.krypczyk.apartmentsforrent.messageservice.domain.security.authorization.AuthorizationService;
+import pl.polsl.krypczyk.apartmentsforrent.messageservice.domain.security.exception.UnauthorizedUserException;
 
 import javax.validation.Valid;
 import java.util.Collection;
@@ -19,15 +21,19 @@ public class MessageController {
 
     private final MessageService messageService;
 
+    private final AuthorizationService authorizationService;
+
     @PostMapping(value = "/messages", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public AddNewMessageResponse addNewMessage(@Valid @ModelAttribute AddNewMessageRequest addNewMessageRequest) {
+    public AddNewMessageResponse addNewMessage(@Valid @ModelAttribute AddNewMessageRequest addNewMessageRequest) throws UnauthorizedUserException {
+        this.authorizationService.authorizeUser(addNewMessageRequest.getSenderId());
         return this.messageService.addNewMessage(addNewMessageRequest);
     }
 
-    @GetMapping(value = "/messages/{receiverId}")
-    public Collection<MessageDTO> getConversation(@RequestHeader("requester-user-id") Long requesterId,
-                                                  @PathVariable Long receiverId) {
-        return this.messageService.getConversation(requesterId, receiverId);
+    @GetMapping(value = "/messages/{senderId}/conversation/{receiverId}")
+    public Collection<MessageDTO> getConversation(@PathVariable Long senderId,
+                                                  @PathVariable Long receiverId) throws UnauthorizedUserException {
+        this.authorizationService.authorizeUser(senderId);
+        return this.messageService.getConversation(senderId, receiverId);
     }
 }

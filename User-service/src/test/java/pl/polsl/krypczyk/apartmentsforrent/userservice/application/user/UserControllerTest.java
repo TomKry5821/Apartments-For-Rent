@@ -10,10 +10,8 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
-import java.io.UnsupportedEncodingException;
-import java.util.UUID;
-
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest("spring.autoconfigure.exclude=org.springframework.boot.autoconfigure.kafka.KafkaAutoConfiguration")
@@ -25,37 +23,79 @@ class UserControllerTest {
     private MockMvc mvc;
 
     @Test
-    void testGetUserDetails_WithValidUserIdAndRequesterId_shouldReturn200() throws Exception {
+    void testCreateUserWithValidUserDetailsShouldReturn201() throws Exception {
+        //GIVEN AND WHEN
+        var result = this.createValidUser();
+
+        //THEN
+        result.andExpect(status().isCreated())
+                .andExpect(content()
+                        .contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
+    }
+
+    @Test
+    void testCreateUserWithInvalidUserDetailsShouldReturn400() throws Exception {
+        mvc.perform(
+                        post("/user/api/v1/users")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content("""
+                                        {
+                                            "name": "",
+                                            "surname": "]",
+                                            "email": "testtest.pl",
+                                            "isActive": null,
+                                            "password": "Test"
+                                        }"""))
+                .andExpect(status().isBadRequest())
+                .andExpect(content()
+                        .contentTypeCompatibleWith(MediaType.TEXT_PLAIN));
+    }
+
+    @Test
+    void testCreaterExistingUserShouldReturn400() throws Exception {
+        //GIVEN AND WHEN
+        this.createValidUser();
+        var result = this.createValidUser();
+        //THEN
+        result.andExpect(status().isBadRequest())
+                .andExpect(content()
+                        .contentTypeCompatibleWith(MediaType.TEXT_PLAIN));
+    }
+
+    @Test
+    void testGetUserDetailsWithValidUserIdAndRequesterIdShouldReturn200() throws Exception {
         //GIVEN
-        this.registerValidUser();
+        this.createValidUser();
 
         //WHEN
         mvc.perform(
                         get("/user/api/v1/users/2/details")
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .header("requester-user-id", 2))
+                                .header("X-USER-ID", 2)
+                                .header("X-USER-ROLES", "[ROLE_USER, ROLE_ADMIN]"))
                 //THEN
                 .andExpect(status().isOk());
     }
 
     @Test
-    void testGetUserDetails_WithInvalidUserIdAndValidRequesterId_shouldReturn401() throws Exception {
+    void testGetUserDetailsWithInvalidUserIdAndValidRequesterIdShouldReturn401() throws Exception {
         //GIVEN
-        this.registerValidUser();
+        this.createValidUser();
 
         //WHEN
         mvc.perform(
                         get("/user/api/v1/users/100/details")
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .header("requester-user-id", 2))
+                                .header("X-USER-ID", 2)
+                                .header("X-USER-ROLES", "[ROLE_USER, ROLE_ADMIN]"))
                 //THEN
                 .andExpect(status().isUnauthorized());
     }
 
     @Test
-    void testChangeUserDetails_WithValidUserIdAndValidRequesterId_shouldReturn200() throws Exception {
+    void testChangeUserDetailsWithValidUserIdAndValidRequesterIdShouldReturn200() throws Exception {
         //GIVEN
-        this.registerValidUser();
+        this.createValidUser();
 
         //WHEN
         mvc.perform(
@@ -68,15 +108,16 @@ class UserControllerTest {
                                             "email": "test@2test.pl",
                                             "password": "Test"
                                         }""")
-                                .header("requester-user-id", 2))
+                                .header("X-USER-ID", 2)
+                                .header("X-USER-ROLES", "[ROLE_USER, ROLE_ADMIN]"))
                 //THEN
                 .andExpect(status().isOk());
     }
 
     @Test
-    void testChangeUserDetails_WithInvalidUserIdAndValidRequesterId_shouldReturn401() throws Exception {
+    void testChangeUserDetailsWithInvalidUserIdAndValidRequesterIdShouldReturn401() throws Exception {
         //GIVEN
-        this.registerValidUser();
+        this.createValidUser();
 
         //WHEN
         mvc.perform(
@@ -89,15 +130,16 @@ class UserControllerTest {
                                             "email": "test@test.pl",
                                             "password": "Test"
                                         }""")
-                                .header("requester-user-id", 2))
+                                .header("X-USER-ID", 2)
+                                .header("X-USER-ROLES", "[ROLE_USER, ROLE_ADMIN]"))
                 //THEN
                 .andExpect(status().isUnauthorized());
     }
 
     @Test
-    void testChangeUserDetails_WithInvalidUserIdAndInvalidRequesterId_shouldReturn400() throws Exception {
+    void testChangeUserDetailsWithInvalidUserIdAndInvalidRequesterIdShouldReturn401() throws Exception {
         //GIVEN
-        this.registerValidUser();
+        this.createValidUser();
 
         //WHEN
         mvc.perform(
@@ -112,51 +154,54 @@ class UserControllerTest {
                                         }""")
                                 .header("Authorization", "sfsf"))
                 //THEN
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isUnauthorized());
     }
 
     @Test
-    void testInactivateAccount_WithValidUserIdAndValidRequesterId_shouldReturn204() throws Exception {
+    void testInactivateAccountWithValidUserIdAndValidRequesterIdShouldReturn204() throws Exception {
         //GIVEN
-        this.registerValidUser();
+        this.createValidUser();
 
         //WHEN
         mvc.perform(
                         post("/user/api/v1/users/2/inactivate")
-                                .header("requester-user-id", 2))
+                                .header("X-USER-ID", 2)
+                                .header("X-USER-ROLES", "[ROLE_USER, ROLE_ADMIN]"))
                 //THEN
                 .andExpect(status().isNoContent());
     }
 
     @Test
-    void testInactivateAccount_WithInvalidUserIdAndValidRequesterId_shouldReturn401() throws Exception {
+    void testInactivateAccountWithInvalidUserIdAndValidRequesterIdShouldReturn401() throws Exception {
         //GIVEN
-        this.registerValidUser();
+        this.createValidUser();
 
         //WHEN
         mvc.perform(
                         post("/user/api/v1/users/192/inactivate")
-                                .header("requester-user-id", 2))
+                                .header("X-USER-ID", 2)
+                                .header("X-USER-ROLES", "[ROLE_USER, ROLE_ADMIN]"))
                 //THEN
                 .andExpect(status().isUnauthorized());
     }
 
     @Test
-    void testInactivateAccount_WithInvalidUserIdAndInvalidRequesterId_shouldReturn400() throws Exception {
+    void testInactivateAccountWithInvalidUserIdAndInvalidRequesterIdShouldReturn401() throws Exception {
         //GIVEN
-        this.registerValidUser();
+        this.createValidUser();
 
         //WHEN
         mvc.perform(
                         post("/user/api/v1/users/192/inactivate")
-                                .header("Authorization", "sdds"))
+                                .header("X-USER-ID", 2)
+                                .header("X-USER-ROLES", "[ROLE_USER, ROLE_ADMIN]"))
                 //THEN
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isUnauthorized());
     }
 
-    private ResultActions registerValidUser() throws Exception {
+    private ResultActions createValidUser() throws Exception {
         return mvc.perform(
-                post("/user/api/v1/auth/register")
+                post("/user/api/v1/users")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {

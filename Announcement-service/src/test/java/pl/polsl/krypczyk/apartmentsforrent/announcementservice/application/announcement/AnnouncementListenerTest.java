@@ -11,17 +11,17 @@ class AnnouncementListenerTest {
     AnnouncementListener announcementListener;
 
     @Test
-    void testCloseUserAnnouncementsListener_WithValidUserId() {
+    void testCloseUserAnnouncementsListenerWithValidUserId() {
         this.announcementListener.closeUserAnnouncementsListener(1L);
     }
 
     @Test
-    void deleteUserAnnouncementsListener_WithValidUserId() {
+    void deleteUserAnnouncementsListenerWithValidUserId() {
         this.announcementListener.deleteUserAnnouncementsListener(1L);
     }
 
     @Test
-    void deleteUserObservedAnnouncementsListener_WithValidUserId() {
+    void deleteUserObservedAnnouncementsListenerWithValidUserId() {
         this.announcementListener.deleteObservedAnnouncementListener(1L);
     }
 }

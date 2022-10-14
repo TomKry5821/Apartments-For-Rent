@@ -11,6 +11,8 @@ import java.util.Collection;
 @Builder
 public class UpdateAnnouncementResponse {
 
+    private Long userId;
+
     private String title;
 
     private String mainPhotoPath;

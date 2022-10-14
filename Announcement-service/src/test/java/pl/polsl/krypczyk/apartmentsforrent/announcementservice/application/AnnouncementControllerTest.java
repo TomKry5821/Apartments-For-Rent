@@ -24,7 +24,7 @@ class AnnouncementControllerTest {
     private MockMvc mvc;
 
     @Test
-    void testGetAllAnnouncements_shouldReturn200() throws Exception {
+    void testGetAllAnnouncementsShouldReturn200() throws Exception {
         mvc.perform(
                         get("/announcement/api/v1/public/announcements")
                                 .contentType(MediaType.APPLICATION_JSON))
@@ -32,7 +32,7 @@ class AnnouncementControllerTest {
     }
 
     @Test
-    void testAddNewAnnouncement_WithValidBody_ShouldReturn200() throws Exception {
+    void testAddNewAnnouncementWithValidBodyShouldReturn200() throws Exception {
         mvc.perform(
                         post("/announcement/api/v1/announcements")
                                 .contentType(MediaType.APPLICATION_JSON)
@@ -57,12 +57,13 @@ class AnnouncementControllerTest {
                                            "buildingNumber":"1A",
                                            "localNumber":3
                                         }""")
-                                .header("requester-user-id",1L))
+                                .header("X-USER-ID",1L)
+                                .header("X-USER-ROLES", "[ROLE_ADMIN, ROLE_USER]"))
                 .andExpect(status().isOk());
     }
 
     @Test
-    void testAddNewAnnouncement_WithInvalidBody_ShouldReturn400() throws Exception {
+    void testAddNewAnnouncementWithInvalidBodyShouldReturn400() throws Exception {
         mvc.perform(
                         post("/announcement/api/v1/announcements")
                                 .contentType(MediaType.APPLICATION_JSON)
@@ -87,12 +88,12 @@ class AnnouncementControllerTest {
                                            "buildingNumber":"1A",
                                            "localNumber":3
                                         }""")
-                                .header("requester-user-id",1L))
+                                .header("X-USER-ID",1L))
                 .andExpect(status().isBadRequest());
     }
 
     @Test
-    void testGetAnnouncement_WithAllDetailsWithInvalidAnnouncementId_ShouldReturn400() throws Exception {
+    void testGetAnnouncementWithAllDetailsWithInvalidAnnouncementIdShouldReturn400() throws Exception {
         mvc.perform(
                         get("/announcement/api/v1/public/announcements/10")
                                 .contentType(MediaType.APPLICATION_JSON))
@@ -100,7 +101,7 @@ class AnnouncementControllerTest {
     }
 
     @Test
-    void testGetAnnouncement_WithAllDetailsWithValidAnnouncementId_ShouldReturn200() throws Exception {
+    void testGetAnnouncementWithAllDetailsWithValidAnnouncementIdShouldReturn200() throws Exception {
         this.createAnnouncement();
 
         mvc.perform(
@@ -110,7 +111,7 @@ class AnnouncementControllerTest {
     }
 
     @Test
-    void testUpdateAnnouncement_WithValidBodyAndValidUserId_ShouldReturn200() throws Exception {
+    void testUpdateAnnouncementWithValidBodyAndValidUserIdShouldReturn200() throws Exception {
         this.createAnnouncement();
 
         mvc.perform(
@@ -118,6 +119,7 @@ class AnnouncementControllerTest {
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content("""
                                         {
+                                                "userId": 1,
                                                  "title":"Title",
                                                  "mainPhotoPath":"Main/photo/path",
                                                  "roomsNumber":3,
@@ -136,12 +138,13 @@ class AnnouncementControllerTest {
                                                  "buildingNumber":"1A",
                                                  "localNumber":3
                                                  }""")
-                                .header("requester-user-id",1L))
+                                .header("X-USER-ID",1L)
+                                .header("X-USER-ROLES", "[ROLE_ADMIN, ROLE_USER]"))
                 .andExpect(status().isOk());
     }
 
     @Test
-    void testUpdateAnnouncement_WithInvalidBodyAndValidUserId_ShouldReturn400() throws Exception {
+    void testUpdateAnnouncementWithInvalidBodyAndValidUserIdShouldReturn400() throws Exception {
         this.createAnnouncement();
 
         mvc.perform(
@@ -167,87 +170,95 @@ class AnnouncementControllerTest {
                                                  "buildingNumber":"1A",
                                                  "localNumber":3
                                                  }""")
-                                .header("requester-user-id",1L))
+                                .header("X-USER-ID",1L)
+                                .header("X-USER-ROLES", "[ROLE_ADMIN, ROLE_USER]"))
                 .andExpect(status().isBadRequest());
     }
 
     @Test
-    void testCloseAnnouncement_WithValidUserId_ShouldReturn204() throws Exception {
+    void testCloseAnnouncementWithValidUserIdShouldReturn204() throws Exception {
         this.createAnnouncement();
 
         mvc.perform(
-                        post("/announcement/api/v1/announcements/1/close")
+                        post("/announcement/api/v1/announcements/1/close/1")
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .header("requester-user-id",1L))
+                                .header("X-USER-ID",1L)
+                                .header("X-USER-ROLES", "[ROLE_ADMIN, ROLE_USER]"))
                 .andExpect(status().isNoContent());
     }
 
     @Test
-    void testCloseAnnouncement_WithInvalidUserId_ShouldReturn400() throws Exception {
+    void testCloseAnnouncementWithInvalidUserIdShouldReturn401() throws Exception {
         this.createAnnouncement();
 
         mvc.perform(
-                        post("/announcement/api/v1/announcements/10/close")
+                        post("/announcement/api/v1/announcements/10/close/0")
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .header("requester-user-id",1L))
-                .andExpect(status().isBadRequest());
+                                .header("X-USER-ID",1L)
+                                .header("X-USER-ROLES", "[ROLE_ADMIN, ROLE_USER]"))
+                .andExpect(status().isUnauthorized());
     }
 
     @Test
-    void testObserveAnnouncement_WithValidUserIdAndValidAnnouncementId_ShouldReturn201() throws Exception {
+    void testObserveAnnouncementWithValidUserIdAndValidAnnouncementIdShouldReturn201() throws Exception {
         this.createAnnouncement();
 
         mvc.perform(
                         post("/announcement/api/v1/announcements/1/observe/1")
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .header("requester-user-id",1L))
+                                .header("X-USER-ID",1L)
+                                .header("X-USER-ROLES", "[ROLE_ADMIN, ROLE_USER]"))
                 .andExpect(status().isCreated());
     }
 
     @Test
-    void testObserveAnnouncement_WithInvalidUserIdAndValidAnnouncementId_ShouldReturn400() throws Exception {
+    void testObserveAnnouncementWithInvalidUserIdAndValidAnnouncementIdShouldReturn401() throws Exception {
         this.createAnnouncement();
 
         mvc.perform(
                         post("/announcement/api/v1/announcements/1/observe/100")
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .header("requester-user-id",1L))
-                .andExpect(status().isBadRequest());
+                                .header("X-USER-ID",1L)
+                                .header("X-USER-ROLES", "[ROLE_ADMIN, ROLE_USER]"))
+                .andExpect(status().isUnauthorized());
     }
 
     @Test
-    void testObserveAnnouncement_WithValidUserIdAndInvalidAnnouncementId_ShouldReturn400() throws Exception {
+    void testObserveAnnouncementWithValidUserIdAndInvalidAnnouncementIdShouldReturn400() throws Exception {
         this.createAnnouncement();
 
         mvc.perform(
                         post("/announcement/api/v1/announcements/100/observe/1")
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .header("requester-user-id",1L))
+                                .header("X-USER-ID",1L)
+                                .header("X-USER-ROLES", "[ROLE_ADMIN, ROLE_USER]"))
                 .andExpect(status().isBadRequest());
     }
 
     @Test
-    void testUnobserveAnnouncement_WithValidUserIdAndValidAnnouncementId_ShouldReturn204() throws Exception {
+    void testUnobserveAnnouncementWithValidUserIdAndValidAnnouncementIdShouldReturn204() throws Exception {
         this.createAnnouncement();
         this.observeAnnouncement();
 
         mvc.perform(
                         delete("/announcement/api/v1/announcements/1/unobserve/1")
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .header("requester-user-id",1L))
+                                .header("X-USER-ID",1L)
+                                .header("X-USER-ROLES", "[ROLE_ADMIN, ROLE_USER]"))
                 .andExpect(status().isNoContent());
     }
 
     @Test
-    void testUnobserveAnnouncement_WithInvalidUserIdAndInvalidAnnouncementId_ShouldReturn400() throws Exception {
+    void testUnobserveAnnouncementWithInvalidUserIdAndInvalidAnnouncementIdShouldReturn401() throws Exception {
         this.createAnnouncement();
         this.observeAnnouncement();
 
         mvc.perform(
                         delete("/announcement/api/v1/announcements/10/unobserve/10")
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .header("requester-user-id",1L))
-                .andExpect(status().isBadRequest());
+                                .header("X-USER-ID",1L)
+                                .header("X-USER-ROLES", "[ROLE_ADMIN, ROLE_USER]"))
+                .andExpect(status().isUnauthorized());
     }
 
     @Test
@@ -258,20 +269,22 @@ class AnnouncementControllerTest {
         mvc.perform(
                         get("/announcement/api/v1/announcements/observed/1")
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .header("requester-user-id",1L))
+                                .header("X-USER-ID",1L)
+                                .header("X-USER-ROLES", "[ROLE_ADMIN, ROLE_USER]"))
                 .andExpect(status().isOk());
     }
 
     @Test
-    void testGetObservedAnnouncementsWithInvalidUserIdShouldReturn400() throws Exception {
+    void testGetObservedAnnouncementsWithInvalidUserIdShouldReturn401() throws Exception {
         this.createAnnouncement();
         this.observeAnnouncement();
 
         mvc.perform(
                         get("/announcement/api/v1/announcements/observed/0")
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .header("requester-user-id",1L))
-                .andExpect(status().isBadRequest());
+                                .header("X-USER-ID",1L)
+                                .header("X-USER-ROLES", "[ROLE_ADMIN, ROLE_USER]"))
+                .andExpect(status().isUnauthorized());
     }
 
 
@@ -300,14 +313,16 @@ class AnnouncementControllerTest {
                                    "buildingNumber":"1A",
                                    "localNumber":3
                                 }""")
-                        .header("requester-user-id", 1L));
+                        .header("X-USER-ID", 1L)
+                        .header("X-USER-ROLES", "[ROLE_ADMIN, ROLE_USER]"));
     }
 
     private void observeAnnouncement() throws Exception {
         mvc.perform(
                         post("/announcement/api/v1/announcements/1/observe/1")
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .header("requester-user-id",1L));
+                                .header("X-USER-ID",1L)
+                                .header("X-USER-ROLES", "[ROLE_ADMIN, ROLE_USER]"));
     }
 }
 

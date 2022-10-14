@@ -41,73 +41,62 @@ class ObservedAnnouncementServiceImplTest {
     }
 
     @Test
-    void testObserveAnnouncement_WithValidUserIdAndValidAnnouncementId() throws InvalidUserIdException, AnnouncementNotFoundException, AnnouncementAlreadyObservedException, ClosedAnnouncementException {
+    void testObserveAnnouncementWithValidUserIdAndValidAnnouncementIdShouldReturnExpectedResponse() throws AnnouncementNotFoundException, AnnouncementAlreadyObservedException, ClosedAnnouncementException {
         //GIVEN
         var addNewAnnouncementRequest = validAnnouncementRequest();
-        var addNewAnnouncementResponse = this.announcementService.addNewAnnouncement(addNewAnnouncementRequest, addNewAnnouncementRequest.getUserId());
+        var addNewAnnouncementResponse = this.announcementService.addNewAnnouncement(addNewAnnouncementRequest);
         var expected = this.validObserveAnnouncementResponse(addNewAnnouncementResponse.getAnnouncementId(), addNewAnnouncementResponse.getUserId());
 
         //WHEN
-        var actual = this.observedAnnouncementService.observeAnnouncement(addNewAnnouncementResponse.getAnnouncementId(), addNewAnnouncementResponse.getUserId(), addNewAnnouncementResponse.getUserId());
+        var actual = this.observedAnnouncementService.observeAnnouncement(addNewAnnouncementResponse.getAnnouncementId(), addNewAnnouncementResponse.getUserId());
         //THEN
         Assertions.assertEquals(expected, actual);
     }
 
     @Test
-    void testObserveAnnouncement_WithInvalidUserIdAndValidAnnouncementId() throws InvalidUserIdException {
+    void testObserveAnnouncementWithValidUserIdAndInvalidAnnouncementIdShouldThrowAnnouncementNotFoundException() {
         //GIVEN
         var addNewAnnouncementRequest = validAnnouncementRequest();
-        var addNewAnnouncementResponse = this.announcementService.addNewAnnouncement(addNewAnnouncementRequest, addNewAnnouncementRequest.getUserId());
-
-        //WHEN AND THEN
-        Assertions.assertThrows(InvalidUserIdException.class, () ->
-                this.observedAnnouncementService.observeAnnouncement(addNewAnnouncementResponse.getAnnouncementId(), 0L, 1L));
-    }
-
-    @Test
-    void testObserveAnnouncement_WithValidUserIdAndInvalidAnnouncementId() throws InvalidUserIdException {
-        //GIVEN
-        var addNewAnnouncementRequest = validAnnouncementRequest();
-        var addNewAnnouncementResponse = this.announcementService.addNewAnnouncement(addNewAnnouncementRequest, addNewAnnouncementRequest.getUserId());
+        var addNewAnnouncementResponse = this.announcementService.addNewAnnouncement(addNewAnnouncementRequest);
 
         //WHEN AND THEN
         Assertions.assertThrows(AnnouncementNotFoundException.class, () ->
-                this.observedAnnouncementService.observeAnnouncement(0L, addNewAnnouncementResponse.getUserId(), addNewAnnouncementResponse.getUserId()));
+                this.observedAnnouncementService.observeAnnouncement(0L, addNewAnnouncementResponse.getUserId()));
     }
 
     @Test
-    void testObserveAnnouncement_WithAlreadyObservedAnnouncement() throws InvalidUserIdException, AnnouncementAlreadyObservedException, AnnouncementNotFoundException, ClosedAnnouncementException {
+    void testObserveAnnouncementWithAlreadyObservedAnnouncementShouldThrowAnnouncementAlreadyObservedException() throws AnnouncementAlreadyObservedException, AnnouncementNotFoundException, ClosedAnnouncementException {
         //GIVEN
         var addNewAnnouncementRequest = validAnnouncementRequest();
-        var addNewAnnouncementResponse = this.announcementService.addNewAnnouncement(addNewAnnouncementRequest, addNewAnnouncementRequest.getUserId());
-        this.observedAnnouncementService.observeAnnouncement(addNewAnnouncementResponse.getAnnouncementId(), addNewAnnouncementResponse.getUserId(), addNewAnnouncementResponse.getUserId());
+        var addNewAnnouncementResponse = this.announcementService.addNewAnnouncement(addNewAnnouncementRequest);
+        this.observedAnnouncementService.observeAnnouncement(addNewAnnouncementResponse.getAnnouncementId(), addNewAnnouncementResponse.getUserId());
 
         //WHEN AND THEN
         Assertions.assertThrows(AnnouncementAlreadyObservedException.class, () ->
-                this.observedAnnouncementService.observeAnnouncement(addNewAnnouncementResponse.getAnnouncementId(), addNewAnnouncementResponse.getUserId(), addNewAnnouncementResponse.getUserId()));
+                this.observedAnnouncementService.observeAnnouncement(addNewAnnouncementResponse.getAnnouncementId(), addNewAnnouncementResponse.getUserId()));
     }
 
     @Test
-    void testObserveAnnouncement_WithClosedAnnouncement() throws InvalidUserIdException, AnnouncementNotFoundException {
+    void testObserveAnnouncementWithClosedAnnouncementShouldThrowClosedAnnouncementException() throws AnnouncementNotFoundException {
         //GIVEN
         var addNewAnnouncementRequest = validAnnouncementRequest();
-        var addNewAnnouncementResponse = this.announcementService.addNewAnnouncement(addNewAnnouncementRequest, addNewAnnouncementRequest.getUserId());
+        var addNewAnnouncementResponse = this.announcementService.addNewAnnouncement(addNewAnnouncementRequest);
         this.announcementService.closeAnnouncement(addNewAnnouncementResponse.getAnnouncementId(), addNewAnnouncementResponse.getUserId());
 
         //WHEN AND THEN
         Assertions.assertThrows(ClosedAnnouncementException.class, () ->
-                this.observedAnnouncementService.observeAnnouncement(addNewAnnouncementResponse.getAnnouncementId(), addNewAnnouncementResponse.getUserId(), addNewAnnouncementResponse.getUserId()));
+                this.observedAnnouncementService.observeAnnouncement(addNewAnnouncementResponse.getAnnouncementId(), addNewAnnouncementResponse.getUserId()));
     }
 
     @Test
-    void testUnobserveAnnouncement_WithValidUserIdAndValidAnnouncementId() throws InvalidUserIdException, AnnouncementAlreadyObservedException, AnnouncementNotFoundException, ClosedAnnouncementException {
+    void testUnobserveAnnouncementWithValidUserIdAndValidAnnouncementIdShouldNotThrowInvalidUserAndAnnouncementNotFoundException() throws AnnouncementAlreadyObservedException, AnnouncementNotFoundException, ClosedAnnouncementException {
         //GIVEN
         var addNewAnnouncementRequest = validAnnouncementRequest();
-        var addNewAnnouncementResponse = this.announcementService.addNewAnnouncement(addNewAnnouncementRequest, addNewAnnouncementRequest.getUserId());
-        this.observedAnnouncementService.observeAnnouncement(addNewAnnouncementResponse.getAnnouncementId(), addNewAnnouncementResponse.getUserId(), addNewAnnouncementResponse.getUserId());
+        var addNewAnnouncementResponse = this.announcementService.addNewAnnouncement(addNewAnnouncementRequest);
+        this.observedAnnouncementService.observeAnnouncement(addNewAnnouncementResponse.getAnnouncementId(), addNewAnnouncementResponse.getUserId());
 
         //WHEN
-        this.observedAnnouncementService.unobserveAnnouncement(addNewAnnouncementResponse.getAnnouncementId(), addNewAnnouncementResponse.getUserId(), addNewAnnouncementResponse.getUserId());
+        this.observedAnnouncementService.unobserveAnnouncement(addNewAnnouncementResponse.getAnnouncementId(), addNewAnnouncementResponse.getUserId());
 
         //THEN
         Assertions.assertDoesNotThrow(InvalidUserIdException::new);
@@ -115,35 +104,23 @@ class ObservedAnnouncementServiceImplTest {
     }
 
     @Test
-    void testUnobserveAnnouncement_WithInvalidUserIdAndValidAnnouncementId() throws InvalidUserIdException, AnnouncementAlreadyObservedException, AnnouncementNotFoundException, ClosedAnnouncementException {
+    void testUnobserveAnnouncementWithValidUserIdAndInvalidAnnouncementIdShouldThrowAnnouncementNotFoundException() throws AnnouncementAlreadyObservedException, AnnouncementNotFoundException, ClosedAnnouncementException {
         //GIVEN
         var addNewAnnouncementRequest = validAnnouncementRequest();
-        var addNewAnnouncementResponse = this.announcementService.addNewAnnouncement(addNewAnnouncementRequest, addNewAnnouncementRequest.getUserId());
-        this.observedAnnouncementService.observeAnnouncement(addNewAnnouncementResponse.getAnnouncementId(), addNewAnnouncementResponse.getUserId(), addNewAnnouncementResponse.getUserId());
-
-        //WHEN AND THEN
-        Assertions.assertThrows(InvalidUserIdException.class, () ->
-                this.observedAnnouncementService.unobserveAnnouncement(addNewAnnouncementResponse.getAnnouncementId(), 0L, addNewAnnouncementResponse.getUserId()));
-    }
-
-    @Test
-    void testUnobserveAnnouncement_WithValidUserIdAndInvalidAnnouncementId() throws InvalidUserIdException, AnnouncementAlreadyObservedException, AnnouncementNotFoundException, ClosedAnnouncementException {
-        //GIVEN
-        var addNewAnnouncementRequest = validAnnouncementRequest();
-        var addNewAnnouncementResponse = this.announcementService.addNewAnnouncement(addNewAnnouncementRequest, addNewAnnouncementRequest.getUserId());
-        this.observedAnnouncementService.observeAnnouncement(addNewAnnouncementResponse.getAnnouncementId(), addNewAnnouncementResponse.getUserId(), addNewAnnouncementResponse.getUserId());
+        var addNewAnnouncementResponse = this.announcementService.addNewAnnouncement(addNewAnnouncementRequest);
+        this.observedAnnouncementService.observeAnnouncement(addNewAnnouncementResponse.getAnnouncementId(), addNewAnnouncementResponse.getUserId());
 
         //WHEN AND THEN
         Assertions.assertThrows(AnnouncementNotFoundException.class, () ->
-                this.observedAnnouncementService.unobserveAnnouncement(0L, addNewAnnouncementResponse.getUserId(), addNewAnnouncementResponse.getUserId()));
+                this.observedAnnouncementService.unobserveAnnouncement(0L, addNewAnnouncementResponse.getUserId()));
     }
 
     @Test
-    void deleteUserObservedAnnouncementsListener_WithValidUserId() throws InvalidUserIdException, AnnouncementAlreadyObservedException, AnnouncementNotFoundException, ClosedAnnouncementException {
+    void deleteUserObservedAnnouncementsListenerWithValidUserIdShouldReturnEmptyObservedAnnouncementsList() throws AnnouncementAlreadyObservedException, AnnouncementNotFoundException, ClosedAnnouncementException {
         //GIVEN
         var announcement = this.validAnnouncementRequest();
-        var addNewAnnouncementResponse = this.announcementService.addNewAnnouncement(announcement, 1L);
-        this.observedAnnouncementService.observeAnnouncement(addNewAnnouncementResponse.getAnnouncementId(), 1L, 1L);
+        var addNewAnnouncementResponse = this.announcementService.addNewAnnouncement(announcement);
+        this.observedAnnouncementService.observeAnnouncement(addNewAnnouncementResponse.getAnnouncementId(), 1L);
 
         //WHEN
         this.observedAnnouncementService.deleteObservedAnnouncements(announcement.getUserId());
@@ -153,42 +130,30 @@ class ObservedAnnouncementServiceImplTest {
     }
 
     @Test
-    void getObservedAnnouncementWithValidUserIdShouldReturnNotEmptyResult() throws InvalidUserIdException, AnnouncementAlreadyObservedException, AnnouncementNotFoundException, ClosedAnnouncementException {
+    void getObservedAnnouncementWithValidUserIdShouldReturnNotEmptyResult() throws AnnouncementAlreadyObservedException, AnnouncementNotFoundException, ClosedAnnouncementException {
         //GIVEN
         var announcement = this.validAnnouncementRequest();
-        var addNewAnnouncementResponse = this.announcementService.addNewAnnouncement(announcement, 1L);
-        this.observedAnnouncementService.observeAnnouncement(addNewAnnouncementResponse.getAnnouncementId(), 1L, 1L);
+        var addNewAnnouncementResponse = this.announcementService.addNewAnnouncement(announcement);
+        this.observedAnnouncementService.observeAnnouncement(addNewAnnouncementResponse.getAnnouncementId(), 1L);
 
         //WHEN
-        var result = this.observedAnnouncementService.getObservedAnnouncements(1L, 1L);
+        var result = this.observedAnnouncementService.getObservedAnnouncements(1L);
 
         //THEN
         Assertions.assertFalse(result.isEmpty());
     }
 
     @Test
-    void getObservedAnnouncementWithValidUserIdAndEmptyObservedAnnouncementsShouldReturnEmptyResult() throws InvalidUserIdException {
+    void getObservedAnnouncementWithValidUserIdAndEmptyObservedAnnouncementsShouldReturnEmptyResult() {
         //GIVEN
         var announcement = this.validAnnouncementRequest();
-        this.announcementService.addNewAnnouncement(announcement, 1L);
+        this.announcementService.addNewAnnouncement(announcement);
 
         //WHEN
-        var result = this.observedAnnouncementService.getObservedAnnouncements(1L, 1L);
+        var result = this.observedAnnouncementService.getObservedAnnouncements(1L);
 
         //THEN
         Assertions.assertTrue(result.isEmpty());
-    }
-
-    @Test
-    void getObservedAnnouncementWithInvalidUserIdShouldThrowInvalidUserException() throws InvalidUserIdException, AnnouncementAlreadyObservedException, AnnouncementNotFoundException, ClosedAnnouncementException {
-        //GIVEN
-        var announcement = this.validAnnouncementRequest();
-        var addNewAnnouncementResponse = this.announcementService.addNewAnnouncement(announcement, 1L);
-        this.observedAnnouncementService.observeAnnouncement(addNewAnnouncementResponse.getAnnouncementId(), 1L, 1L);
-
-        //WHEN AND THEN
-        Assertions.assertThrows(InvalidUserIdException.class, () ->
-                this.observedAnnouncementService.getObservedAnnouncements(0L, 1L));
     }
 
     private AddNewAnnouncementRequest validAnnouncementRequest() {

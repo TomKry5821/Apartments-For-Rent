@@ -1,3 +1,1 @@
 1. Rozdzielić bramę od serwera autoryzacyjnego(?)
-2. Usprawnić uwierzetylnianie(?)
-3. Dodać geta dla obserwowanych ogłoszeń użytkownika

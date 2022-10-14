@@ -21,22 +21,24 @@ class AdminControllerTest {
     private MockMvc mvc;
 
     @Test
-    void testDeleteAnnouncement_WithValidAnnouncementId_ShouldReturn204() throws Exception {
+    void testDeleteAnnouncementWithValidAnnouncementIdShouldReturn204() throws Exception {
         this.createAnnouncement();
 
         mvc.perform(
                         delete("/announcement/api/v1/admin/announcements/1")
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .header("requester-user-id", 1L))
+                                .header("X-USER-ID", 1L)
+                                .header("X-USER-ROLES", "[ROLE_ADMIN, ROLE_USER]"))
                 .andExpect(status().isNoContent());
     }
 
     @Test
-    void testDeleteAnnouncement_WithInvalidAnnouncementId_ShouldReturn400() throws Exception {
+    void testDeleteAnnouncementWithInvalidAnnouncementIdShouldReturn400() throws Exception {
         mvc.perform(
                         delete("/announcement/api/v1/admin/announcements/10")
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .header("requester-user-id", 1L))
+                                .header("X-USER-ID", 1L)
+                                .header("X-USER-ROLES", "[ROLE_ADMIN, ROLE_USER]"))
                 .andExpect(status().isBadRequest());
     }
 
@@ -65,6 +67,7 @@ class AdminControllerTest {
                                    "buildingNumber":"1A",
                                    "localNumber":3
                                 }""")
-                        .header("requester-user-id", 1L));
+                        .header("X-USER-ID", 1L)
+                        .header("X-USER-ROLES", "[ROLE_ADMIN, ROLE_USER]"));
     }
 }

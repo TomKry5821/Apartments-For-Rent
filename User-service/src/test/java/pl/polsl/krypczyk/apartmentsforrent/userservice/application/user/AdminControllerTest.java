@@ -21,57 +21,61 @@ class AdminControllerTest {
     private MockMvc mvc;
 
     @Test
-    void testDeleteUser_WithInvalidUserIdAndValidRequesterId_shouldReturn401() throws Exception {
+    void testDeleteUserWithInvalidUserIdShouldReturn400() throws Exception {
         //GIVEN
         this.registerValidUser();
         //WHEN
         mvc.perform(
                         delete("/user/api/v1/admin/users/194")
-                                .header("requester-user-id", 2L))
+                                .header("X-USER-ID", 2)
+                                .header("X-USER-ROLES", "[ROLE_USER, ROLE_ADMIN]"))
                 //THEN
-                .andExpect(status().isUnauthorized());
+                .andExpect(status().isBadRequest());
     }
 
     @Test
-    void testDeleteUser_WithInvalidUserIdAndInvalidRequesterId_shouldReturn401() throws Exception {
+    void testDeleteUserWithInvalidUserIdAndInvalidRolesShouldReturn401() throws Exception {
         //GIVEN
         this.registerValidUser();
 
         //WHEN
         mvc.perform(
                         delete("/user/api/v1/admin/users/194")
-                                .header("Authorization", "sdsd"))
-                //THEN
-                .andExpect(status().isBadRequest());
-    }
-
-    @Test
-    void testGetAllUsers_WithInvalidUserIdAndValidRequesterId_shouldReturn401() throws Exception {
-        //GIVEN
-        this.registerValidUser();
-        //WHEN
-        mvc.perform(
-                        get("/user/api/v1/admin/users")
-                                .header("requester-user-id", 2L))
+                                .header("X-USER-ID", 2)
+                                .header("X-USER-ROLES", "[ROLE_USER]"))
                 //THEN
                 .andExpect(status().isUnauthorized());
     }
 
     @Test
-    void testGetAllUsers_WithInvalidUserIdAndInvalidRequesterId_shouldReturn401() throws Exception {
+    void testGetAllUsersWithInvalidUserIdAndValidRolesShouldReturn401() throws Exception {
+        //GIVEN
+        this.registerValidUser();
+        //WHEN
+        mvc.perform(
+                        get("/user/api/v1/admin/users")
+                                .header("X-USER-ID", 2)
+                                .header("X-USER-ROLES", "[ROLE_USER]"))
+                //THEN
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void testGetAllUsersWithInvalidUserIdAndInvalidRolesShouldReturn401() throws Exception {
         //GIVEN
         this.registerValidUser();
 
         //WHEN
         mvc.perform(
                         get("/user/api/v1/admin/users")
-                                .header("Authorization", "sdsd"))
+                                .header("X-USER-ID", 211)
+                                .header("X-USER-ROLES", "[ROLE_USER]"))
                 //THEN
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isUnauthorized());
     }
 
     @Test
-    void testChangeUserDetails_WithInvalidUserIdAndValidRequesterId_shouldReturn401() throws Exception {
+    void testChangeUserDetailsWithInvalidUserIdAndValidRolesShouldReturn401() throws Exception {
         //GIVEN
         this.registerValidUser();
         //WHEN
@@ -85,13 +89,14 @@ class AdminControllerTest {
                                             "email": "test@test.pl",
                                             "password": "Test"
                                         }""")
-                                .header("requester-user-id", 2L))
+                                .header("X-USER-ID", 2L)
+                                .header("X-USER-ROLES", "[ROLE_USER]"))
                 //THEN
                 .andExpect(status().isUnauthorized());
     }
 
     @Test
-    void testChangeUserDetails_WithInvalidUserIdAndInvalidRequesterId_shouldReturn400() throws Exception {
+    void testChangeUserDetailsWithInvalidUserIdAndInvalidRolesShouldReturn401() throws Exception {
         //GIVEN
         this.registerValidUser();
 
@@ -106,13 +111,15 @@ class AdminControllerTest {
                                             "email": "test@test.pl",
                                             "password": "Test"
                                         }""")
-                                .header("Authorization", "sfsf"))
+                                .header("Authorization", "sfsf")
+                                .header("X-USER-ID", 2)
+                                .header("X-USER-ROLES", "[ROLE_USER]"))
                 //THEN
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isUnauthorized());
     }
 
     @Test
-    void testActivateAccount_WithValidUserIdAndValidRequesterId_shouldReturn204() throws Exception {
+    void testActivateAccountWithValidUserIdAndValidRequesterIdShouldReturn204() throws Exception {
         //GIVEN
         this.registerValidUser();
 
@@ -120,13 +127,14 @@ class AdminControllerTest {
         mvc.perform(
                         post("/user/api/v1/admin/users/1/activate")
                                 .header("Authorization", "1")
-                                .header("requester-user-id", 1L))
+                                .header("X-USER-ID", 1)
+                                .header("X-USER-ROLES", "[ROLE_USER, ROLE_ADMIN]"))
                 //THEN
                 .andExpect(status().isNoContent());
     }
 
     @Test
-    void testActivateAccount_WithInvalidUserIdAndValidRequesterId_shouldReturn204() throws Exception {
+    void testActivateAccountWithInvalidUserIdAndValidRequesterIdShouldReturn204() throws Exception {
         //GIVEN
         this.registerValidUser();
 
@@ -134,7 +142,8 @@ class AdminControllerTest {
         mvc.perform(
                         post("/user/api/v1/admin/users/0/activate")
                                 .header("Authorization", "1")
-                                .header("requester-user-id", 1L))
+                                .header("X-USER-ID", 1L)
+                                .header("X-USER-ROLES", "[ROLE_USER, ROLE_ADMIN]"))
                 //THEN
                 .andExpect(status().isBadRequest());
     }

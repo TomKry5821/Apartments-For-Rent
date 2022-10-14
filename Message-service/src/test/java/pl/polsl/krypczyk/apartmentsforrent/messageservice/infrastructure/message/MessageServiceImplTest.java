@@ -29,13 +29,14 @@ class MessageServiceImplTest {
     }
 
     @Test
-    void testAddNewMessage_WithValidMessageData() {
+    void testAddNewMessageWithValidMessageDataShouldReturnExpectedMessage() {
         //GIVEN
         var addNewMessageRequest = this.addNewMessageRequest();
         var expected = this.addNewMessageResponse();
 
         //WHEN
         var actual = this.messageService.addNewMessage(addNewMessageRequest);
+        expected.setId(2L);
 
         //THEN
         Assertions.assertEquals(expected, actual);
@@ -44,7 +45,7 @@ class MessageServiceImplTest {
 
     @Test
     @Transactional
-    void testGetConversation_WithNotEmptyConversation() {
+    void testGetConversationWithNotEmptyConversationShouldReturnNotEmptyConversation() {
         //GIVEN
         var addNewMessageRequest = this.addNewMessageRequest();
         this.messageService.addNewMessage(addNewMessageRequest);
@@ -58,7 +59,7 @@ class MessageServiceImplTest {
 
     @Test
     @Transactional
-    void testGetConversation_WithEmptyConversation() {
+    void testGetConversationWithEmptyConversationShouldReturnEmptyConversation() {
         //GIVEN
 
         //WHEN
