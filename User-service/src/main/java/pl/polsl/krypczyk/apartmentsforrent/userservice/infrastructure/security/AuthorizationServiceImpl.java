@@ -1,4 +1,4 @@
-package pl.polsl.krypczyk.apartmentsforrent.userservice.infrastructure.authorization;
+package pl.polsl.krypczyk.apartmentsforrent.userservice.infrastructure.security;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -11,9 +11,9 @@ import pl.polsl.krypczyk.apartmentsforrent.userservice.application.user.response
 import pl.polsl.krypczyk.apartmentsforrent.userservice.application.user.response.LoginUserResponse;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.EntityFactory;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.ResponseFactory;
-import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.authorization.AuthorizationService;
-import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.authorization.exception.BadCredentialsException;
-import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.authorization.exception.UnauthorizedUserException;
+import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.security.AuthorizationService;
+import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.security.exception.BadCredentialsException;
+import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.security.exception.UnauthorizedUserException;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.user.UserEntity;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.user.UserRepository;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.user.exception.UserAlreadyExistsException;
@@ -22,6 +22,7 @@ import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.userauthorization.
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.userauthorization.UserAuthorizationRepository;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.userdetails.UserDetailsEntity;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.userdetails.UserDetailsRepository;
+import pl.polsl.krypczyk.apartmentsforrent.userservice.infrastructure.security.config.AES;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Objects;

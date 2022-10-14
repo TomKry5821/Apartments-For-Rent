@@ -1,4 +1,4 @@
-package pl.polsl.krypczyk.apartmentsforrent.userservice.infrastructure.authorization;
+package pl.polsl.krypczyk.apartmentsforrent.userservice.infrastructure.security.config;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;

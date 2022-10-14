@@ -3,7 +3,7 @@ package pl.polsl.krypczyk.apartmentsforrent.userservice.infrastructure.user;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import pl.polsl.krypczyk.apartmentsforrent.userservice.infrastructure.authorization.AES;
+import pl.polsl.krypczyk.apartmentsforrent.userservice.infrastructure.security.config.AES;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.application.security.userdetails.request.ChangeUserDetailsRequest;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.application.security.userdetails.response.ChangeUserDetailsResponse;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.application.security.userdetails.response.GetUserDetailsResponse;

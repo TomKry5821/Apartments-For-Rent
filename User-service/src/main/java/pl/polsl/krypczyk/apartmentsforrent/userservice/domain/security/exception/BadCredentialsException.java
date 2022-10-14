@@ -1,4 +1,4 @@
-package pl.polsl.krypczyk.apartmentsforrent.userservice.domain.authorization.exception;
+package pl.polsl.krypczyk.apartmentsforrent.userservice.domain.security.exception;
 
 public class BadCredentialsException extends Exception {
 

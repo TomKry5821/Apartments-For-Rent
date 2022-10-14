@@ -3,7 +3,7 @@ package pl.polsl.krypczyk.apartmentsforrent.userservice.infrastructure;
 import lombok.RequiredArgsConstructor;
 import org.mapstruct.factory.Mappers;
 import org.springframework.stereotype.Component;
-import pl.polsl.krypczyk.apartmentsforrent.userservice.infrastructure.authorization.AES;
+import pl.polsl.krypczyk.apartmentsforrent.userservice.infrastructure.security.config.AES;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.application.user.request.CreateUserRequest;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.EntityFactory;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.role.RoleEntity;
