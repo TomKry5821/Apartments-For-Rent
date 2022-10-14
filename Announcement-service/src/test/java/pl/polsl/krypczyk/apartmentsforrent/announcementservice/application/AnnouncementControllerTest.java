@@ -57,7 +57,8 @@ class AnnouncementControllerTest {
                                            "buildingNumber":"1A",
                                            "localNumber":3
                                         }""")
-                                .header("X-USER-ID",1L))
+                                .header("X-USER-ID",1L)
+                                .header("X-USER-ROLES", "[ROLE_ADMIN, ROLE_USER]"))
                 .andExpect(status().isOk());
     }
 
@@ -137,7 +138,8 @@ class AnnouncementControllerTest {
                                                  "buildingNumber":"1A",
                                                  "localNumber":3
                                                  }""")
-                                .header("X-USER-ID",1L))
+                                .header("X-USER-ID",1L)
+                                .header("X-USER-ROLES", "[ROLE_ADMIN, ROLE_USER]"))
                 .andExpect(status().isOk());
     }
 
@@ -168,7 +170,8 @@ class AnnouncementControllerTest {
                                                  "buildingNumber":"1A",
                                                  "localNumber":3
                                                  }""")
-                                .header("X-USER-ID",1L))
+                                .header("X-USER-ID",1L)
+                                .header("X-USER-ROLES", "[ROLE_ADMIN, ROLE_USER]"))
                 .andExpect(status().isBadRequest());
     }
 
@@ -179,7 +182,8 @@ class AnnouncementControllerTest {
         mvc.perform(
                         post("/announcement/api/v1/announcements/1/close/1")
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .header("X-USER-ID",1L))
+                                .header("X-USER-ID",1L)
+                                .header("X-USER-ROLES", "[ROLE_ADMIN, ROLE_USER]"))
                 .andExpect(status().isNoContent());
     }
 
@@ -190,7 +194,8 @@ class AnnouncementControllerTest {
         mvc.perform(
                         post("/announcement/api/v1/announcements/10/close/0")
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .header("X-USER-ID",1L))
+                                .header("X-USER-ID",1L)
+                                .header("X-USER-ROLES", "[ROLE_ADMIN, ROLE_USER]"))
                 .andExpect(status().isUnauthorized());
     }
 
@@ -201,7 +206,8 @@ class AnnouncementControllerTest {
         mvc.perform(
                         post("/announcement/api/v1/announcements/1/observe/1")
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .header("X-USER-ID",1L))
+                                .header("X-USER-ID",1L)
+                                .header("X-USER-ROLES", "[ROLE_ADMIN, ROLE_USER]"))
                 .andExpect(status().isCreated());
     }
 
@@ -212,7 +218,8 @@ class AnnouncementControllerTest {
         mvc.perform(
                         post("/announcement/api/v1/announcements/1/observe/100")
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .header("X-USER-ID",1L))
+                                .header("X-USER-ID",1L)
+                                .header("X-USER-ROLES", "[ROLE_ADMIN, ROLE_USER]"))
                 .andExpect(status().isUnauthorized());
     }
 
@@ -223,7 +230,8 @@ class AnnouncementControllerTest {
         mvc.perform(
                         post("/announcement/api/v1/announcements/100/observe/1")
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .header("X-USER-ID",1L))
+                                .header("X-USER-ID",1L)
+                                .header("X-USER-ROLES", "[ROLE_ADMIN, ROLE_USER]"))
                 .andExpect(status().isBadRequest());
     }
 
@@ -235,7 +243,8 @@ class AnnouncementControllerTest {
         mvc.perform(
                         delete("/announcement/api/v1/announcements/1/unobserve/1")
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .header("X-USER-ID",1L))
+                                .header("X-USER-ID",1L)
+                                .header("X-USER-ROLES", "[ROLE_ADMIN, ROLE_USER]"))
                 .andExpect(status().isNoContent());
     }
 
@@ -247,7 +256,8 @@ class AnnouncementControllerTest {
         mvc.perform(
                         delete("/announcement/api/v1/announcements/10/unobserve/10")
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .header("X-USER-ID",1L))
+                                .header("X-USER-ID",1L)
+                                .header("X-USER-ROLES", "[ROLE_ADMIN, ROLE_USER]"))
                 .andExpect(status().isUnauthorized());
     }
 
@@ -259,7 +269,8 @@ class AnnouncementControllerTest {
         mvc.perform(
                         get("/announcement/api/v1/announcements/observed/1")
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .header("X-USER-ID",1L))
+                                .header("X-USER-ID",1L)
+                                .header("X-USER-ROLES", "[ROLE_ADMIN, ROLE_USER]"))
                 .andExpect(status().isOk());
     }
 
@@ -271,7 +282,8 @@ class AnnouncementControllerTest {
         mvc.perform(
                         get("/announcement/api/v1/announcements/observed/0")
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .header("X-USER-ID",1L))
+                                .header("X-USER-ID",1L)
+                                .header("X-USER-ROLES", "[ROLE_ADMIN, ROLE_USER]"))
                 .andExpect(status().isUnauthorized());
     }
 
@@ -301,14 +313,16 @@ class AnnouncementControllerTest {
                                    "buildingNumber":"1A",
                                    "localNumber":3
                                 }""")
-                        .header("X-USER-ID", 1L));
+                        .header("X-USER-ID", 1L)
+                        .header("X-USER-ROLES", "[ROLE_ADMIN, ROLE_USER]"));
     }
 
     private void observeAnnouncement() throws Exception {
         mvc.perform(
                         post("/announcement/api/v1/announcements/1/observe/1")
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .header("X-USER-ID",1L));
+                                .header("X-USER-ID",1L)
+                                .header("X-USER-ROLES", "[ROLE_ADMIN, ROLE_USER]"));
     }
 }
 

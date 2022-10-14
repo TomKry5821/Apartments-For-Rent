@@ -27,7 +27,8 @@ class AdminControllerTest {
         mvc.perform(
                         delete("/announcement/api/v1/admin/announcements/1")
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .header("X-USER-ID", 1L))
+                                .header("X-USER-ID", 1L)
+                                .header("X-USER-ROLES", "[ROLE_ADMIN, ROLE_USER]"))
                 .andExpect(status().isNoContent());
     }
 
@@ -36,7 +37,8 @@ class AdminControllerTest {
         mvc.perform(
                         delete("/announcement/api/v1/admin/announcements/10")
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .header("X-USER-ID", 1L))
+                                .header("X-USER-ID", 1L)
+                                .header("X-USER-ROLES", "[ROLE_ADMIN, ROLE_USER]"))
                 .andExpect(status().isBadRequest());
     }
 
@@ -65,6 +67,7 @@ class AdminControllerTest {
                                    "buildingNumber":"1A",
                                    "localNumber":3
                                 }""")
-                        .header("X-USER-ID", 1L));
+                        .header("X-USER-ID", 1L)
+                        .header("X-USER-ROLES", "[ROLE_ADMIN, ROLE_USER]"));
     }
 }
