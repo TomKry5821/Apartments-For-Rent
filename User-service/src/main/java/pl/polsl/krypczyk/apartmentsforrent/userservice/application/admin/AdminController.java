@@ -32,21 +32,21 @@ public class AdminController {
 
     @DeleteMapping("/users/{userId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void DeleteUser(@PathVariable("userId") @NotNull Long userId) throws UnauthorizedUserException, UserNotFoundException {
+    public void DeleteUser(@PathVariable @NotNull Long userId) throws UnauthorizedUserException, UserNotFoundException {
         this.authorizationService.authorizeAdmin();
         this.adminService.deleteUser(userId);
     }
 
     @PutMapping("users/{userId}/details")
     public ChangeUserDetailsResponse changeUserDetails(@RequestBody @Valid ChangeUserDetailsRequest changeUserDetailsRequest,
-                                                       @PathVariable("userId") @NotNull Long userId) throws UnauthorizedUserException, UserNotFoundException, InvalidUserDetailsException {
+                                                       @PathVariable @NotNull Long userId) throws UnauthorizedUserException, UserNotFoundException, InvalidUserDetailsException {
         this.authorizationService.authorizeAdmin();
         return this.adminService.changeUserDetails(changeUserDetailsRequest, userId);
     }
 
     @PostMapping("users/{userId}/activate")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void activateAccount(@PathVariable("userId") @NotNull Long userId) throws UnauthorizedUserException, UserNotFoundException {
+    public void activateAccount(@PathVariable @NotNull Long userId) throws UnauthorizedUserException, UserNotFoundException {
         this.authorizationService.authorizeAdmin();
         this.adminService.activateAccount(userId);
     }

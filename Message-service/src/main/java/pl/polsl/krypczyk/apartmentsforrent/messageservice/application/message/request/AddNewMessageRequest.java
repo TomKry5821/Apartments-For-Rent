@@ -12,9 +12,11 @@ import java.util.Collection;
 @Builder
 public class AddNewMessageRequest {
 
+    @NotNull
     @Min(value = 1, message = "Invalid sender id")
     private Long senderId;
 
+    @NotNull
     @Min(value = 1, message = "Invalid receiver id")
     private Long receiverId;
 

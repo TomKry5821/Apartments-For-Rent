@@ -22,7 +22,7 @@ public class AdminController {
 
     @DeleteMapping("/announcements/{announcementId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteAnnouncement(@PathVariable("announcementId") @NotNull @Min(value = 1) Long announcementId) throws AnnouncementNotFoundException, UnauthorizedUserException {
+    public void deleteAnnouncement(@PathVariable @NotNull @Min(value = 1) Long announcementId) throws AnnouncementNotFoundException, UnauthorizedUserException {
         this.authorizationService.authorizeAdmin();
         this.adminService.deleteAnnouncement(announcementId);
     }

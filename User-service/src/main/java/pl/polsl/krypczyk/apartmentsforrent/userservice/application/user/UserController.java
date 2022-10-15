@@ -34,21 +34,21 @@ public class UserController {
     }
 
     @GetMapping("users/{userId}/details")
-    public GetUserDetailsResponse getUserDetails(@PathVariable("userId") @NotNull @Min(value = 1) Long userId) throws UnauthorizedUserException, UserNotFoundException {
+    public GetUserDetailsResponse getUserDetails(@PathVariable @NotNull @Min(value = 1) Long userId) throws UnauthorizedUserException, UserNotFoundException {
         this.authorizationService.authorizeUser(userId);
         return this.userService.getUserDetails(userId);
     }
 
     @PutMapping("users/{userId}/details")
     public ChangeUserDetailsResponse changeUserDetails(@RequestBody @Valid ChangeUserDetailsRequest changeUserDetailsRequest,
-                                                       @PathVariable("userId") @NotNull @Min(value = 1) Long userId) throws UnauthorizedUserException, UserNotFoundException, InvalidUserDetailsException, UserAlreadyExistsException {
+                                                       @PathVariable @NotNull @Min(value = 1) Long userId) throws UnauthorizedUserException, UserNotFoundException, InvalidUserDetailsException, UserAlreadyExistsException {
         this.authorizationService.authorizeUser(userId);
         return this.userService.changeUserDetails(changeUserDetailsRequest, userId);
     }
 
     @PostMapping("users/{userId}/inactivate")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void inactivateAccount(@PathVariable("userId") @NotNull @Min(value = 1) Long userId) throws UnauthorizedUserException, UserNotFoundException {
+    public void inactivateAccount(@PathVariable @NotNull @Min(value = 1) Long userId) throws UnauthorizedUserException, UserNotFoundException {
         this.authorizationService.authorizeUser(userId);
         this.userService.inactivateAccount(userId);
     }
