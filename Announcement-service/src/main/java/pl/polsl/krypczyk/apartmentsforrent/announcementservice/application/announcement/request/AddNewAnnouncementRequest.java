@@ -1,14 +1,12 @@
 package pl.polsl.krypczyk.apartmentsforrent.announcementservice.application.announcement.request;
 
 import lombok.Builder;
-import lombok.Data;
 
 import javax.validation.constraints.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Collection;
 
-@Data
 @Builder
 public class AddNewAnnouncementRequest {
 
