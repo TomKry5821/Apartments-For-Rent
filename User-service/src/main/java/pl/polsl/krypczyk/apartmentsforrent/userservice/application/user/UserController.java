@@ -34,7 +34,7 @@ public class UserController {
     }
 
     @GetMapping("users/{userId}/details")
-    public GetUserDetailsResponse getUserDetails(@PathVariable("userId") @NotNull Long userId) throws UnauthorizedUserException, UserNotFoundException {
+    public GetUserDetailsResponse getUserDetails(@PathVariable("userId") @NotNull @Min(value = 1) Long userId) throws UnauthorizedUserException, UserNotFoundException {
         this.authorizationService.authorizeUser(userId);
         return this.userService.getUserDetails(userId);
     }
@@ -48,7 +48,7 @@ public class UserController {
 
     @PostMapping("users/{userId}/inactivate")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void inactivateAccount(@PathVariable("userId") @NotNull Long userId) throws UnauthorizedUserException, UserNotFoundException {
+    public void inactivateAccount(@PathVariable("userId") @NotNull @Min(value = 1) Long userId) throws UnauthorizedUserException, UserNotFoundException {
         this.authorizationService.authorizeUser(userId);
         this.userService.inactivateAccount(userId);
     }
