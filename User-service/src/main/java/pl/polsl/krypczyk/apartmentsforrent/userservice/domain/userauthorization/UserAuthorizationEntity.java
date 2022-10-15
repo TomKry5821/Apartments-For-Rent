@@ -5,7 +5,14 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.role.RoleEntity;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Table;
+import javax.persistence.Id;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Column;
+import javax.persistence.FetchType;
+import javax.persistence.OneToMany;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.UUID;

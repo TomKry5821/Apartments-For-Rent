@@ -1,6 +1,7 @@
 package pl.polsl.krypczyk.apartmentsforrent.messageservice.domain.message;
 
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 import pl.polsl.krypczyk.apartmentsforrent.messageservice.application.message.request.AddNewMessageRequest;
 import pl.polsl.krypczyk.apartmentsforrent.messageservice.application.message.response.AddNewMessageResponse;
@@ -13,6 +14,8 @@ import java.util.Collection;
 @Mapper
 public interface MessageMapper {
 
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "attachmentsCount", ignore = true)
     AddNewMessageResponse addNewMessageRequestToAddNewMessageResponse(AddNewMessageRequest addNewMessageRequest);
 
     @Named("attachmentEntitiesToByteArrayCollection")

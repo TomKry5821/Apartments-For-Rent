@@ -3,13 +3,17 @@ package pl.polsl.krypczyk.apartmentsforrent.announcementservice.application.anno
 import lombok.Builder;
 import lombok.Data;
 
-import javax.validation.constraints.*;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.FutureOrPresent;
+import javax.validation.constraints.Pattern;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Collection;
 
-@Data
 @Builder
+@Data
 public class UpdateAnnouncementRequest {
 
     @NotNull(message = "Invalid user id")

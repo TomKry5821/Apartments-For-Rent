@@ -7,10 +7,17 @@ import lombok.ToString;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.adressdetails.AddressDetailsEntity;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcementcontent.AnnouncementContentEntity;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Table;
+import javax.persistence.Id;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Column;
+import javax.persistence.FetchType;
+import javax.persistence.OneToOne;
+import javax.persistence.JoinColumn;
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.Collection;
 
 @Getter
 @Setter
@@ -28,7 +35,7 @@ public class AnnouncementDetailsEntity {
     @Column(name = "TITLE", nullable = false)
     private String title;
 
-    @Column(name = "MAIN_PHOTO_PATH", nullable = true)
+    @Column(name = "MAIN_PHOTO_PATH")
     private String mainPhotoPath;
 
     @Column(name = "ROOMS_NUMBER", nullable = false)
