@@ -11,10 +11,10 @@ import java.util.UUID;
 @Builder
 public class LoginUserResponse {
 
-    private final UUID accessToken;
-    private final String email;
-    private final Collection<String> roles;
-    private final LocalDateTime loginDate;
-    private final Long id;
+    private UUID accessToken;
+    private String email;
+    private Collection<String> roles;
+    private LocalDateTime loginDate;
+    private Long id;
 
 }

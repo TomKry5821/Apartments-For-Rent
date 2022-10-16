@@ -7,8 +7,8 @@ import lombok.Data;
 @Builder
 public class ObserveAnnouncementResponse {
 
-    Long userId;
+    private Long userId;
 
-    Long announcementId;
+    private Long announcementId;
 
 }

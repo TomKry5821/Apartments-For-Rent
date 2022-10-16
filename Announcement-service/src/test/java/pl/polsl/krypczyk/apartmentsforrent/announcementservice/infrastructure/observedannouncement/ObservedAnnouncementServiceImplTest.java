@@ -5,13 +5,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.application.announcement.request.AddNewAnnouncementRequest;
-import pl.polsl.krypczyk.apartmentsforrent.announcementservice.application.announcement.response.ObserveAnnouncementResponse;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.AnnouncementRepository;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.AnnouncementService;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.excpetion.AnnouncementNotFoundException;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.excpetion.ClosedAnnouncementException;
-import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.excpetion.InvalidUserIdException;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.observedannouncement.ObservedAnnouncementRepository;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.observedannouncement.ObservedAnnouncementService;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.observedannouncement.exception.AnnouncementAlreadyObservedException;
@@ -21,8 +20,25 @@ import java.time.LocalDate;
 import java.util.List;
 
 @SpringBootTest("spring.autoconfigure.exclude=org.springframework.boot.autoconfigure.kafka.KafkaAutoConfiguration")
+@Transactional
 class ObservedAnnouncementServiceImplTest {
 
+    private static final String CITY = "City";
+    private static final BigDecimal CAUTION = BigDecimal.valueOf(10.55);
+    private static final String CONTENT = "Content";
+    private static final String DISTRICT = "District";
+    private static final int LOCAL_NUMBER = 1;
+    private static final String BUILDING_NUMBER = "1A";
+    private static final String STREET = "Street";
+    private static final String TITLE = "Title";
+    private static final List<String> PHOTO_PATHS = List.of("test", "test2");
+    private static final String MAIN_PHOTO_PATH = "path";
+    private static final BigDecimal RENTAL_AMOUNT = BigDecimal.valueOf(10.55);
+    private static final int ROOMS_NUMBER = 1;
+    private static final String ZIP_CODE = "11-111";
+    private static final LocalDate RENTAL_TERM = LocalDate.now();
+    private static final long USER_ID = 1L;
+    private static final long ANNOUNCEMENT_ID = 0L;
     @Autowired
     private ObservedAnnouncementService observedAnnouncementService;
 
@@ -41,16 +57,16 @@ class ObservedAnnouncementServiceImplTest {
     }
 
     @Test
-    void testObserveAnnouncementWithValidUserIdAndValidAnnouncementIdShouldReturnExpectedResponse() throws AnnouncementNotFoundException, AnnouncementAlreadyObservedException, ClosedAnnouncementException {
+    void testObserveAnnouncementWithValidUserIdAndValidAnnouncementIdShouldReturnNotEmptyObservedAnnouncementsList() throws AnnouncementNotFoundException, AnnouncementAlreadyObservedException, ClosedAnnouncementException {
         //GIVEN
         var addNewAnnouncementRequest = validAnnouncementRequest();
         var addNewAnnouncementResponse = this.announcementService.addNewAnnouncement(addNewAnnouncementRequest);
-        var expected = this.validObserveAnnouncementResponse(addNewAnnouncementResponse.getAnnouncementId(), addNewAnnouncementResponse.getUserId());
 
         //WHEN
-        var actual = this.observedAnnouncementService.observeAnnouncement(addNewAnnouncementResponse.getAnnouncementId(), addNewAnnouncementResponse.getUserId());
+        this.observedAnnouncementService.observeAnnouncement(addNewAnnouncementResponse.getAnnouncementId(), addNewAnnouncementResponse.getUserId());
+
         //THEN
-        Assertions.assertEquals(expected, actual);
+        Assertions.assertFalse(this.observedAnnouncementRepository.findAll().isEmpty());
     }
 
     @Test
@@ -59,9 +75,10 @@ class ObservedAnnouncementServiceImplTest {
         var addNewAnnouncementRequest = validAnnouncementRequest();
         var addNewAnnouncementResponse = this.announcementService.addNewAnnouncement(addNewAnnouncementRequest);
 
-        //WHEN AND THEN
+        //WHEN
+        //THEN
         Assertions.assertThrows(AnnouncementNotFoundException.class, () ->
-                this.observedAnnouncementService.observeAnnouncement(0L, addNewAnnouncementResponse.getUserId()));
+                this.observedAnnouncementService.observeAnnouncement(ANNOUNCEMENT_ID, addNewAnnouncementResponse.getUserId()));
     }
 
     @Test
@@ -71,7 +88,8 @@ class ObservedAnnouncementServiceImplTest {
         var addNewAnnouncementResponse = this.announcementService.addNewAnnouncement(addNewAnnouncementRequest);
         this.observedAnnouncementService.observeAnnouncement(addNewAnnouncementResponse.getAnnouncementId(), addNewAnnouncementResponse.getUserId());
 
-        //WHEN AND THEN
+        //WHEN
+        //THEN
         Assertions.assertThrows(AnnouncementAlreadyObservedException.class, () ->
                 this.observedAnnouncementService.observeAnnouncement(addNewAnnouncementResponse.getAnnouncementId(), addNewAnnouncementResponse.getUserId()));
     }
@@ -83,7 +101,8 @@ class ObservedAnnouncementServiceImplTest {
         var addNewAnnouncementResponse = this.announcementService.addNewAnnouncement(addNewAnnouncementRequest);
         this.announcementService.closeAnnouncement(addNewAnnouncementResponse.getAnnouncementId(), addNewAnnouncementResponse.getUserId());
 
-        //WHEN AND THEN
+        //WHEN
+        //THEN
         Assertions.assertThrows(ClosedAnnouncementException.class, () ->
                 this.observedAnnouncementService.observeAnnouncement(addNewAnnouncementResponse.getAnnouncementId(), addNewAnnouncementResponse.getUserId()));
     }
@@ -99,7 +118,6 @@ class ObservedAnnouncementServiceImplTest {
         this.observedAnnouncementService.unobserveAnnouncement(addNewAnnouncementResponse.getAnnouncementId(), addNewAnnouncementResponse.getUserId());
 
         //THEN
-        Assertions.assertDoesNotThrow(InvalidUserIdException::new);
         Assertions.assertDoesNotThrow(AnnouncementNotFoundException::new);
     }
 
@@ -110,9 +128,10 @@ class ObservedAnnouncementServiceImplTest {
         var addNewAnnouncementResponse = this.announcementService.addNewAnnouncement(addNewAnnouncementRequest);
         this.observedAnnouncementService.observeAnnouncement(addNewAnnouncementResponse.getAnnouncementId(), addNewAnnouncementResponse.getUserId());
 
-        //WHEN AND THEN
+        //WHEN
+        //THEN
         Assertions.assertThrows(AnnouncementNotFoundException.class, () ->
-                this.observedAnnouncementService.unobserveAnnouncement(0L, addNewAnnouncementResponse.getUserId()));
+                this.observedAnnouncementService.unobserveAnnouncement(ANNOUNCEMENT_ID, addNewAnnouncementResponse.getUserId()));
     }
 
     @Test
@@ -120,7 +139,7 @@ class ObservedAnnouncementServiceImplTest {
         //GIVEN
         var announcement = this.validAnnouncementRequest();
         var addNewAnnouncementResponse = this.announcementService.addNewAnnouncement(announcement);
-        this.observedAnnouncementService.observeAnnouncement(addNewAnnouncementResponse.getAnnouncementId(), 1L);
+        this.observedAnnouncementService.observeAnnouncement(addNewAnnouncementResponse.getAnnouncementId(), USER_ID);
 
         //WHEN
         this.observedAnnouncementService.deleteObservedAnnouncements(announcement.getUserId());
@@ -134,10 +153,10 @@ class ObservedAnnouncementServiceImplTest {
         //GIVEN
         var announcement = this.validAnnouncementRequest();
         var addNewAnnouncementResponse = this.announcementService.addNewAnnouncement(announcement);
-        this.observedAnnouncementService.observeAnnouncement(addNewAnnouncementResponse.getAnnouncementId(), 1L);
+        this.observedAnnouncementService.observeAnnouncement(addNewAnnouncementResponse.getAnnouncementId(), USER_ID);
 
         //WHEN
-        var result = this.observedAnnouncementService.getObservedAnnouncements(1L);
+        var result = this.observedAnnouncementService.getObservedAnnouncements(USER_ID);
 
         //THEN
         Assertions.assertFalse(result.isEmpty());
@@ -150,7 +169,7 @@ class ObservedAnnouncementServiceImplTest {
         this.announcementService.addNewAnnouncement(announcement);
 
         //WHEN
-        var result = this.observedAnnouncementService.getObservedAnnouncements(1L);
+        var result = this.observedAnnouncementService.getObservedAnnouncements(USER_ID);
 
         //THEN
         Assertions.assertTrue(result.isEmpty());
@@ -158,29 +177,21 @@ class ObservedAnnouncementServiceImplTest {
 
     private AddNewAnnouncementRequest validAnnouncementRequest() {
         return AddNewAnnouncementRequest.builder()
-                .city("City")
-                .caution(BigDecimal.valueOf(10.55))
-                .content("Content")
-                .district("District")
-                .localNumber(1)
-                .buildingNumber("1A")
-                .street("Street")
-                .title("Title")
-                .photoPaths(List.of("test", "test2"))
-                .mainPhotoPath("path")
-                .rentalAmount(BigDecimal.valueOf(10.55))
-                .roomsNumber(1)
-                .zipCode("11-111")
-                .rentalTerm(LocalDate.now())
-                .userId(1L)
-                .build();
-    }
-
-    private ObserveAnnouncementResponse validObserveAnnouncementResponse(Long announcementId, Long userId) {
-        return ObserveAnnouncementResponse
-                .builder()
-                .announcementId(announcementId)
-                .userId(userId)
+                .city(CITY)
+                .caution(CAUTION)
+                .content(CONTENT)
+                .district(DISTRICT)
+                .localNumber(LOCAL_NUMBER)
+                .buildingNumber(BUILDING_NUMBER)
+                .street(STREET)
+                .title(TITLE)
+                .photoPaths(PHOTO_PATHS)
+                .mainPhotoPath(MAIN_PHOTO_PATH)
+                .rentalAmount(RENTAL_AMOUNT)
+                .roomsNumber(ROOMS_NUMBER)
+                .zipCode(ZIP_CODE)
+                .rentalTerm(RENTAL_TERM)
+                .userId(USER_ID)
                 .build();
     }
 

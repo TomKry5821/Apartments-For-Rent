@@ -5,24 +5,29 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.application.user.request.CreateUserRequest;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.application.security.userdetails.request.ChangeUserDetailsRequest;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.admin.AdminService;
+import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.role.RoleRepository;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.user.UserRepository;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.user.UserService;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.user.exception.InvalidUserDetailsException;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.user.exception.UserAlreadyExistsException;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.user.exception.UserNotFoundException;
+import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.userauthorization.UserAuthorizationRepository;
+import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.userdetails.UserDetailsRepository;
 
 @SpringBootTest("spring.autoconfigure.exclude=org.springframework.boot.autoconfigure.kafka.KafkaAutoConfiguration")
+@Transactional
 class AdminServiceImplTest {
 
-    private static final String VALID_USER_SURNAME = "surname";
-    private static final String VALID_USER_PASSWORD = "password";
-    private static final String VALID_USER_NAME = "name";
-    private static final String VALID_USER_EMAIL = "user@user.com";
-    private static final boolean VALID_USER_IS_ACTIVE = true;
-    private static final boolean INACTIVE_USER_IS_ACTIVE = false;
+    private static final String SURNAME = "surname";
+    private static final String PASSWORD = "password";
+    private static final String NAME = "name";
+    private static final String EMAIL = "user@user.com";
+    private static final boolean IS_ACTIVE = true;
+    private static final boolean IS_INACTIVE = false;
     private static final Long INVALID_USER_ID = 12L;
 
     @Autowired
@@ -32,6 +37,15 @@ class AdminServiceImplTest {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private UserDetailsRepository userDetailsRepository;
+
+    @Autowired
+    private UserAuthorizationRepository userAuthorizationRepository;
+
+    @Autowired
+    private RoleRepository roleRepository;
 
     @AfterEach
     void deleteDbContent() {
@@ -55,6 +69,7 @@ class AdminServiceImplTest {
     void testGetAllUsersWithEmptyUsersListShouldReturnEmptyResponse() {
         //GIVEN
         this.deleteDbContent();
+
         //WHEN
         var response = this.adminService.getAllUsers();
 
@@ -72,23 +87,26 @@ class AdminServiceImplTest {
 
         //WHEN
         this.adminService.deleteUser(userId);
+
         //THEN
         Assertions.assertDoesNotThrow(UserNotFoundException::new);
+        Assertions.assertEquals(this.userRepository.findAll().size(), 1);
+        Assertions.assertEquals(this.userAuthorizationRepository.findAll().size(), 1);
+        Assertions.assertEquals(this.userDetailsRepository.findAll().size(), 1);
+        Assertions.assertEquals(this.roleRepository.findAll().size(), 2);
     }
 
     @Test
     void testDeleteUserWithInvalidUserIdShouldThrowUserNotFoundException() {
         //GIVEN
-        this.createValidUser();
-
-
-        //WHEN AND THEN
+        //WHEN
+        //THEN
         Assertions.assertThrows(UserNotFoundException.class, () ->
                 this.adminService.deleteUser(INVALID_USER_ID));
     }
 
     @Test
-    void testChangeUserDetailsWithValidUserIdShouldNotThrowUserNotFoundException() throws UserAlreadyExistsException, UserNotFoundException, InvalidUserDetailsException {
+    void testChangeUserDetailsWithValidUserIdShouldNotThrowUserNotFoundOrInvalidUserDetailsException() throws UserAlreadyExistsException, UserNotFoundException, InvalidUserDetailsException {
         //GIVEN
         var user = this.createValidUser();
         var createUserResponse = this.userService.createUser(user);
@@ -97,8 +115,10 @@ class AdminServiceImplTest {
 
         //WHEN
         this.adminService.changeUserDetails(changeUserDetailsRequest, userId);
-        //WHEN AND THEN
+
+        //THEN
         Assertions.assertDoesNotThrow(UserNotFoundException::new);
+        Assertions.assertDoesNotThrow(InvalidUserDetailsException::new);
     }
 
     @Test
@@ -114,7 +134,7 @@ class AdminServiceImplTest {
     }
 
     @Test
-    void testChangeUserDetailsWithNullUserDetailsShouldThrowInvalidUserException() throws UserAlreadyExistsException {
+    void testChangeUserDetailsWithNullUserDetailsShouldThrowInvalidUserDetailsException() throws UserAlreadyExistsException {
         //GIVEN
         var inactiveUser = this.createInactiveUser();
         var createUserResponse = this.userService.createUser(inactiveUser);
@@ -146,35 +166,35 @@ class AdminServiceImplTest {
         this.userService.createUser(inactiveUser);
 
         //WHEN AND THEN
-        Assertions.assertThrows(UserNotFoundException.class, () -> this.adminService.activateAccount(0L));
+        Assertions.assertThrows(UserNotFoundException.class, () -> this.adminService.activateAccount(INVALID_USER_ID));
     }
 
     private CreateUserRequest createValidUser() {
         return CreateUserRequest.builder()
-                .surname(VALID_USER_SURNAME)
-                .password(VALID_USER_PASSWORD)
-                .name(VALID_USER_NAME)
-                .email(VALID_USER_EMAIL)
-                .isActive(VALID_USER_IS_ACTIVE)
+                .surname(SURNAME)
+                .password(PASSWORD)
+                .name(NAME)
+                .email(EMAIL)
+                .isActive(IS_ACTIVE)
                 .build();
     }
 
     private CreateUserRequest createInactiveUser() {
         return pl.polsl.krypczyk.apartmentsforrent.userservice.application.user.request.CreateUserRequest.builder()
-                .surname(VALID_USER_SURNAME)
-                .password(VALID_USER_PASSWORD)
-                .name(VALID_USER_NAME)
-                .email(VALID_USER_EMAIL)
-                .isActive(INACTIVE_USER_IS_ACTIVE)
+                .surname(SURNAME)
+                .password(PASSWORD)
+                .name(NAME)
+                .email(EMAIL)
+                .isActive(IS_INACTIVE)
                 .build();
     }
 
     private ChangeUserDetailsRequest createValidChangeUserDetailsRequest() {
         return ChangeUserDetailsRequest.builder()
-                .surname(VALID_USER_SURNAME)
-                .password(VALID_USER_PASSWORD)
-                .name(VALID_USER_NAME)
-                .email(VALID_USER_EMAIL)
+                .surname(SURNAME)
+                .password(PASSWORD)
+                .name(NAME)
+                .email(EMAIL)
                 .build();
     }
 

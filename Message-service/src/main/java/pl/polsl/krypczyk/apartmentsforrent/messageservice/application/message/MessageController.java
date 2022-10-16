@@ -3,7 +3,13 @@ package pl.polsl.krypczyk.apartmentsforrent.messageservice.application.message;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import pl.polsl.krypczyk.apartmentsforrent.messageservice.application.message.request.AddNewMessageRequest;
 import pl.polsl.krypczyk.apartmentsforrent.messageservice.application.message.response.AddNewMessageResponse;
 import pl.polsl.krypczyk.apartmentsforrent.messageservice.application.message.response.MessageDTO;
@@ -12,6 +18,8 @@ import pl.polsl.krypczyk.apartmentsforrent.messageservice.domain.security.author
 import pl.polsl.krypczyk.apartmentsforrent.messageservice.domain.security.exception.UnauthorizedUserException;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 import java.util.Collection;
 
 @RestController
@@ -31,8 +39,8 @@ public class MessageController {
     }
 
     @GetMapping(value = "/messages/{senderId}/conversation/{receiverId}")
-    public Collection<MessageDTO> getConversation(@PathVariable Long senderId,
-                                                  @PathVariable Long receiverId) throws UnauthorizedUserException {
+    public Collection<MessageDTO> getConversation(@PathVariable @NotNull @Min(value = 1) Long senderId,
+                                                  @PathVariable @NotNull @Min(value = 1) Long receiverId) throws UnauthorizedUserException {
         this.authorizationService.authorizeUser(senderId);
         return this.messageService.getConversation(senderId, receiverId);
     }

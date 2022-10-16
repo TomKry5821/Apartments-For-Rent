@@ -11,10 +11,10 @@ import java.util.UUID;
 @Builder
 public class CreateUserResponse {
 
-    private final String email;
-    private final UUID accessToken;
-    private final Collection<String> roles;
-    private final LocalDateTime creationDate;
-    private final Long id;
+    private String email;
+    private UUID accessToken;
+    private Collection<String> roles;
+    private LocalDateTime creationDate;
+    private Long id;
 
 }

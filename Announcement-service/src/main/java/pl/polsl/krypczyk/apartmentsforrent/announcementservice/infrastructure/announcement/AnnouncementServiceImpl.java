@@ -65,7 +65,15 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     public AddNewAnnouncementResponse addNewAnnouncement(AddNewAnnouncementRequest addNewAnnouncementRequest) {
         log.info("Started creating announcement");
 
-        var announcement = this.entityFactory.createAnnouncementEntity(addNewAnnouncementRequest);
+        var announcementContent = this.entityFactory.createAnnouncementContentEntity(addNewAnnouncementRequest);
+        this.announcementContentRepository.save(announcementContent);
+        var addressDetails = this.entityFactory.createAddressDetailsEntity(addNewAnnouncementRequest);
+        this.addressDetailsRepository.save(addressDetails);
+        var announcementDetails = this.entityFactory.createAnnouncementDetailsEntity(addNewAnnouncementRequest, announcementContent, addressDetails);
+        this.announcementDetailsRepository.save(announcementDetails);
+        var announcement = this.entityFactory.createAnnouncementEntity(addNewAnnouncementRequest, announcementDetails);
+        this.announcementRepository.save(announcement);
+
         var response = this.responseFactory.createAddNewAnnouncementResponse(announcement, addNewAnnouncementRequest);
 
         log.info("Successfully created announcement - " + announcement);

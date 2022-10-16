@@ -2,7 +2,14 @@ package pl.polsl.krypczyk.apartmentsforrent.userservice.application.user;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.application.security.userdetails.request.ChangeUserDetailsRequest;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.application.security.userdetails.response.ChangeUserDetailsResponse;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.application.security.userdetails.response.GetUserDetailsResponse;
@@ -34,21 +41,21 @@ public class UserController {
     }
 
     @GetMapping("users/{userId}/details")
-    public GetUserDetailsResponse getUserDetails(@PathVariable("userId") @NotNull Long userId) throws UnauthorizedUserException, UserNotFoundException {
+    public GetUserDetailsResponse getUserDetails(@PathVariable @NotNull @Min(value = 1) Long userId) throws UnauthorizedUserException, UserNotFoundException {
         this.authorizationService.authorizeUser(userId);
         return this.userService.getUserDetails(userId);
     }
 
     @PutMapping("users/{userId}/details")
     public ChangeUserDetailsResponse changeUserDetails(@RequestBody @Valid ChangeUserDetailsRequest changeUserDetailsRequest,
-                                                       @PathVariable("userId") @NotNull @Min(value = 1) Long userId) throws UnauthorizedUserException, UserNotFoundException, InvalidUserDetailsException, UserAlreadyExistsException {
+                                                       @PathVariable @NotNull @Min(value = 1) Long userId) throws UnauthorizedUserException, UserNotFoundException, InvalidUserDetailsException, UserAlreadyExistsException {
         this.authorizationService.authorizeUser(userId);
         return this.userService.changeUserDetails(changeUserDetailsRequest, userId);
     }
 
     @PostMapping("users/{userId}/inactivate")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void inactivateAccount(@PathVariable("userId") @NotNull Long userId) throws UnauthorizedUserException, UserNotFoundException {
+    public void inactivateAccount(@PathVariable @NotNull @Min(value = 1) Long userId) throws UnauthorizedUserException, UserNotFoundException {
         this.authorizationService.authorizeUser(userId);
         this.userService.inactivateAccount(userId);
     }

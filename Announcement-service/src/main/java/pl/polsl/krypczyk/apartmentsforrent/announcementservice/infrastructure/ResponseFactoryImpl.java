@@ -94,12 +94,11 @@ public class ResponseFactoryImpl implements ResponseFactory {
 
     @Override
     public ObservedAnnouncementDTO createObservedAnnouncementDTO(AnnouncementEntity announcement) {
-        var observedAnnouncementDTO = new ObservedAnnouncementDTO();
-
-        observedAnnouncementDTO.setTitle(announcement.getAnnouncementDetailsEntity().getTitle());
-        observedAnnouncementDTO.setUserId(announcement.getUserId());
-        observedAnnouncementDTO.setMainPhotoPath(announcement.getAnnouncementDetailsEntity().getMainPhotoPath());
-
-        return observedAnnouncementDTO;
+        return ObservedAnnouncementDTO
+                .builder()
+                .title(announcement.getAnnouncementDetailsEntity().getTitle())
+                .userId(announcement.getUserId())
+                .mainPhotoPath(announcement.getAnnouncementDetailsEntity().getMainPhotoPath())
+                .build();
     }
 }

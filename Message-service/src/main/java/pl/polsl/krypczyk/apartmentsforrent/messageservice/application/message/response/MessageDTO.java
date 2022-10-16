@@ -1,5 +1,6 @@
 package pl.polsl.krypczyk.apartmentsforrent.messageservice.application.message.response;
 
+import lombok.Builder;
 import lombok.Data;
 import lombok.ToString;
 
@@ -8,6 +9,7 @@ import java.util.Collection;
 
 @Data
 @ToString
+@Builder
 public class MessageDTO {
 
     private Long senderId;

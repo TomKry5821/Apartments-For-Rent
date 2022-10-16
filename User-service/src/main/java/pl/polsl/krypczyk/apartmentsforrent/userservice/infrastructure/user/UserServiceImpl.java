@@ -3,9 +3,12 @@ package pl.polsl.krypczyk.apartmentsforrent.userservice.infrastructure.user;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.application.user.request.CreateUserRequest;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.application.user.response.CreateUserResponse;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.EntityFactory;
+import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.role.RoleRepository;
+import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.userauthorization.UserAuthorizationRepository;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.infrastructure.security.config.AES;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.application.security.userdetails.request.ChangeUserDetailsRequest;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.application.security.userdetails.response.ChangeUserDetailsResponse;
@@ -26,10 +29,13 @@ import java.util.concurrent.CompletableFuture;
 @Service
 @RequiredArgsConstructor
 @Slf4j
+@Transactional(rollbackFor = Exception.class)
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final UserDetailsRepository userDetailsRepository;
+    private final UserAuthorizationRepository userAuthorizationRepository;
+    private final RoleRepository roleRepository;
     private final ResponseFactory responseFactory;
     private final KafkaMessageProducer kafkaMessageProducer;
     private final EntityFactory entityFactory;
@@ -42,9 +48,13 @@ public class UserServiceImpl implements UserService {
             throw new UserAlreadyExistsException();
 
         var role = this.entityFactory.createUserRoleEntity();
+        this.roleRepository.save(role);
         var userDetails = this.entityFactory.createUserDetailsEntity(createUserRequest);
+        this.userDetailsRepository.save(userDetails);
         var userAuthorization = this.entityFactory.createUserAuthorizationEntity(role);
+        this.userAuthorizationRepository.save(userAuthorization);
         var user = this.entityFactory.createUserEntity(userDetails, userAuthorization);
+        this.userRepository.save(user);
 
         var createUserResponse = this.responseFactory.createCreateUserResponse(createUserRequest, userAuthorization, user.getId());
 
