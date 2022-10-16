@@ -9,23 +9,21 @@ import pl.polsl.krypczyk.apartmentsforrent.messageservice.domain.attachment.Atta
 import pl.polsl.krypczyk.apartmentsforrent.messageservice.domain.message.MessageEntity;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
+import java.util.List;
 
 @Component
 @Transactional
 public class EntityFactoryImpl implements EntityFactory {
 
     @Override
-    public MessageEntity createMessageEntity(AddNewMessageRequest addNewMessageRequest) {
+    public MessageEntity createMessageEntity(AddNewMessageRequest addNewMessageRequest,
+                                             List<AttachmentEntity> attachments) {
         var message = new MessageEntity();
 
         message.setSendDate(LocalDateTime.now());
         message.setSenderId(addNewMessageRequest.getSenderId());
         message.setReceiverId(addNewMessageRequest.getReceiverId());
         message.setMessage(addNewMessageRequest.getMessage());
-        var attachments = new ArrayList<AttachmentEntity>();
-
-        addNewMessageRequest.getAttachments().forEach(f -> attachments.add(this.createAttachmentEntity(f)));
         message.setAttachments(attachments);
 
         return message;

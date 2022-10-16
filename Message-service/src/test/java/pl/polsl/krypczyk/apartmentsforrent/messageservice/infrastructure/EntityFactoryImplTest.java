@@ -33,7 +33,7 @@ class EntityFactoryImplTest {
         var expected = validMessageEntity();
 
         //WHEN
-        var actual = entityFactory.createMessageEntity(addNewMessageRequest);
+        var actual = entityFactory.createMessageEntity(addNewMessageRequest, DB_ATTACHMENTS.stream().toList());
 
         //THEN
         Assertions.assertEquals(expected.getMessage(), actual.getMessage());

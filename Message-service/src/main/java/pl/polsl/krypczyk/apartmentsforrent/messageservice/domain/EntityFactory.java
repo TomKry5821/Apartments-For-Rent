@@ -5,9 +5,12 @@ import pl.polsl.krypczyk.apartmentsforrent.messageservice.application.message.re
 import pl.polsl.krypczyk.apartmentsforrent.messageservice.domain.attachment.AttachmentEntity;
 import pl.polsl.krypczyk.apartmentsforrent.messageservice.domain.message.MessageEntity;
 
+import java.util.List;
+
 public interface EntityFactory {
 
-    MessageEntity createMessageEntity(AddNewMessageRequest addNewMessageRequest);
+    MessageEntity createMessageEntity(AddNewMessageRequest addNewMessageRequest,
+                                      List<AttachmentEntity> attachments);
 
     AttachmentEntity createAttachmentEntity(MultipartFile file);
 }
