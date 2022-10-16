@@ -62,7 +62,7 @@ class EntityFactoryImplTest {
         var expected = validAnnouncementEntity();
 
         //WHEN
-        var actual = this.entityFactory.createAnnouncementEntity(addAnnouncementRequest);
+        var actual = this.entityFactory.createAnnouncementEntity(addAnnouncementRequest, validAnnouncementDetailsEntity());
 
         //THEN
         Assertions.assertEquals(expected.getUserId(), actual.getUserId());
@@ -78,7 +78,7 @@ class EntityFactoryImplTest {
         var expected = validAnnouncementDetailsEntity();
 
         //WHEN
-        var actual = this.entityFactory.createAnnouncementDetailsEntity(addAnnouncementRequest);
+        var actual = this.entityFactory.createAnnouncementDetailsEntity(addAnnouncementRequest, validAnnouncementContentEntity(), validAddressDetailsEntity());
 
         //THEN
         Assertions.assertEquals(expected.getMainPhotoPath(), actual.getMainPhotoPath());

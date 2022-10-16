@@ -5,6 +5,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.adressdetails.AddressDetailsRepository;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.AnnouncementRepository;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.AnnouncementService;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.application.announcement.dto.AnnouncementDTO;
@@ -12,8 +13,8 @@ import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announceme
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.excpetion.ClosedAnnouncementException;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.application.announcement.request.AddNewAnnouncementRequest;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.application.announcement.request.UpdateAnnouncementRequest;
-import pl.polsl.krypczyk.apartmentsforrent.announcementservice.application.announcement.response.GetAnnouncementWithAllDetailsResponse;
-import pl.polsl.krypczyk.apartmentsforrent.announcementservice.application.announcement.response.UpdateAnnouncementResponse;
+import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcementcontent.AnnouncementContentRepository;
+import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcementdetails.AnnouncementDetailsRepository;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -26,11 +27,36 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest("spring.autoconfigure.exclude=org.springframework.boot.autoconfigure.kafka.KafkaAutoConfiguration")
 class AnnouncementServiceImplTest {
 
+    private static final String CITY = "City";
+    private static final BigDecimal CAUTION = BigDecimal.valueOf(10.55);
+    private static final String CONTENT = "Content";
+    private static final String DISTRICT = "District";
+    private static final int LOCAL_NUMBER = 1;
+    private static final String BUILDING_NUMBER = "1A";
+    private static final String STREET = "Street";
+    private static final String TITLE = "Title";
+    private static final List<String> PHOTO_PATHS = List.of("test", "test2");
+    private static final String MAIN_PHOTO_PATH = "path";
+    private static final BigDecimal RENTAL_AMOUNT = BigDecimal.valueOf(10.55);
+    private static final int ROOMS_NUMBER = 1;
+    private static final String ZIP_CODE = "11-111";
+    private static final LocalDate RENTAL_TERM = LocalDate.now();
+    private static final long USER_ID = 1L;
+    private static final long INVALID_ANNOUNCEMENT_ID = 0L;
     @Autowired
     private AnnouncementService announcementService;
 
     @Autowired
     private AnnouncementRepository announcementRepository;
+
+    @Autowired
+    private AnnouncementDetailsRepository announcementDetailsRepository;
+
+    @Autowired
+    private AddressDetailsRepository addressDetailsRepository;
+
+    @Autowired
+    private AnnouncementContentRepository announcementContentRepository;
 
     @BeforeEach
     void deleteDbContent() {
@@ -40,13 +66,13 @@ class AnnouncementServiceImplTest {
     @Test
     void testGetAllActiveAnnouncementsWithEmptyDatabaseShouldReturnExpectedResponse() {
         //GIVEN
-        Collection<AnnouncementDTO> announcementDTOS = new ArrayList<>();
+        Collection<AnnouncementDTO> expected = new ArrayList<>();
 
         //WHEN
-        var expected = this.announcementService.getAllActiveAnnouncements();
+        var actual = this.announcementService.getAllActiveAnnouncements();
 
         //THEN
-        assertEquals(expected, announcementDTOS);
+        assertEquals(expected, actual);
     }
 
     @Test
@@ -56,10 +82,10 @@ class AnnouncementServiceImplTest {
         this.announcementService.addNewAnnouncement(addNewAnnouncementRequest);
 
         //WHEN
-        var expected = this.announcementService.getAllActiveAnnouncements();
+        var actual = this.announcementService.getAllActiveAnnouncements();
 
         //THEN
-        assertFalse(expected.isEmpty());
+        assertFalse(actual.isEmpty());
     }
 
     @Test
@@ -68,30 +94,28 @@ class AnnouncementServiceImplTest {
         var addNewAnnouncementRequest = validAnnouncementRequest();
 
         //WHEN
-        var expected = this.announcementService.addNewAnnouncement(addNewAnnouncementRequest);
-        expected.setCreationDate(null);
-        expected.setRentalTerm(null);
+        this.announcementService.addNewAnnouncement(addNewAnnouncementRequest);
 
         //THEN
         assertFalse(this.announcementRepository.findAll().isEmpty());
+        assertFalse(this.announcementDetailsRepository.findAll().isEmpty());
+        assertFalse(this.announcementContentRepository.findAll().isEmpty());
+        assertFalse(this.addressDetailsRepository.findAll().isEmpty());
+        assertFalse(this.announcementContentRepository.findAll().get(0).getPhotoPaths().isEmpty());
 
     }
 
     @Test
-    void testGetAnnouncementWithAllDetailsWithValidAnnouncementIdShouldReturnExpectedResponse() throws AnnouncementNotFoundException {
+    void testGetAnnouncementWithAllDetailsWithValidAnnouncementIdShouldReturnNotNullResponse() throws AnnouncementNotFoundException {
         //GIVEN
         var addNewAnnouncementRequest = validAnnouncementRequest();
-        var getAnnouncementDetailsResponse = validGetAnnouncementWithAllDetailsResponse();
         var addNewAnnouncementResponse = this.announcementService.addNewAnnouncement(addNewAnnouncementRequest);
 
         //WHEN
-        var response = this.announcementService.getAnnouncementWithAllDetails(addNewAnnouncementResponse.getAnnouncementId());
-        response.setRentalTerm(null);
-        response.setCreationDate(null);
+        var actual = this.announcementService.getAnnouncementWithAllDetails(addNewAnnouncementResponse.getAnnouncementId());
 
         //THEN
-        Assertions.assertNotNull(response);
-        Assertions.assertEquals(response, getAnnouncementDetailsResponse);
+        Assertions.assertNotNull(actual);
     }
 
     @Test
@@ -102,22 +126,22 @@ class AnnouncementServiceImplTest {
 
         //WHEN AND THEN
         Assertions.assertThrows(AnnouncementNotFoundException.class, () ->
-                this.announcementService.getAnnouncementWithAllDetails(0L));
+                this.announcementService.getAnnouncementWithAllDetails(INVALID_ANNOUNCEMENT_ID));
     }
 
     @Test
-    void testUpdateAnnouncementWithValidRequestBodyAndUserIdShouldReturnExpectedResponse() throws AnnouncementNotFoundException, ClosedAnnouncementException {
+    void testUpdateAnnouncementWithValidRequestBodyAndUserIdShouldNotThrowAnnouncementNotFoundAndClosedAnnouncementException() throws AnnouncementNotFoundException, ClosedAnnouncementException {
         //GIVEN
         var updateAnnouncementRequest = validUpdateAnnouncementRequest();
         var addNewAnnouncementRequest = validAnnouncementRequest();
         var addAnnouncementResponse = this.announcementService.addNewAnnouncement(addNewAnnouncementRequest);
-        var updateAnnouncementResponse = validUpdateAnnouncementResponse();
 
         //WHEN
-        var expected = this.announcementService.updateAnnouncement(updateAnnouncementRequest, addAnnouncementResponse.getAnnouncementId());
+        this.announcementService.updateAnnouncement(updateAnnouncementRequest, addAnnouncementResponse.getAnnouncementId());
 
         //THEN
-        Assertions.assertEquals(expected, updateAnnouncementResponse);
+        Assertions.assertDoesNotThrow(AnnouncementNotFoundException::new);
+        Assertions.assertDoesNotThrow(ClosedAnnouncementException::new);
     }
 
     @Test
@@ -126,9 +150,10 @@ class AnnouncementServiceImplTest {
         var updateAnnouncementRequest = validUpdateAnnouncementRequest();
         var addNewAnnouncementRequest = validAnnouncementRequest();
         var addNewAnnouncementResponse = this.announcementService.addNewAnnouncement(addNewAnnouncementRequest);
-        this.announcementService.closeAnnouncement(addNewAnnouncementResponse.getAnnouncementId(), 1L);
+        this.announcementService.closeAnnouncement(addNewAnnouncementResponse.getAnnouncementId(), USER_ID);
 
-        //WHEN AND THEN
+        //WHEN
+        //THEN
         Assertions.assertThrows(ClosedAnnouncementException.class, () ->
                 this.announcementService.updateAnnouncement(updateAnnouncementRequest, addNewAnnouncementResponse.getAnnouncementId()));
     }
@@ -145,6 +170,19 @@ class AnnouncementServiceImplTest {
 
         //THEN
         Assertions.assertDoesNotThrow(AnnouncementNotFoundException::new);
+    }
+
+    @Test
+    void testCloseAnnouncementWithInvalidAnnouncementIdShouldThrowAnnouncementNotFoundException() {
+        //GIVEN
+        validUpdateAnnouncementRequest();
+        var addNewAnnouncementRequest = validAnnouncementRequest();
+        var addNewAnnouncementResponse = this.announcementService.addNewAnnouncement(addNewAnnouncementRequest);
+
+        //WHEN
+        //THEN
+        Assertions.assertThrows(AnnouncementNotFoundException.class, () ->
+                this.announcementService.closeAnnouncement(INVALID_ANNOUNCEMENT_ID, addNewAnnouncementResponse.getUserId()));
     }
 
     @Test
@@ -175,84 +213,40 @@ class AnnouncementServiceImplTest {
 
     private AddNewAnnouncementRequest validAnnouncementRequest() {
         return AddNewAnnouncementRequest.builder()
-                .city("City")
-                .caution(BigDecimal.valueOf(10.55))
-                .content("Content")
-                .district("District")
-                .localNumber(1)
-                .buildingNumber("1A")
-                .street("Street")
-                .title("Title")
-                .photoPaths(List.of("test", "test2"))
-                .mainPhotoPath("path")
-                .rentalAmount(BigDecimal.valueOf(10.55))
-                .roomsNumber(1)
-                .zipCode("11-111")
-                .rentalTerm(LocalDate.now())
-                .userId(1L)
-                .build();
-    }
-
-    private GetAnnouncementWithAllDetailsResponse validGetAnnouncementWithAllDetailsResponse() {
-        return GetAnnouncementWithAllDetailsResponse
-                .builder()
-                .city("City")
-                .caution(BigDecimal.valueOf(10.55))
-                .content("Content")
-                .district("District")
-                .localNumber(1)
-                .buildingNumber("1A")
-                .street("Street")
-                .title("Title")
-                .photoPaths(List.of("test", "test2"))
-                .mainPhotoPath("path")
-                .rentalAmount(BigDecimal.valueOf(10.55))
-                .roomsNumber(1)
-                .zipCode("11-111")
-                .rentalTerm(null)
-                .userId(1L)
-                .creationDate(null)
-                .isClosed(false)
+                .city(CITY)
+                .caution(CAUTION)
+                .content(CONTENT)
+                .district(DISTRICT)
+                .localNumber(LOCAL_NUMBER)
+                .buildingNumber(BUILDING_NUMBER)
+                .street(STREET)
+                .title(TITLE)
+                .photoPaths(PHOTO_PATHS)
+                .mainPhotoPath(MAIN_PHOTO_PATH)
+                .rentalAmount(RENTAL_AMOUNT)
+                .roomsNumber(ROOMS_NUMBER)
+                .zipCode(ZIP_CODE)
+                .rentalTerm(RENTAL_TERM)
+                .userId(USER_ID)
                 .build();
     }
 
     private UpdateAnnouncementRequest validUpdateAnnouncementRequest() {
         return UpdateAnnouncementRequest
                 .builder()
-                .city("City")
-                .caution(BigDecimal.valueOf(10.55))
-                .content("Content")
-                .district("District")
-                .localNumber(1)
-                .buildingNumber("1A")
-                .street("Street")
-                .title("Title")
-                .photoPaths(List.of("test", "test2"))
-                .mainPhotoPath("path")
-                .rentalAmount(BigDecimal.valueOf(10.55))
-                .roomsNumber(1)
-                .zipCode("11-111")
-                .rentalTerm(null)
-                .build();
-    }
-
-    private UpdateAnnouncementResponse validUpdateAnnouncementResponse() {
-        return UpdateAnnouncementResponse
-                .builder()
-                .city("City")
-                .caution(BigDecimal.valueOf(10.55))
-                .content("Content")
-                .district("District")
-                .localNumber(1)
-                .buildingNumber("1A")
-                .street("Street")
-                .title("Title")
-                .photoPaths(List.of("test", "test2"))
-                .mainPhotoPath("path")
-                .rentalAmount(BigDecimal.valueOf(10.55))
-                .roomsNumber(1)
-                .zipCode("11-111")
-                .rentalTerm(null)
+                .city(CITY)
+                .caution(CAUTION)
+                .content(CONTENT)
+                .district(DISTRICT)
+                .localNumber(LOCAL_NUMBER)
+                .buildingNumber(BUILDING_NUMBER)
+                .street(STREET)
+                .title(TITLE)
+                .photoPaths(PHOTO_PATHS)
+                .mainPhotoPath(MAIN_PHOTO_PATH)
+                .rentalAmount(RENTAL_AMOUNT)
+                .roomsNumber(ROOMS_NUMBER)
+                .zipCode(ZIP_CODE)
                 .build();
     }
 
