@@ -5,16 +5,21 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.application.user.request.CreateUserRequest;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.application.security.userdetails.request.ChangeUserDetailsRequest;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.admin.AdminService;
+import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.role.RoleRepository;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.user.UserRepository;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.user.UserService;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.user.exception.InvalidUserDetailsException;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.user.exception.UserAlreadyExistsException;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.user.exception.UserNotFoundException;
+import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.userauthorization.UserAuthorizationRepository;
+import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.userdetails.UserDetailsRepository;
 
 @SpringBootTest("spring.autoconfigure.exclude=org.springframework.boot.autoconfigure.kafka.KafkaAutoConfiguration")
+@Transactional
 class AdminServiceImplTest {
 
     private static final String SURNAME = "surname";
@@ -32,6 +37,15 @@ class AdminServiceImplTest {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private UserDetailsRepository userDetailsRepository;
+
+    @Autowired
+    private UserAuthorizationRepository userAuthorizationRepository;
+
+    @Autowired
+    private RoleRepository roleRepository;
 
     @AfterEach
     void deleteDbContent() {
@@ -76,7 +90,10 @@ class AdminServiceImplTest {
 
         //THEN
         Assertions.assertDoesNotThrow(UserNotFoundException::new);
-        Assertions.assertTrue(this.userRepository.findAll().isEmpty());
+        Assertions.assertEquals(this.userRepository.findAll().size(), 1);
+        Assertions.assertEquals(this.userAuthorizationRepository.findAll().size(), 1);
+        Assertions.assertEquals(this.userDetailsRepository.findAll().size(), 1);
+        Assertions.assertEquals(this.roleRepository.findAll().size(), 2);
     }
 
     @Test
@@ -89,7 +106,7 @@ class AdminServiceImplTest {
     }
 
     @Test
-    void testChangeUserDetailsWithValidUserIdShouldNotThrowUserNotFoundOrInvalidUserDetailsExeption() throws UserAlreadyExistsException, UserNotFoundException, InvalidUserDetailsException {
+    void testChangeUserDetailsWithValidUserIdShouldNotThrowUserNotFoundOrInvalidUserDetailsException() throws UserAlreadyExistsException, UserNotFoundException, InvalidUserDetailsException {
         //GIVEN
         var user = this.createValidUser();
         var createUserResponse = this.userService.createUser(user);
