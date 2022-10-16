@@ -1,26 +1,20 @@
 package pl.polsl.krypczyk.apartmentsforrent.messageservice.infrastructure;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import pl.polsl.krypczyk.apartmentsforrent.messageservice.application.message.request.AddNewMessageRequest;
 import pl.polsl.krypczyk.apartmentsforrent.messageservice.domain.EntityFactory;
 import pl.polsl.krypczyk.apartmentsforrent.messageservice.domain.attachment.AttachmentEntity;
-import pl.polsl.krypczyk.apartmentsforrent.messageservice.domain.attachment.AttachmentRepository;
 import pl.polsl.krypczyk.apartmentsforrent.messageservice.domain.message.MessageEntity;
-import pl.polsl.krypczyk.apartmentsforrent.messageservice.domain.message.MessageRepository;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 @Component
-@RequiredArgsConstructor
+@Transactional
 public class EntityFactoryImpl implements EntityFactory {
-
-    private final MessageRepository messageRepository;
-
-    private final AttachmentRepository attachmentRepository;
 
     @Override
     public MessageEntity createMessageEntity(AddNewMessageRequest addNewMessageRequest) {
@@ -35,14 +29,13 @@ public class EntityFactoryImpl implements EntityFactory {
         addNewMessageRequest.getAttachments().forEach(f -> attachments.add(this.createAttachmentEntity(f)));
         message.setAttachments(attachments);
 
-        return this.messageRepository.save(message);
+        return message;
     }
 
     private AttachmentEntity createAttachmentEntity(MultipartFile file) {
         var attachment = new AttachmentEntity();
         try {
             attachment.setAttachment(file.getBytes());
-            this.attachmentRepository.save(attachment);
         } catch (IOException e) {
             System.out.println("Attachment could not been saved in database");
         }
