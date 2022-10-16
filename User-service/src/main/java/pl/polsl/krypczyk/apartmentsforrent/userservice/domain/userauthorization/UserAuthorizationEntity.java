@@ -32,6 +32,6 @@ public class UserAuthorizationEntity {
     @Column(name = "TOKEN")
     private UUID token;
 
-    @OneToMany(fetch = FetchType.EAGER)
+    @OneToMany(fetch = FetchType.EAGER, orphanRemoval = true)
     private Collection<RoleEntity> roles = new ArrayList<>();
 }
