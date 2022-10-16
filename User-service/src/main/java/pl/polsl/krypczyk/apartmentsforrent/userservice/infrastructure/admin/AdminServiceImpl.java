@@ -3,6 +3,7 @@ package pl.polsl.krypczyk.apartmentsforrent.userservice.infrastructure.admin;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.infrastructure.security.config.AES;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.application.security.userdetails.request.ChangeUserDetailsRequest;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.application.security.userdetails.response.ChangeUserDetailsResponse;
@@ -24,6 +25,7 @@ import java.util.concurrent.CompletableFuture;
 @Service
 @RequiredArgsConstructor
 @Slf4j
+@Transactional
 public class AdminServiceImpl implements AdminService {
 
     private final KafkaMessageProducer kafkaMessageProducer;
