@@ -17,11 +17,14 @@ import pl.polsl.krypczyk.apartmentsforrent.userservice.application.user.request.
 @SpringBootTest("spring.autoconfigure.exclude=org.springframework.boot.autoconfigure.kafka.KafkaAutoConfiguration")
 class AuthorizationServiceImplTest {
 
-    private static final String VALID_USER_SURNAME = "surname";
-    private static final String VALID_USER_PASSWORD = "password";
-    private static final String VALID_USER_NAME = "name";
-    private static final String VALID_USER_EMAIL = "user@user.com";
-    private static final boolean VALID_USER_IS_ACTIVE = true;
+    private static final String SURNAME = "surname";
+    private static final String PASSWORD = "password";
+    private static final String NAME = "name";
+    private static final String EMAIL = "user@user.com";
+    private static final boolean IS_ACTIVE = true;
+    private static final String INVALID_EMAIL = "wrong@mail.com";
+    private static final String INVALID_PASSWORD = "wrongpassword";
+    public static final long INVALID_USER_ID = 0L;
 
     @Autowired
     private UserService userService;
@@ -44,9 +47,7 @@ class AuthorizationServiceImplTest {
         this.userService.createUser(createUserRequest);
 
         //WHEN
-        UserLoginRequest userLoginRequest = new UserLoginRequest();
-        userLoginRequest.setEmail(VALID_USER_EMAIL);
-        userLoginRequest.setPassword(VALID_USER_PASSWORD);
+        UserLoginRequest userLoginRequest = validLoginRequest(EMAIL, PASSWORD);
         this.authorizationService.loginUser(userLoginRequest);
 
         //THEN
@@ -60,9 +61,7 @@ class AuthorizationServiceImplTest {
         this.userService.createUser(createUserRequest);
 
         //WHEN
-        UserLoginRequest userLoginRequest = new UserLoginRequest();
-        userLoginRequest.setEmail("wrong@mail.com");
-        userLoginRequest.setPassword("wrongpassword");
+        UserLoginRequest userLoginRequest = validLoginRequest(INVALID_EMAIL, INVALID_PASSWORD);
 
         //THEN
         Assertions.assertThrows(UserNotFoundException.class, () ->
@@ -74,10 +73,10 @@ class AuthorizationServiceImplTest {
         //GIVEN
         var createUserRequest = this.createValidUser();
         var createUserResponse = this.userService.createUser(createUserRequest);
-        var id = createUserResponse.getId();
+        var userId = createUserResponse.getId();
 
         //WHEN
-        this.authorizationService.logoutUser(id);
+        this.authorizationService.logoutUser(userId);
 
         //THEN
         Assertions.assertDoesNotThrow(UserNotFoundException::new);
@@ -91,17 +90,24 @@ class AuthorizationServiceImplTest {
 
         // WHEN AND THEN
         Assertions.assertThrows(UserNotFoundException.class, () ->
-                this.authorizationService.logoutUser(0L));
+                this.authorizationService.logoutUser(INVALID_USER_ID));
     }
 
     private CreateUserRequest createValidUser() {
         return pl.polsl.krypczyk.apartmentsforrent.userservice.application.user.request.CreateUserRequest.builder()
-                .surname(VALID_USER_SURNAME)
-                .password(VALID_USER_PASSWORD)
-                .name(VALID_USER_NAME)
-                .email(VALID_USER_EMAIL)
-                .isActive(VALID_USER_IS_ACTIVE)
+                .surname(SURNAME)
+                .password(PASSWORD)
+                .name(NAME)
+                .email(EMAIL)
+                .isActive(IS_ACTIVE)
                 .build();
+    }
+
+    private UserLoginRequest validLoginRequest(String email, String password) {
+        UserLoginRequest userLoginRequest = new UserLoginRequest();
+        userLoginRequest.setEmail(email);
+        userLoginRequest.setPassword(password);
+        return userLoginRequest;
     }
 }
 
