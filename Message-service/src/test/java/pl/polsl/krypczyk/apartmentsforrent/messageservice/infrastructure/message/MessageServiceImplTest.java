@@ -14,6 +14,7 @@ import pl.polsl.krypczyk.apartmentsforrent.messageservice.domain.message.Message
 import java.util.List;
 
 @SpringBootTest
+@Transactional
 class MessageServiceImplTest {
 
     private static final Long SENDER_ID = 1L;
@@ -32,7 +33,6 @@ class MessageServiceImplTest {
     }
 
     @Test
-    @Transactional
     void testAddNewMessageWithValidMessageDataShouldReturnNotEmptyMessageFromRepository() {
         //GIVEN
         var addNewMessageRequest = this.addNewMessageRequest();
@@ -45,7 +45,6 @@ class MessageServiceImplTest {
     }
 
     @Test
-    @Transactional
     void testGetConversationWithNotEmptyConversationShouldReturnNotEmptyConversation() {
         //GIVEN
         var addNewMessageRequest = this.addNewMessageRequest();
@@ -59,7 +58,6 @@ class MessageServiceImplTest {
     }
 
     @Test
-    @Transactional
     void testGetConversationWithEmptyConversationShouldReturnEmptyConversation() {
         //GIVEN
         //WHEN

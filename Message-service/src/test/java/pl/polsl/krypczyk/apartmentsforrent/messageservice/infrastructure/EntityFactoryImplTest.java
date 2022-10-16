@@ -43,7 +43,17 @@ class EntityFactoryImplTest {
         Assertions.assertEquals(expected.getAttachments(), actual.getAttachments());
     }
 
-    private MessageEntity validMessageEntity(){
+    @Test
+    void testCreateAttachmentEntityWithInvalidAddAttachmentShouldAddEmptyAttachment() {
+        //GIVEN
+        //WHEN
+        var underTest = this.entityFactory.createAttachmentEntity(null);
+
+        //THEN
+        Assertions.assertEquals(underTest.getAttachment(), new AttachmentEntity().getAttachment());
+    }
+
+    private MessageEntity validMessageEntity() {
         var message = new MessageEntity();
         message.setMessage(MESSAGE);
         message.setSenderId(SENDER_ID);
@@ -53,7 +63,7 @@ class EntityFactoryImplTest {
         return message;
     }
 
-    private AddNewMessageRequest validAddNewMessageRequest(){
+    private AddNewMessageRequest validAddNewMessageRequest() {
         return AddNewMessageRequest
                 .builder()
                 .message(MESSAGE)
