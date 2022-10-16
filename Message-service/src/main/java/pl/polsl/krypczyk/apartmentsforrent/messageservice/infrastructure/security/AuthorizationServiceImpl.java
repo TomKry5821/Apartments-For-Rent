@@ -32,7 +32,7 @@ public class AuthorizationServiceImpl implements AuthorizationService {
         log.info("Successfully authorized user with provided id - " + userId);
     }
 
-    @Override
+    /*@Override
     public void authorizeAdmin() throws UnauthorizedUserException {
         var request = getRequest();
         var roles = this.getUserRolesFromRequest(request);
@@ -43,7 +43,7 @@ public class AuthorizationServiceImpl implements AuthorizationService {
             throw new UnauthorizedUserException();
 
         log.info("Successfully authorized admin");
-    }
+    }*/
 
     private HttpServletRequest getRequest() {
         return ((ServletRequestAttributes) Objects.requireNonNull(RequestContextHolder.getRequestAttributes()))
