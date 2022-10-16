@@ -38,19 +38,6 @@ class AuthorizationServiceImplTest {
     }
 
     @Test
-    void testRegisterAlreadyExistingUserShouldThrowUserAlreadyExistsException() throws UserAlreadyExistsException {
-        //GIVEN
-        var createUserRequest = createValidUser();
-
-        //WHEN
-        this.userService.createUser(createUserRequest);
-
-        //THEN
-        Assertions.assertThrows(UserAlreadyExistsException.class, () ->
-                this.userService.createUser(createUserRequest));
-    }
-
-    @Test
     void testLoginUserWithValidCredentialsShouldNotThrowUserNotFoundException() throws UserNotFoundException, UserAlreadyExistsException {
         //GIVEN
         var createUserRequest = createValidUser();
