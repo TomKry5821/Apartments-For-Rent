@@ -22,6 +22,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Slf4j
+@Transactional
 public class MessageServiceImpl implements MessageService {
 
     private final ResponseFactory responseFactory;
@@ -35,13 +36,13 @@ public class MessageServiceImpl implements MessageService {
         log.info("Started adding message - " + addNewMessageRequest);
 
         var message = this.entityFactory.createMessageEntity(addNewMessageRequest);
+        this.messageRepository.save(message);
 
         log.info("Successfully added message - " + message);
         return this.responseFactory.createAddNewMessageResponse(addNewMessageRequest, message.getId());
     }
 
     @Override
-    @Transactional
     public Collection<MessageDTO> getConversation(Long senderId, Long receiverId) {
         log.info("Started retrieving conversation for sender with id " + senderId + " and receiver with id " + receiverId);
 

@@ -8,7 +8,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.transaction.annotation.Transactional;
 import pl.polsl.krypczyk.apartmentsforrent.messageservice.application.message.request.AddNewMessageRequest;
-import pl.polsl.krypczyk.apartmentsforrent.messageservice.application.message.response.AddNewMessageResponse;
 import pl.polsl.krypczyk.apartmentsforrent.messageservice.domain.message.MessageRepository;
 import pl.polsl.krypczyk.apartmentsforrent.messageservice.domain.message.MessageService;
 
@@ -16,6 +15,10 @@ import java.util.List;
 
 @SpringBootTest
 class MessageServiceImplTest {
+
+    private static final Long SENDER_ID = 1L;
+    private static final Long RECEIVER_ID = 1L;
+    private static final String CONTENT = "Content";
 
     @Autowired
     MessageService messageService;
@@ -29,18 +32,16 @@ class MessageServiceImplTest {
     }
 
     @Test
-    void testAddNewMessageWithValidMessageDataShouldReturnExpectedMessage() {
+    @Transactional
+    void testAddNewMessageWithValidMessageDataShouldReturnNotEmptyMessageFromRepository() {
         //GIVEN
         var addNewMessageRequest = this.addNewMessageRequest();
-        var expected = this.addNewMessageResponse();
 
         //WHEN
-        var actual = this.messageService.addNewMessage(addNewMessageRequest);
-        expected.setId(2L);
+        this.messageService.addNewMessage(addNewMessageRequest);
 
         //THEN
-        Assertions.assertEquals(expected, actual);
-
+        Assertions.assertFalse(this.messageRepository.findAll().isEmpty());
     }
 
     @Test
@@ -51,7 +52,7 @@ class MessageServiceImplTest {
         this.messageService.addNewMessage(addNewMessageRequest);
 
         //WHEN
-        this.messageService.getConversation(1L, 1L);
+        this.messageService.getConversation(SENDER_ID, RECEIVER_ID);
 
         //THEN
         Assertions.assertFalse(this.messageRepository.findAll().isEmpty());
@@ -61,9 +62,8 @@ class MessageServiceImplTest {
     @Transactional
     void testGetConversationWithEmptyConversationShouldReturnEmptyConversation() {
         //GIVEN
-
         //WHEN
-        this.messageService.getConversation(1L, 1L);
+        this.messageService.getConversation(SENDER_ID, RECEIVER_ID);
 
         //THEN
         Assertions.assertTrue(this.messageRepository.findAll().isEmpty());
@@ -72,21 +72,10 @@ class MessageServiceImplTest {
     private AddNewMessageRequest addNewMessageRequest() {
         return AddNewMessageRequest
                 .builder()
-                .receiverId(1L)
-                .senderId(1L)
-                .message("Test content")
+                .receiverId(RECEIVER_ID)
+                .senderId(SENDER_ID)
+                .message(CONTENT)
                 .attachments(List.of(new MockMultipartFile("test-file", "test content".getBytes())))
-                .build();
-    }
-
-    private AddNewMessageResponse addNewMessageResponse() {
-        return AddNewMessageResponse
-                .builder()
-                .id(1L)
-                .message("Test content")
-                .attachmentsCount(1)
-                .senderId(1L)
-                .receiverId(1L)
                 .build();
     }
 
