@@ -6,10 +6,14 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.admin.AdminService;
+import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.adressdetails.AddressDetailsRepository;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.AnnouncementRepository;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.AnnouncementService;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.excpetion.AnnouncementNotFoundException;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.application.announcement.request.AddNewAnnouncementRequest;
+import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcementcontent.AnnouncementContentRepository;
+import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcementdetails.AnnouncementDetailsRepository;
+import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.photopath.PhotoPathRepository;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -44,6 +48,18 @@ class AdminServiceImplTest {
     @Autowired
     private AnnouncementRepository announcementRepository;
 
+    @Autowired
+    private AnnouncementContentRepository announcementContentRepository;
+
+    @Autowired
+    private AnnouncementDetailsRepository announcementDetailsRepository;
+
+    @Autowired
+    private AddressDetailsRepository addressDetailsRepository;
+
+    @Autowired
+    private PhotoPathRepository photoPathRepository;
+
     @BeforeEach
     void deleteDbContent() {
         this.announcementRepository.deleteAll();
@@ -61,6 +77,10 @@ class AdminServiceImplTest {
         //THEN
         Assertions.assertDoesNotThrow(AnnouncementNotFoundException::new);
         Assertions.assertTrue(this.announcementRepository.findAll().isEmpty());
+        Assertions.assertTrue(this.announcementContentRepository.findAll().isEmpty());
+        Assertions.assertTrue(this.announcementDetailsRepository.findAll().isEmpty());
+        Assertions.assertTrue(this.addressDetailsRepository.findAll().isEmpty());
+        Assertions.assertTrue(this.photoPathRepository.findAll().isEmpty());
     }
 
     @Test
