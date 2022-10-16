@@ -44,6 +44,7 @@ public class ObservedAnnouncementServiceImpl implements ObservedAnnouncementServ
 
 
         var observedAnnouncement = this.entityFactory.createObservedAnnouncementEntity(announcement, userId);
+        this.observedAnnouncementRepository.save(observedAnnouncement);
 
         log.info("Successfully observed announcement with id - " + announcementId + " by user with id - " + userId);
         return this.responseFactory.createObserveAnnouncementResponse(observedAnnouncement.getObservingUserId(), announcementId);
