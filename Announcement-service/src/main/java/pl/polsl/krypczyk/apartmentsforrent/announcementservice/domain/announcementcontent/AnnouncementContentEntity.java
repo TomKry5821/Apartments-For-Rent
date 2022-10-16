@@ -30,7 +30,7 @@ public class AnnouncementContentEntity {
     @Column(name = "CONTENT", nullable = false)
     private String content;
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private Collection<PhotoPathEntity> photoPaths;
 
 }
