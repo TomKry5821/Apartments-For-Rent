@@ -9,10 +9,13 @@ import pl.polsl.krypczyk.apartmentsforrent.messageservice.application.message.re
 import pl.polsl.krypczyk.apartmentsforrent.messageservice.application.message.response.MessageDTO;
 import pl.polsl.krypczyk.apartmentsforrent.messageservice.domain.EntityFactory;
 import pl.polsl.krypczyk.apartmentsforrent.messageservice.domain.ResponseFactory;
+import pl.polsl.krypczyk.apartmentsforrent.messageservice.domain.attachment.AttachmentEntity;
+import pl.polsl.krypczyk.apartmentsforrent.messageservice.domain.attachment.AttachmentRepository;
 import pl.polsl.krypczyk.apartmentsforrent.messageservice.domain.message.MessageEntity;
 import pl.polsl.krypczyk.apartmentsforrent.messageservice.domain.message.MessageRepository;
 import pl.polsl.krypczyk.apartmentsforrent.messageservice.domain.message.MessageService;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
@@ -27,6 +30,8 @@ public class MessageServiceImpl implements MessageService {
 
     private final ResponseFactory responseFactory;
 
+    private final AttachmentRepository attachmentRepository;
+
     private final EntityFactory entityFactory;
 
     private final MessageRepository messageRepository;
@@ -35,7 +40,11 @@ public class MessageServiceImpl implements MessageService {
     public AddNewMessageResponse addNewMessage(AddNewMessageRequest addNewMessageRequest) {
         log.info("Started adding message - " + addNewMessageRequest);
 
-        var message = this.entityFactory.createMessageEntity(addNewMessageRequest);
+        var attachments = new ArrayList<AttachmentEntity>();
+        addNewMessageRequest.getAttachments().forEach(f ->
+               attachments.add(this.attachmentRepository.save(this.entityFactory.createAttachmentEntity(f))));
+
+        var message = this.entityFactory.createMessageEntity(addNewMessageRequest, attachments);
         this.messageRepository.save(message);
 
         log.info("Successfully added message - " + message);
@@ -52,7 +61,7 @@ public class MessageServiceImpl implements MessageService {
         return this.responseFactory.createGetConversationResponse(conversation);
     }
 
-    List<MessageEntity> retrieveAndSortMessages(Long senderId, Long receiverId){
+    List<MessageEntity> retrieveAndSortMessages(Long senderId, Long receiverId) {
         var conversation = this.messageRepository.getMessageEntitiesBySenderIdAndReceiverId(senderId, receiverId);
         conversation.addAll(this.messageRepository.getMessageEntitiesBySenderIdAndReceiverId(receiverId, senderId));
 
