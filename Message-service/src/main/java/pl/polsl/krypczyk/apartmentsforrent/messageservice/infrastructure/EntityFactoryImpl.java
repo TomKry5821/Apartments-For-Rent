@@ -8,7 +8,6 @@ import pl.polsl.krypczyk.apartmentsforrent.messageservice.domain.EntityFactory;
 import pl.polsl.krypczyk.apartmentsforrent.messageservice.domain.attachment.AttachmentEntity;
 import pl.polsl.krypczyk.apartmentsforrent.messageservice.domain.message.MessageEntity;
 
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
@@ -36,7 +35,7 @@ public class EntityFactoryImpl implements EntityFactory {
         var attachment = new AttachmentEntity();
         try {
             attachment.setAttachment(file.getBytes());
-        } catch (IOException e) {
+        } catch (Exception e) {
             System.out.println("Attachment could not been saved in database");
         }
         return attachment;
