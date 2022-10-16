@@ -31,7 +31,9 @@ public class EntityFactoryImpl implements EntityFactory {
         return message;
     }
 
-    private AttachmentEntity createAttachmentEntity(MultipartFile file) {
+
+    @Override
+    public AttachmentEntity createAttachmentEntity(MultipartFile file) {
         var attachment = new AttachmentEntity();
         try {
             attachment.setAttachment(file.getBytes());
