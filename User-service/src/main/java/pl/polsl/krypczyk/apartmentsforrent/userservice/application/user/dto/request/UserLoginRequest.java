@@ -1,4 +1,4 @@
-package pl.polsl.krypczyk.apartmentsforrent.userservice.application.user.request;
+package pl.polsl.krypczyk.apartmentsforrent.userservice.application.user.dto.request;
 
 import lombok.Data;
 

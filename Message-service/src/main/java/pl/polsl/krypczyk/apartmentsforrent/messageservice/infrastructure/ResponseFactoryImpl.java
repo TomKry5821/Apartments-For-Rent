@@ -2,9 +2,9 @@ package pl.polsl.krypczyk.apartmentsforrent.messageservice.infrastructure;
 
 import org.mapstruct.factory.Mappers;
 import org.springframework.stereotype.Component;
-import pl.polsl.krypczyk.apartmentsforrent.messageservice.application.message.request.AddNewMessageRequest;
-import pl.polsl.krypczyk.apartmentsforrent.messageservice.application.message.response.AddNewMessageResponse;
-import pl.polsl.krypczyk.apartmentsforrent.messageservice.application.message.response.MessageDTO;
+import pl.polsl.krypczyk.apartmentsforrent.messageservice.application.message.dto.request.AddNewMessageRequest;
+import pl.polsl.krypczyk.apartmentsforrent.messageservice.application.message.dto.response.AddNewMessageResponse;
+import pl.polsl.krypczyk.apartmentsforrent.messageservice.application.message.dto.response.MessageDTO;
 import pl.polsl.krypczyk.apartmentsforrent.messageservice.domain.ResponseFactory;
 import pl.polsl.krypczyk.apartmentsforrent.messageservice.domain.message.MessageEntity;
 import pl.polsl.krypczyk.apartmentsforrent.messageservice.domain.message.MessageMapper;

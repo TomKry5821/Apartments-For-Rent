@@ -1,4 +1,4 @@
-package pl.polsl.krypczyk.apartmentsforrent.messageservice.application.message.request;
+package pl.polsl.krypczyk.apartmentsforrent.messageservice.application.message.dto.request;
 
 import lombok.Builder;
 import lombok.Data;
