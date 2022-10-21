@@ -3,6 +3,7 @@ package pl.polsl.krypczyk.apartmentsforrent.messageservice.domain.message;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import pl.polsl.krypczyk.apartmentsforrent.messageservice.domain.attachment.AttachmentEntity;
 
 
@@ -19,6 +20,7 @@ import java.util.Collection;
 
 @Getter
 @Setter
+@ToString
 @Entity
 @Table(name = "MESSAGE")
 public class MessageEntity {
@@ -41,6 +43,7 @@ public class MessageEntity {
     private String message;
 
     @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true)
+    @ToString.Exclude
     private Collection<AttachmentEntity> attachments;
 
 

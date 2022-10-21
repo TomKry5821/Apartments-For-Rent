@@ -20,5 +20,6 @@ public class MessageDTO {
 
     private LocalDateTime sendDate;
 
+    @ToString.Exclude
     private Collection<byte[]> attachments;
 }

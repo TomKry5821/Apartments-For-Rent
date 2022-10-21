@@ -2,9 +2,11 @@ package pl.polsl.krypczyk.apartmentsforrent.messageservice.application.message.d
 
 import lombok.Builder;
 import lombok.Data;
+import lombok.ToString;
 
 @Data
 @Builder
+@ToString
 public class AddNewMessageResponse {
 
     private Long id;
