@@ -1,6 +1,7 @@
 package pl.polsl.krypczyk.apartmentsforrent.announcementservice.infrastructure;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.mapstruct.factory.Mappers;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,6 +21,7 @@ import java.util.ArrayList;
 @Component
 @Transactional
 @RequiredArgsConstructor
+@Slf4j
 public class EntityFactoryImpl implements EntityFactory {
 
     private final AnnouncementMapper announcementMapper = Mappers.getMapper(AnnouncementMapper.class);
@@ -32,6 +34,7 @@ public class EntityFactoryImpl implements EntityFactory {
         announcement.setCreationDate(LocalDate.now());
         announcement.setIsClosed(false);
 
+        log.trace("Created announcement entity - " + announcement);
         return announcement;
     }
 
@@ -43,6 +46,7 @@ public class EntityFactoryImpl implements EntityFactory {
         announcementDetails.setAnnouncementContent(announcementContent);
         announcementDetails.setAddressDetailsEntity(addressDetails);
 
+        log.trace("Created announcement details entity - " + announcementDetails);
         return announcementDetails;
     }
 
@@ -57,12 +61,16 @@ public class EntityFactoryImpl implements EntityFactory {
         });
         announcementContent.setPhotoPaths(photoPaths);
 
+        log.trace("Created announcement content entity - " + announcementContent);
         return announcementContent;
     }
 
     @Override
     public AddressDetailsEntity createAddressDetailsEntity(AddNewAnnouncementRequest addNewAnnouncementRequest) {
-        return this.announcementMapper.addAnnouncementRequestDtoToAddressDetailsEntity(addNewAnnouncementRequest);
+        var addressDetails = this.announcementMapper.addAnnouncementRequestDtoToAddressDetailsEntity(addNewAnnouncementRequest);
+
+        log.trace("Created address details entity - " + addressDetails);
+        return addressDetails;
     }
 
     @Override
@@ -70,6 +78,8 @@ public class EntityFactoryImpl implements EntityFactory {
         var observedAnnouncement = new ObservedAnnouncementEntity();
         observedAnnouncement.setObservingUserId(userId);
         observedAnnouncement.setAnnouncementEntity(announcement);
+
+        log.trace("Created observed announcement entity - " + observedAnnouncement);
         return observedAnnouncement;
     }
 }
