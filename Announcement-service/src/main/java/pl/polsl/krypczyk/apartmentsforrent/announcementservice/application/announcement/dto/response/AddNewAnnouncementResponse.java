@@ -3,6 +3,7 @@ package pl.polsl.krypczyk.apartmentsforrent.announcementservice.application.anno
 
 import lombok.Builder;
 import lombok.Data;
+import lombok.ToString;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -10,6 +11,7 @@ import java.util.Collection;
 
 @Data
 @Builder
+@ToString
 public class AddNewAnnouncementResponse {
 
     private Long announcementId;

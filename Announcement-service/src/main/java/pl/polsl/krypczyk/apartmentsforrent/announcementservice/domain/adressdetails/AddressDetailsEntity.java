@@ -3,6 +3,7 @@ package pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.adressdet
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
@@ -14,6 +15,7 @@ import javax.persistence.Column;
 @Getter
 @Setter
 @RequiredArgsConstructor
+@ToString
 @Entity
 @Table(name = "ADDRESS_DETAILS")
 public class AddressDetailsEntity {

@@ -2,6 +2,7 @@ package pl.polsl.krypczyk.apartmentsforrent.announcementservice.application.anno
 
 import lombok.Builder;
 import lombok.Data;
+import lombok.ToString;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.application.announcementdetails.dto.AnnouncementDetailsDTO;
 
 import java.time.LocalDate;
@@ -9,6 +10,7 @@ import java.time.LocalDate;
 
 @Data
 @Builder
+@ToString
 public class AnnouncementDTO {
 
     private Long userId;
