@@ -1,6 +1,7 @@
 package pl.polsl.krypczyk.apartmentsforrent.userservice.infrastructure;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.mapstruct.factory.Mappers;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,13 +21,17 @@ import java.util.UUID;
 @Component
 @RequiredArgsConstructor
 @Transactional
+@Slf4j
 public class EntityFactoryImpl implements EntityFactory {
     private final UserMapper userMapper = Mappers.getMapper(UserMapper.class);
 
 
     @Override
     public RoleEntity createUserRoleEntity() {
-        return new RoleEntity("ROLE_USER");
+        var role = new RoleEntity("ROLE_USER");
+
+        log.trace("Created user role entity - " + role);
+        return role;
     }
 
     @Override
@@ -34,6 +39,8 @@ public class EntityFactoryImpl implements EntityFactory {
         var userAuthorization = new UserAuthorizationEntity();
         userAuthorization.setToken(UUID.randomUUID());
         userAuthorization.setRoles(List.of(roleEntity));
+
+        log.trace("Created user authorization entity - " + userAuthorization);
         return userAuthorization;
     }
 
@@ -42,6 +49,8 @@ public class EntityFactoryImpl implements EntityFactory {
         var userDetails = this.userMapper.userDetailsDTOToUserDetailsEntity(createUserRequest);
         userDetails.setCreationDate(LocalDateTime.now());
         userDetails.setPassword(AES.encrypt(userDetails.getPassword()));
+
+        log.trace("Created user details entity - " + userDetails);
         return userDetails;
     }
 
@@ -50,6 +59,8 @@ public class EntityFactoryImpl implements EntityFactory {
         var userEntity = new UserEntity();
         userEntity.setUserDetailsEntity(userDetailsEntity);
         userEntity.setUserAuthorizationEntity(userAuthorizationEntity);
+
+        log.trace("Created user entity - " + userEntity);
         return userEntity;
     }
 }
