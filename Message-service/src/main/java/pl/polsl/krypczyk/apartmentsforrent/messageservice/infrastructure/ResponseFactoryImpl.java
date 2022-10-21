@@ -1,5 +1,6 @@
 package pl.polsl.krypczyk.apartmentsforrent.messageservice.infrastructure;
 
+import lombok.extern.slf4j.Slf4j;
 import org.mapstruct.factory.Mappers;
 import org.springframework.stereotype.Component;
 import pl.polsl.krypczyk.apartmentsforrent.messageservice.application.message.dto.request.AddNewMessageRequest;
@@ -13,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 @Component
+@Slf4j
 public class ResponseFactoryImpl implements ResponseFactory {
 
     private final MessageMapper messageMapper = Mappers.getMapper(MessageMapper.class);
@@ -23,6 +25,7 @@ public class ResponseFactoryImpl implements ResponseFactory {
         addNewMessageResponse.setAttachmentsCount(addNewMessageRequest.getAttachments().size());
         addNewMessageResponse.setId(messageId);
 
+        log.trace("Created add new message response - " + addNewMessageResponse);
         return addNewMessageResponse;
     }
 
@@ -32,6 +35,7 @@ public class ResponseFactoryImpl implements ResponseFactory {
 
         messageEntities.forEach(me -> messageDTOS.add(this.messageMapper.messageEntityToMessageDTO(me)));
 
+        log.trace("Created message DTOs - " + messageDTOS);
         return messageDTOS;
     }
 }
