@@ -4,6 +4,7 @@ package pl.polsl.krypczyk.apartmentsforrent.userservice.domain.userdetails;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
@@ -15,6 +16,7 @@ import java.time.LocalDateTime;
 
 @Getter
 @Setter
+@ToString
 @Entity
 @Table(name = "USER_DETAILS")
 public class UserDetailsEntity {

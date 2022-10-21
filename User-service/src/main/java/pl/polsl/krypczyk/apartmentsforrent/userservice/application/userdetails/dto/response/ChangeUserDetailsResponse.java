@@ -2,12 +2,11 @@ package pl.polsl.krypczyk.apartmentsforrent.userservice.application.userdetails.
 
 import lombok.Builder;
 import lombok.Data;
-
-import javax.validation.constraints.NotNull;
+import lombok.ToString;
 
 @Data
-@NotNull
 @Builder
+@ToString
 public class ChangeUserDetailsResponse {
 
     private String name;

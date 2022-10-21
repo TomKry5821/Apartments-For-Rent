@@ -2,10 +2,13 @@ package pl.polsl.krypczyk.apartmentsforrent.userservice.application.userdetails.
 
 import lombok.Builder;
 import lombok.Data;
+import lombok.ToString;
+
 import java.time.LocalDateTime;
 
 @Data
 @Builder
+@ToString
 public class GetUserDetailsResponse {
 
     private String name;
