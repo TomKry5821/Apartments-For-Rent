@@ -20,11 +20,12 @@ public class AuthorizationServiceImpl implements AuthorizationService {
 
     @Override
     public void authorizeUser(Long userId) throws UnauthorizedUserException {
+        log.info("Started user authorization with provided id - " + userId);
+
         var request = getRequest();
         var requesterId = this.getUserIdFromRequestOrThrowUnauthorizedException(request);
         var roles = this.getUserRolesFromRequest(request);
 
-        log.info("Started user authorization with provided id - " + userId);
 
         if (!userId.equals(requesterId) || !roles.contains(ROLE_USER))
             throw new UnauthorizedUserException();
@@ -32,18 +33,18 @@ public class AuthorizationServiceImpl implements AuthorizationService {
         log.info("Successfully authorized user with provided id - " + userId);
     }
 
-    /*@Override
+    @Override
     public void authorizeAdmin() throws UnauthorizedUserException {
+        log.info("Started admin authorization");
+
         var request = getRequest();
         var roles = this.getUserRolesFromRequest(request);
-
-        log.info("Started admin authorization");
 
         if (!roles.contains(ROLE_ADMIN))
             throw new UnauthorizedUserException();
 
         log.info("Successfully authorized admin");
-    }*/
+    }
 
     private HttpServletRequest getRequest() {
         return ((ServletRequestAttributes) Objects.requireNonNull(RequestContextHolder.getRequestAttributes()))
