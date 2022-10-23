@@ -5,5 +5,5 @@ import pl.polsl.krypczyk.apartmentsforrent.messageservice.domain.security.except
 public interface AuthorizationService {
     void authorizeUser(Long userId) throws UnauthorizedUserException;
 
-    //  void authorizeAdmin() throws UnauthorizedUserException;
+    void authorizeAdmin() throws UnauthorizedUserException;
 }
