@@ -3,6 +3,7 @@ package pl.polsl.krypczyk.apartmentsforrent.userservice.domain.userauthorization
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.role.RoleEntity;
 
 import javax.persistence.Entity;
@@ -20,6 +21,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @RequiredArgsConstructor
+@ToString
 @Entity
 @Table(name = "USER_AUTHORIZATION")
 public class UserAuthorizationEntity {

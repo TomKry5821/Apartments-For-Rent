@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
-import pl.polsl.krypczyk.apartmentsforrent.userservice.application.user.request.CreateUserRequest;
+import pl.polsl.krypczyk.apartmentsforrent.userservice.application.user.dto.request.CreateUserRequest;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.EntityFactory;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.role.RoleEntity;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.user.UserEntity;

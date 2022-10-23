@@ -3,6 +3,7 @@ package pl.polsl.krypczyk.apartmentsforrent.userservice.domain.user;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.userauthorization.UserAuthorizationEntity;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.userdetails.UserDetailsEntity;
 
@@ -19,6 +20,7 @@ import javax.persistence.JoinColumn;
 @Getter
 @Setter
 @RequiredArgsConstructor
+@ToString(exclude = {"userDetailsEntity", "userAuthorizationEntity"})
 @Entity
 @Table(name = "\"USER\"")
 public class UserEntity {

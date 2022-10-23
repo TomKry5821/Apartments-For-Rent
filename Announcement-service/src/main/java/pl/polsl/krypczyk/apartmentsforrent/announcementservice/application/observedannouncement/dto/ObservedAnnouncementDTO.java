@@ -2,9 +2,11 @@ package pl.polsl.krypczyk.apartmentsforrent.announcementservice.application.obse
 
 import lombok.Builder;
 import lombok.Data;
+import lombok.ToString;
 
 @Data
 @Builder
+@ToString
 public class ObservedAnnouncementDTO {
 
     private String title;

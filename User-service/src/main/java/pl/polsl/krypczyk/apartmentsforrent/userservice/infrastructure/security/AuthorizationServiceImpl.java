@@ -5,8 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
-import pl.polsl.krypczyk.apartmentsforrent.userservice.application.user.request.UserLoginRequest;
-import pl.polsl.krypczyk.apartmentsforrent.userservice.application.user.response.LoginUserResponse;
+import pl.polsl.krypczyk.apartmentsforrent.userservice.application.user.dto.request.UserLoginRequest;
+import pl.polsl.krypczyk.apartmentsforrent.userservice.application.user.dto.response.LoginUserResponse;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.ResponseFactory;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.security.AuthorizationService;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.security.exception.UnauthorizedUserException;
@@ -94,11 +94,11 @@ public class AuthorizationServiceImpl implements AuthorizationService {
 
     @Override
     public void authorizeUser(Long userId) throws UnauthorizedUserException {
+        log.info("Started user authorization with provided id - " + userId);
+
         var request = getRequest();
         var requesterId = this.getUserIdFromRequestOrThrowUnauthorizedException(request);
         var roles = this.getUserRolesFromRequest(request);
-
-        log.info("Started user authorization with provided id - " + userId);
 
         if (!userId.equals(requesterId) || !roles.contains(ROLE_USER))
             throw new UnauthorizedUserException();
@@ -108,10 +108,10 @@ public class AuthorizationServiceImpl implements AuthorizationService {
 
     @Override
     public void authorizeAdmin() throws UnauthorizedUserException {
+        log.info("Started admin authorization");
+        
         var request = getRequest();
         var roles = this.getUserRolesFromRequest(request);
-
-        log.info("Started admin authorization");
 
         if (!roles.contains(ROLE_ADMIN))
             throw new UnauthorizedUserException();

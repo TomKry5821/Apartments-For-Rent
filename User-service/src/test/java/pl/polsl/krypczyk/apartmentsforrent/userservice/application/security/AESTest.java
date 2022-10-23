@@ -8,26 +8,25 @@ import java.util.Objects;
 
 class AESTest {
 
+    private static final String ENCRYPTED_PASSWORD = "H6LsgM/nxKwv+1yR3wlLxg==";
+    private static final String DECRYPTED_PASSWORD = "Admin";
+
+
     @Test
     void testEncryptPasswordWithValidDataShouldReturnEncryptedPassword() {
         //GIVEN
-        var encryptedPassword = "H6LsgM/nxKwv+1yR3wlLxg==";
-        var password = "Admin";
-
         //WHEN
-        var expected = AES.encrypt(password);
+        var expected = AES.encrypt(DECRYPTED_PASSWORD);
 
         //THEN
-        Assertions.assertEquals(expected, encryptedPassword);
+        Assertions.assertEquals(expected, ENCRYPTED_PASSWORD);
     }
 
     @Test
     void testEncryptPasswordWitInvalidDataShouldReturnNullPassword() {
         //GIVEN
-        String password = null;
-
         //WHEN
-        var expected = AES.encrypt(password);
+        var expected = AES.encrypt(null);
 
         //THEN
         Assertions.assertTrue(Objects.isNull(expected));
@@ -36,23 +35,18 @@ class AESTest {
     @Test
     void testDecryptPasswordWithValidDataShouldReturnDecryptedPassword() {
         //GIVEN
-        var encryptedPassword = "H6LsgM/nxKwv+1yR3wlLxg==";
-        var password = "Admin";
-
         //WHEN
-        var expected = AES.decrypt(encryptedPassword);
+        var expected = AES.decrypt(ENCRYPTED_PASSWORD);
 
         //THEN
-        Assertions.assertEquals(expected, password);
+        Assertions.assertEquals(expected, DECRYPTED_PASSWORD);
     }
 
     @Test
     void testDecryptPasswordWithInvalidDataShouldReturnNullPassword() {
         //GIVEN
-        String password = null;
-
         //WHEN
-        var expected = AES.encrypt(password);
+        var expected = AES.encrypt(null);
 
         //THEN
         Assertions.assertTrue(Objects.isNull(expected));

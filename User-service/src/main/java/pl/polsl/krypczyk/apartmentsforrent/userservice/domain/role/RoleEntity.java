@@ -3,6 +3,7 @@ package pl.polsl.krypczyk.apartmentsforrent.userservice.domain.role;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
@@ -15,6 +16,7 @@ import javax.persistence.Column;
 @Setter
 @Entity
 @NoArgsConstructor
+@ToString
 @Table(name = "ROLE")
 public class RoleEntity {
 

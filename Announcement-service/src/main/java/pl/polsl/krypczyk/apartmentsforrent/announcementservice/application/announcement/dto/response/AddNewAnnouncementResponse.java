@@ -1,7 +1,9 @@
-package pl.polsl.krypczyk.apartmentsforrent.announcementservice.application.announcement.response;
+package pl.polsl.krypczyk.apartmentsforrent.announcementservice.application.announcement.dto.response;
+
 
 import lombok.Builder;
 import lombok.Data;
+import lombok.ToString;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -9,7 +11,11 @@ import java.util.Collection;
 
 @Data
 @Builder
-public class GetAnnouncementWithAllDetailsResponse {
+@ToString
+public class AddNewAnnouncementResponse {
+
+    private Long announcementId;
+
     private Long userId;
 
     private String title;
@@ -43,5 +49,4 @@ public class GetAnnouncementWithAllDetailsResponse {
     private LocalDate creationDate;
 
     private Boolean isClosed;
-
 }

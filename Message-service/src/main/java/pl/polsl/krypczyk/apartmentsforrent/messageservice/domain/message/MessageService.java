@@ -1,8 +1,8 @@
 package pl.polsl.krypczyk.apartmentsforrent.messageservice.domain.message;
 
-import pl.polsl.krypczyk.apartmentsforrent.messageservice.application.message.request.AddNewMessageRequest;
-import pl.polsl.krypczyk.apartmentsforrent.messageservice.application.message.response.AddNewMessageResponse;
-import pl.polsl.krypczyk.apartmentsforrent.messageservice.application.message.response.MessageDTO;
+import pl.polsl.krypczyk.apartmentsforrent.messageservice.application.message.dto.request.AddNewMessageRequest;
+import pl.polsl.krypczyk.apartmentsforrent.messageservice.application.message.dto.response.AddNewMessageResponse;
+import pl.polsl.krypczyk.apartmentsforrent.messageservice.application.message.dto.response.MessageDTO;
 
 import java.util.Collection;
 

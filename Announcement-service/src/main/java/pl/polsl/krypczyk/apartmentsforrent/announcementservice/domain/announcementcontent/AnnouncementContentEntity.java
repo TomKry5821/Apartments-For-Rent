@@ -3,6 +3,7 @@ package pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcem
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.photopath.PhotoPathEntity;
 
 import javax.persistence.Entity;
@@ -19,6 +20,7 @@ import java.util.Collection;
 @Getter
 @Setter
 @RequiredArgsConstructor
+@ToString
 @Entity
 @Table(name = "ANNOUNCEMENT_CONTENT")
 public class AnnouncementContentEntity {

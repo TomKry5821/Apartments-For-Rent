@@ -6,8 +6,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
-import pl.polsl.krypczyk.apartmentsforrent.userservice.application.user.request.CreateUserRequest;
-import pl.polsl.krypczyk.apartmentsforrent.userservice.application.security.userdetails.request.ChangeUserDetailsRequest;
+import pl.polsl.krypczyk.apartmentsforrent.userservice.application.user.dto.request.CreateUserRequest;
+import pl.polsl.krypczyk.apartmentsforrent.userservice.application.userdetails.dto.request.ChangeUserDetailsRequest;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.admin.AdminService;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.role.RoleRepository;
 import pl.polsl.krypczyk.apartmentsforrent.userservice.domain.user.UserRepository;
@@ -180,7 +180,7 @@ class AdminServiceImplTest {
     }
 
     private CreateUserRequest createInactiveUser() {
-        return pl.polsl.krypczyk.apartmentsforrent.userservice.application.user.request.CreateUserRequest.builder()
+        return CreateUserRequest.builder()
                 .surname(SURNAME)
                 .password(PASSWORD)
                 .name(NAME)
