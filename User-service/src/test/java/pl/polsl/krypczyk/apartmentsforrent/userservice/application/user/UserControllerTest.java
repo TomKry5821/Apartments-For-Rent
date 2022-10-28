@@ -199,6 +199,19 @@ class UserControllerTest {
                 .andExpect(status().isUnauthorized());
     }
 
+    @Test
+    void testGetUsernameWithValidUserIdShouldReturn200() throws Exception {
+        //GIVEN
+        this.createValidUser();
+
+        //WHEN
+        mvc.perform(
+                        get("/user/api/v1/users/1/username")
+                                .contentType(MediaType.APPLICATION_JSON))
+                //THEN
+                .andExpect(status().isOk());
+    }
+
     private ResultActions createValidUser() throws Exception {
         return mvc.perform(
                 post("/user/api/v1/public/users")

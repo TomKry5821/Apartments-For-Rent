@@ -15,6 +15,8 @@ public class AnnouncementDTO {
 
     private Long userId;
 
+    private String username;
+
     private LocalDate creationDate;
 
     private AnnouncementDetailsDTO announcementDetailsDTO;

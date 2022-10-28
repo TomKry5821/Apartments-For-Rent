@@ -15,4 +15,6 @@ public class ObservedAnnouncementDTO {
 
     private Long userId;
 
+    private String username;
+
 }

@@ -1,5 +1,6 @@
 package pl.polsl.krypczyk.apartmentsforrent.announcementservice.infrastructure;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.mapstruct.factory.Mappers;
 import org.springframework.stereotype.Component;
@@ -12,6 +13,7 @@ import pl.polsl.krypczyk.apartmentsforrent.announcementservice.application.annou
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.application.announcement.dto.response.ObserveAnnouncementResponse;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.application.announcement.dto.response.UpdateAnnouncementResponse;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.application.observedannouncement.dto.ObservedAnnouncementDTO;
+import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.HttpService;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.ResponseFactory;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.AnnouncementEntity;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.AnnouncementMapper;
@@ -22,15 +24,20 @@ import java.util.stream.Collectors;
 @Component
 @Transactional
 @Slf4j
+@RequiredArgsConstructor
 public class ResponseFactoryImpl implements ResponseFactory {
 
     private final AnnouncementMapper announcementMapper = Mappers.getMapper(AnnouncementMapper.class);
+
+    private final HttpService httpService;
 
     @Override
     public AnnouncementDTO createAnnouncementDTO(AnnouncementEntity announcement) {
         var announcementDetails = announcement.getAnnouncementDetailsEntity();
         var announcementDTO = announcementMapper.announcementEntityToAnnouncementDTO(announcement);
         var announcementDetailsDTO = announcementMapper.announcementDetailsEntityToAnnouncementDetailsDTO(announcementDetails);
+        var username = this.getUsername(announcement.getUserId());
+        announcementDTO.setUsername(username);
         announcementDTO.setAnnouncementDetailsDTO(announcementDetailsDTO);
         announcementDTO.setDistrict(announcement.getDistrict());
         announcementDTO.setCity(announcementDTO.getCity());
@@ -56,11 +63,13 @@ public class ResponseFactoryImpl implements ResponseFactory {
         var addressDetails = announcementDetails.getAddressDetailsEntity();
         var announcementContent = announcementDetails.getAnnouncementContent();
         var photoPaths = announcementContent.getPhotoPaths();
+        var username = this.getUsername(announcement.getUserId());
 
         var getAnnouncementWithAllDetailsResponse = GetAnnouncementWithAllDetailsResponse
                 .builder()
                 .creationDate(announcement.getCreationDate())
                 .userId(announcement.getUserId())
+                .username(username)
                 .isClosed(announcement.getIsClosed())
                 .district(announcement.getDistrict())
                 .city(announcement.getCity())
@@ -107,14 +116,20 @@ public class ResponseFactoryImpl implements ResponseFactory {
 
     @Override
     public ObservedAnnouncementDTO createObservedAnnouncementDTO(AnnouncementEntity announcement) {
+        var username = this.getUsername(announcement.getUserId());
         var observedAnnouncementDTO = ObservedAnnouncementDTO
                 .builder()
                 .title(announcement.getAnnouncementDetailsEntity().getTitle())
                 .userId(announcement.getUserId())
+                .username(username)
                 .mainPhotoPath(announcement.getAnnouncementDetailsEntity().getMainPhotoPath())
                 .build();
 
         log.trace("Created observed announcement DTO - " + observedAnnouncementDTO);
         return observedAnnouncementDTO;
+    }
+
+    private String getUsername(Long userId){
+        return httpService.retrieveUsernameFromUserService(userId);
     }
 }

@@ -19,6 +19,8 @@ public interface MessageMapper {
     AddNewMessageResponse addNewMessageRequestToAddNewMessageResponse(AddNewMessageRequest addNewMessageRequest);
 
     @Named("attachmentEntitiesToByteArrayCollection")
+    @Mapping(target = "senderName", ignore = true)
+    @Mapping(target = "receiverName", ignore = true)
     MessageDTO messageEntityToMessageDTO(MessageEntity messageEntity);
 
     default Collection<byte[]> attachmentEntitiesToByteArrayCollection(Collection<AttachmentEntity> attachmentEntities){

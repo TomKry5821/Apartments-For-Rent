@@ -58,7 +58,7 @@ public class MessageServiceImpl implements MessageService {
         var conversation = this.retrieveAndSortMessages(senderId, receiverId);
 
         log.info("Successfully retrieved conversation for sender with id " + senderId + " and receiver with id " + receiverId);
-        return this.responseFactory.createGetConversationResponse(conversation);
+        return this.responseFactory.createGetConversationResponse(conversation, senderId, receiverId);
     }
 
     List<MessageEntity> retrieveAndSortMessages(Long senderId, Long receiverId) {

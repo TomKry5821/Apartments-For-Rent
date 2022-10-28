@@ -12,6 +12,6 @@ public interface ResponseFactory {
 
     AddNewMessageResponse createAddNewMessageResponse(AddNewMessageRequest addNewMessageRequest, Long messageId);
 
-    Collection<MessageDTO> createGetConversationResponse(Collection<MessageEntity> messageEntities);
+    Collection<MessageDTO> createGetConversationResponse(Collection<MessageEntity> messageEntities, Long senderId, Long receiverId);
 
 }

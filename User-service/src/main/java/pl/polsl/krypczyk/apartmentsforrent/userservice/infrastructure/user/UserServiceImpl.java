@@ -137,4 +137,13 @@ public class UserServiceImpl implements UserService {
 
         log.info("Successfully inactivated account with user id - " + userId);
     }
+
+    @Override
+    public String getUsername(Long userId) {
+        var user = this.userRepository.findUserEntityById(userId);
+        if(Objects.isNull(user))
+            return "Nieznany użytkownik";
+
+        return user.getUserDetailsEntity().getName();
+    }
 }

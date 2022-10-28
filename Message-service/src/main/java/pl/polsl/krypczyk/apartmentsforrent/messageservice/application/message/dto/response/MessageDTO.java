@@ -14,7 +14,11 @@ public class MessageDTO {
 
     private Long senderId;
 
+    private String senderName;
+
     private Long receiverId;
+
+    private String receiverName;
 
     private String message;
 
