@@ -59,5 +59,10 @@ public class UserController {
         this.authorizationService.authorizeUser(userId);
         this.userService.inactivateAccount(userId);
     }
+
+    @GetMapping("users/{userId}/username")
+    public String getUsername(@PathVariable @NotNull @Min(value = 1) Long userId){
+        return this.userService.getUsername(userId);
+    }
 }
 
