@@ -56,7 +56,7 @@ class ResponseFactoryImplTest {
         var expected = List.of(validMessageDTO());
 
         //WHEN
-        var actual = responseFactory.createGetConversationResponse(messages);
+        var actual = responseFactory.createGetConversationResponse(messages, messages.get(0).getSenderId(), messages.get(0).getReceiverId());
 
         //THEN
         Assertions.assertEquals(expected.get(0).getMessage(), actual.stream().toList().get(0).getMessage());
