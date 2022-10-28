@@ -56,6 +56,7 @@ class ResponseFactoryImplTest {
 
     private static final Integer LOCAL_NUMBER = 4;
     private static final Long ANNOUNCEMENT_ID = 1L;
+    private static final String USERNAME = "Nieznany użytkownik";
 
     @Autowired
     ResponseFactory responseFactory;
@@ -74,6 +75,7 @@ class ResponseFactoryImplTest {
         Assertions.assertEquals(expected.getDistrict(), actual.getDistrict());
         Assertions.assertEquals(expected.getCity(), actual.getCity());
         Assertions.assertEquals(expected.getIsClosed(), actual.getIsClosed());
+        Assertions.assertEquals(expected.getUsername(), actual.getUsername());
     }
 
     @Test
@@ -129,6 +131,7 @@ class ResponseFactoryImplTest {
         Assertions.assertEquals(expected.getMainPhotoPath(), actual.getMainPhotoPath());
         Assertions.assertEquals(expected.getRentalTerm(), actual.getRentalTerm());
         Assertions.assertEquals(expected.getRentalAmount(), actual.getRentalAmount());
+        Assertions.assertEquals(expected.getUsername(), actual.getUsername());
     }
 
     @Test
@@ -184,6 +187,7 @@ class ResponseFactoryImplTest {
         Assertions.assertEquals(expected.getUserId(), actual.getUserId());
         Assertions.assertEquals(expected.getTitle(), actual.getTitle());
         Assertions.assertEquals(expected.getMainPhotoPath(), actual.getMainPhotoPath());
+        Assertions.assertEquals(expected.getUsername(), actual.getUsername());
     }
 
     private AnnouncementEntity validAnnouncementEntity() {
@@ -202,6 +206,7 @@ class ResponseFactoryImplTest {
                 .isClosed(false)
                 .city(CITY)
                 .district(DISTRICT)
+                .username(USERNAME)
                 .build();
     }
 
@@ -299,6 +304,7 @@ class ResponseFactoryImplTest {
                 .content(CONTENT)
                 .zipCode(ZIP_CODE)
                 .userId(USER_ID)
+                .username(USERNAME)
                 .title(TITLE)
                 .district(DISTRICT)
                 .isClosed(false)
@@ -368,6 +374,7 @@ class ResponseFactoryImplTest {
                 .title(TITLE)
                 .mainPhotoPath(MAIN_PHOTO_PATH)
                 .userId(USER_ID)
+                .username(USERNAME)
                 .build();
     }
 }
