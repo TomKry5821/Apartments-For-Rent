@@ -26,6 +26,7 @@ class UserServiceImplTest {
     private static final String CHANGED_EMAIL = "user2@user.com";
     private static final boolean IS_ACTIVE = true;
     private static final Long INVALID_USER_ID = 12334343L;
+    private static final String UNKNOWN_USER = "Nieznany użytkownik";
 
 
     @Autowired
@@ -180,6 +181,30 @@ class UserServiceImplTest {
         // WHEN AND THEN
         Assertions.assertThrows(UserNotFoundException.class, () ->
                 this.userService.inactivateAccount(INVALID_USER_ID));
+    }
+
+    @Test
+    void testGetUsernameWithValidUserIdShouldReturnExpectedUsername() throws UserAlreadyExistsException {
+        //GIVEN
+        var user = this.createValidUserRequest();
+        var response = this.userService.createUser(user);
+        var expected = user.getName();
+
+        //WHEN
+        var actual = this.userService.getUsername(response.getId());
+
+        //THEN
+        Assertions.assertEquals(expected, actual);
+    }
+
+    @Test
+    void testGetUsernameWithInvalidUserIdShouldReturnExpectedUsername() {
+        //GIVEN
+        //WHEN
+        var actual = this.userService.getUsername(INVALID_USER_ID);
+
+        //THEN
+        Assertions.assertEquals(UNKNOWN_USER, actual);
     }
 
     private CreateUserRequest createValidUserRequest() {
