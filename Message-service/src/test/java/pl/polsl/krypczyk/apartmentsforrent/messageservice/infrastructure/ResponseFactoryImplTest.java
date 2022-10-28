@@ -29,6 +29,7 @@ class ResponseFactoryImplTest {
     private static final Collection<MultipartFile> REQUEST_ATTACHMENTS = Collections.emptyList();
     private static final Collection<AttachmentEntity> DB_ATTACHMENTS = Collections.emptyList();
     private static final Collection<byte[]> BYTE_ATTACHMENTS = Collections.emptyList();
+    private static final String USERNAME = "Nieznany użytkownik";
 
     @Autowired
     private ResponseFactory responseFactory;
@@ -63,6 +64,8 @@ class ResponseFactoryImplTest {
         Assertions.assertEquals(expected.get(0).getSenderId(), actual.stream().toList().get(0).getSenderId());
         Assertions.assertEquals(expected.get(0).getReceiverId(), actual.stream().toList().get(0).getReceiverId());
         Assertions.assertEquals(expected.get(0).getAttachments(), actual.stream().toList().get(0).getAttachments());
+        Assertions.assertEquals(expected.get(0).getSenderName(), actual.stream().toList().get(0).getSenderName());
+        Assertions.assertEquals(expected.get(0).getReceiverName(), actual.stream().toList().get(0).getReceiverName());
     }
 
     private AddNewMessageRequest validAddMessageRequest() {
@@ -92,6 +95,8 @@ class ResponseFactoryImplTest {
                 .senderId(SENDER_ID)
                 .receiverId(RECEIVER_ID)
                 .attachments(BYTE_ATTACHMENTS)
+                .senderName(USERNAME)
+                .receiverName(USERNAME)
                 .build();
     }
 
