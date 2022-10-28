@@ -7,7 +7,11 @@ import java.util.Collection;
 @Data
 public class RolesDTO {
 
-    private final Collection<String> roles;
-    private final Long userId;
+    private Collection<String> roles;
+    private Long userId;
 
+    public RolesDTO(Collection<String> roles, Long userId) {
+        this.roles = roles;
+        this.userId = userId;
+    }
 }
