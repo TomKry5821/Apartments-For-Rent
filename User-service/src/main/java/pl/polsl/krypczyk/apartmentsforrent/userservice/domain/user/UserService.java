@@ -18,4 +18,6 @@ public interface UserService {
     ChangeUserDetailsResponse changeUserDetails(ChangeUserDetailsRequest changeUserDetailsRequest, Long userId) throws InvalidUserDetailsException, UserNotFoundException, UserAlreadyExistsException;
 
     void inactivateAccount(Long userId) throws UserNotFoundException;
+
+    String getUsername(Long userId);
 }
