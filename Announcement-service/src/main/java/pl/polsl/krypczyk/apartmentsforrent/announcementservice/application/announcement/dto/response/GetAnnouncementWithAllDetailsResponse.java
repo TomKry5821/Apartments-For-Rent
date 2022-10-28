@@ -14,6 +14,8 @@ import java.util.Collection;
 public class GetAnnouncementWithAllDetailsResponse {
     private Long userId;
 
+    private String username;
+
     private String title;
 
     private String mainPhotoPath;
