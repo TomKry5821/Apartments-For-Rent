@@ -10,7 +10,6 @@
     </parent>
     <groupId>pl.polsl.krypczyk.apartmentsforrent</groupId>
     <artifactId>Eureka-server</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
     <name>Eureka-server</name>
     <description>Eureka-server</description>
     <properties>
