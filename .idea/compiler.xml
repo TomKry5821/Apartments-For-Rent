@@ -9,6 +9,7 @@
         <outputRelativeToContentRoot value="true" />
         <module name="Apartments-for-rent-ga" />
         <module name="Gateway-service" />
+        <module name="Eureka-server" />
       </profile>
       <profile name="Annotation profile for Apartments-for-rent" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
@@ -19,8 +20,8 @@
           <entry name="$MAVEN_REPOSITORY$/org/mapstruct/mapstruct-processor/1.5.2.Final/mapstruct-processor-1.5.2.Final.jar" />
           <entry name="$MAVEN_REPOSITORY$/org/mapstruct/mapstruct/1.5.2.Final/mapstruct-1.5.2.Final.jar" />
         </processorPath>
-        <module name="Announcement-service" />
         <module name="User-service" />
+        <module name="Announcement-service" />
         <module name="Message-service" />
       </profile>
     </annotationProcessing>
@@ -36,6 +37,7 @@
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="Announcement-service" options="-parameters" />
       <module name="Apartments-for-rent-ga" options="-parameters" />
+      <module name="Eureka-server" options="-parameters" />
       <module name="Gateway-service" options="-parameters" />
       <module name="Message-service" options="-parameters" />
       <module name="User-service" options="-parameters" />

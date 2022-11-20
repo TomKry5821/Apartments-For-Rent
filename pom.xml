@@ -9,6 +9,8 @@
     <packaging>pom</packaging>
     <version>1.0.0-SNAPSHOT</version>
     <modules>
+        <module>Eureka-server</module>
+        <module>Gateway-service</module>
         <module>User-service</module>
         <module>Message-service</module>
         <module>Announcement-service</module>

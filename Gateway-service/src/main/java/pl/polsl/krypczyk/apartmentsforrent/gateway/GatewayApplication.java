@@ -6,11 +6,13 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.gateway.route.RouteLocator;
 import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
+import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 import org.springframework.context.annotation.Bean;
 import pl.polsl.krypczyk.apartmentsforrent.gateway.filter.AdminRoleAuthGatewayFilterFactory;
 import pl.polsl.krypczyk.apartmentsforrent.gateway.filter.UserRoleAuthGatewayFilterFactory;
 
 @SpringBootApplication
+@EnableEurekaClient
 @RequiredArgsConstructor
 public class GatewayApplication {
 
