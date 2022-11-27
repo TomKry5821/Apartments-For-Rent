@@ -81,6 +81,7 @@ public class ResponseFactoryImpl implements ResponseFactory {
                 .builder()
                 .accessToken(accessToken)
                 .email(email)
+                .loginDate(LocalDateTime.now())
                 .roles(roles.stream()
                         .map(RoleEntity::getName).collect(Collectors.toList()))
                 .id(userId)
