@@ -1,6 +1,17 @@
 version: "3.9"
 
 services:
+
+  eureka-server:
+    container_name: Eureka
+    image: eureka-server-2.7.5.jar
+    ports:
+      - "8761:8761"
+    volumes:
+      - /AFR-volume
+    networks:
+      - AFR
+
   user-database:
     container_name: UserDatabase
     image: postgres
@@ -44,7 +55,7 @@ services:
     container_name: Gateway
     image: gateway-service.jar
     ports:
-      - "8010:8080"
+      - "8010:8010"
     volumes:
       - /AFR-volume
     networks:
