@@ -5,7 +5,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.adressdetails.AddressDetailsRepository;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.AnnouncementRepository;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.AnnouncementService;
@@ -17,6 +19,7 @@ import pl.polsl.krypczyk.apartmentsforrent.announcementservice.application.annou
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcementcontent.AnnouncementContentRepository;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcementdetails.AnnouncementDetailsRepository;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -37,8 +40,10 @@ class AnnouncementServiceImplTest {
     private static final String BUILDING_NUMBER = "1A";
     private static final String STREET = "Street";
     private static final String TITLE = "Title";
-    private static final List<String> PHOTO_PATHS = List.of("test", "test2");
-    private static final String MAIN_PHOTO_PATH = "path";
+    private static final List<MultipartFile> PHOTO_FILES = List.of(
+            new MockMultipartFile("test1", new byte[5]),
+            new MockMultipartFile("test2", new byte[5]));
+    private static final MultipartFile MAIN_PHOTO_FILE = new MockMultipartFile("test", new byte[5]);
     private static final BigDecimal RENTAL_AMOUNT = BigDecimal.valueOf(10.55);
     private static final int ROOMS_NUMBER = 1;
     private static final String ZIP_CODE = "11-111";
@@ -103,7 +108,7 @@ class AnnouncementServiceImplTest {
         assertFalse(this.announcementDetailsRepository.findAll().isEmpty());
         assertFalse(this.announcementContentRepository.findAll().isEmpty());
         assertFalse(this.addressDetailsRepository.findAll().isEmpty());
-        assertFalse(this.announcementContentRepository.findAll().get(0).getPhotoPaths().isEmpty());
+        assertFalse(this.announcementContentRepository.findAll().get(0).getPhotos().isEmpty());
 
     }
 
@@ -132,7 +137,7 @@ class AnnouncementServiceImplTest {
     }
 
     @Test
-    void testUpdateAnnouncementWithValidRequestBodyAndUserIdShouldNotThrowAnnouncementNotFoundAndClosedAnnouncementException() throws AnnouncementNotFoundException, ClosedAnnouncementException {
+    void testUpdateAnnouncementWithValidRequestBodyAndUserIdShouldNotThrowAnnouncementNotFoundAndClosedAnnouncementException() throws AnnouncementNotFoundException, ClosedAnnouncementException, IOException {
         //GIVEN
         var updateAnnouncementRequest = validUpdateAnnouncementRequest();
         var addNewAnnouncementRequest = validAnnouncementRequest();
@@ -223,8 +228,8 @@ class AnnouncementServiceImplTest {
                 .buildingNumber(BUILDING_NUMBER)
                 .street(STREET)
                 .title(TITLE)
-                .photoPaths(PHOTO_PATHS)
-                .mainPhotoPath(MAIN_PHOTO_PATH)
+                .photos(PHOTO_FILES)
+                .mainPhoto(MAIN_PHOTO_FILE)
                 .rentalAmount(RENTAL_AMOUNT)
                 .roomsNumber(ROOMS_NUMBER)
                 .zipCode(ZIP_CODE)
@@ -244,8 +249,8 @@ class AnnouncementServiceImplTest {
                 .buildingNumber(BUILDING_NUMBER)
                 .street(STREET)
                 .title(TITLE)
-                .photoPaths(PHOTO_PATHS)
-                .mainPhotoPath(MAIN_PHOTO_PATH)
+                .photos(PHOTO_FILES)
+                .mainPhoto(MAIN_PHOTO_FILE)
                 .rentalAmount(RENTAL_AMOUNT)
                 .roomsNumber(ROOMS_NUMBER)
                 .zipCode(ZIP_CODE)

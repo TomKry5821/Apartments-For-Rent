@@ -4,6 +4,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.web.multipart.MultipartFile;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.application.announcement.dto.AnnouncementDTO;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.application.announcement.dto.request.AddNewAnnouncementRequest;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.application.announcement.dto.request.UpdateAnnouncementRequest;
@@ -17,7 +19,7 @@ import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.adressdeta
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.AnnouncementEntity;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcementcontent.AnnouncementContentEntity;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcementdetails.AnnouncementDetailsEntity;
-import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.photopath.PhotoPathEntity;
+import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.photo.PhotoEntity;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -30,8 +32,7 @@ class ResponseFactoryImplTest {
 
     private static final String TITLE = "Title";
 
-    private static final String MAIN_PHOTO_PATH = "test/path";
-
+    private static final byte[] MAIN_PHOTO = new byte[5];
     private static final Integer ROOMS_NUMBER = 2;
 
     private static final LocalDate RENTAL_TERM = LocalDate.MAX;
@@ -42,8 +43,9 @@ class ResponseFactoryImplTest {
 
     private static final String CONTENT = "Content";
 
-    private static final List<String> PHOTO_PATHS = List.of("test/path/1", "test/path/2");
-
+    private static final List<byte[]> PHOTOS = List.of(
+            new byte[3],
+            new byte[4]);
     private static final String DISTRICT = "District";
 
     private static final String CITY = "City";
@@ -57,6 +59,10 @@ class ResponseFactoryImplTest {
     private static final Integer LOCAL_NUMBER = 4;
     private static final Long ANNOUNCEMENT_ID = 1L;
     private static final String USERNAME = "Nieznany użytkownik";
+    private static final List<MultipartFile> PHOTO_FILES = List.of(
+            new MockMultipartFile("test1", new byte[5]),
+            new MockMultipartFile("test2", new byte[5]));
+    private static final MultipartFile MAIN_PHOTO_FILE = new MockMultipartFile("test", new byte[5]);
 
     @Autowired
     ResponseFactory responseFactory;
@@ -99,9 +105,7 @@ class ResponseFactoryImplTest {
         Assertions.assertEquals(expected.getUserId(), actual.getUserId());
         Assertions.assertEquals(expected.getCity(), actual.getCity());
         Assertions.assertEquals(expected.getDistrict(), actual.getDistrict());
-        Assertions.assertEquals(expected.getPhotoPaths(), actual.getPhotoPaths());
         Assertions.assertEquals(expected.getZipCode(), actual.getZipCode());
-        Assertions.assertEquals(expected.getMainPhotoPath(), actual.getMainPhotoPath());
         Assertions.assertEquals(expected.getRentalTerm(), actual.getRentalTerm());
         Assertions.assertEquals(expected.getRentalAmount(), actual.getRentalAmount());
     }
@@ -126,9 +130,9 @@ class ResponseFactoryImplTest {
         Assertions.assertEquals(expected.getUserId(), actual.getUserId());
         Assertions.assertEquals(expected.getCity(), actual.getCity());
         Assertions.assertEquals(expected.getDistrict(), actual.getDistrict());
-        Assertions.assertEquals(expected.getPhotoPaths(), actual.getPhotoPaths());
+        Assertions.assertEquals(expected.getPhotos(), actual.getPhotos());
         Assertions.assertEquals(expected.getZipCode(), actual.getZipCode());
-        Assertions.assertEquals(expected.getMainPhotoPath(), actual.getMainPhotoPath());
+        Assertions.assertEquals(expected.getMainPhoto(), actual.getMainPhoto());
         Assertions.assertEquals(expected.getRentalTerm(), actual.getRentalTerm());
         Assertions.assertEquals(expected.getRentalAmount(), actual.getRentalAmount());
         Assertions.assertEquals(expected.getUsername(), actual.getUsername());
@@ -154,9 +158,7 @@ class ResponseFactoryImplTest {
         Assertions.assertEquals(expected.getUserId(), actual.getUserId());
         Assertions.assertEquals(expected.getCity(), actual.getCity());
         Assertions.assertEquals(expected.getDistrict(), actual.getDistrict());
-        Assertions.assertEquals(expected.getPhotoPaths(), actual.getPhotoPaths());
         Assertions.assertEquals(expected.getZipCode(), actual.getZipCode());
-        Assertions.assertEquals(expected.getMainPhotoPath(), actual.getMainPhotoPath());
         Assertions.assertEquals(expected.getRentalTerm(), actual.getRentalTerm());
         Assertions.assertEquals(expected.getRentalAmount(), actual.getRentalAmount());
     }
@@ -186,7 +188,7 @@ class ResponseFactoryImplTest {
         //THEN
         Assertions.assertEquals(expected.getUserId(), actual.getUserId());
         Assertions.assertEquals(expected.getTitle(), actual.getTitle());
-        Assertions.assertEquals(expected.getMainPhotoPath(), actual.getMainPhotoPath());
+        Assertions.assertEquals(expected.getMainPhoto(), actual.getMainPhoto());
         Assertions.assertEquals(expected.getUsername(), actual.getUsername());
     }
 
@@ -226,7 +228,7 @@ class ResponseFactoryImplTest {
         announcementDetails.setCaution(CAUTION);
         announcementDetails.setRoomsNumber(ROOMS_NUMBER);
         announcementDetails.setTitle(TITLE);
-        announcementDetails.setMainPhotoPath(MAIN_PHOTO_PATH);
+        announcementDetails.setMainPhoto(MAIN_PHOTO);
         announcementDetails.setRentalTerm(RENTAL_TERM);
         announcementDetails.setAddressDetailsEntity(validAddressDetailsEntity());
         announcementDetails.setAnnouncementContent(validAnnouncementContentEntity());
@@ -244,12 +246,12 @@ class ResponseFactoryImplTest {
 
     private AnnouncementContentEntity validAnnouncementContentEntity() {
         var announcementContent = new AnnouncementContentEntity();
-        var photoPath = new PhotoPathEntity();
-        photoPath.setPhotoPath(PHOTO_PATHS.get(0));
-        var photoPath2 = new PhotoPathEntity();
-        photoPath2.setPhotoPath(PHOTO_PATHS.get(1));
+        var photo = new PhotoEntity();
+        photo.setPhoto(PHOTOS.get(0));
+        var photo1 = new PhotoEntity();
+        photo1.setPhoto(PHOTOS.get(1));
         announcementContent.setContent(CONTENT);
-        announcementContent.setPhotoPaths(List.of(photoPath, photoPath2));
+        announcementContent.setPhotos(List.of(photo, photo1));
         return announcementContent;
     }
 
@@ -262,8 +264,8 @@ class ResponseFactoryImplTest {
                 .content(CONTENT)
                 .district(DISTRICT)
                 .localNumber(LOCAL_NUMBER)
-                .mainPhotoPath(MAIN_PHOTO_PATH)
-                .photoPaths(PHOTO_PATHS)
+                .mainPhoto(MAIN_PHOTO_FILE)
+                .photos(PHOTO_FILES)
                 .rentalAmount(RENTAL_AMOUNT)
                 .rentalTerm(RENTAL_TERM)
                 .roomsNumber(ROOMS_NUMBER)
@@ -283,8 +285,6 @@ class ResponseFactoryImplTest {
                 .content(CONTENT)
                 .district(DISTRICT)
                 .localNumber(LOCAL_NUMBER)
-                .mainPhotoPath(MAIN_PHOTO_PATH)
-                .photoPaths(PHOTO_PATHS)
                 .rentalAmount(RENTAL_AMOUNT)
                 .rentalTerm(RENTAL_TERM)
                 .roomsNumber(ROOMS_NUMBER)
@@ -309,8 +309,8 @@ class ResponseFactoryImplTest {
                 .district(DISTRICT)
                 .isClosed(false)
                 .localNumber(LOCAL_NUMBER)
-                .mainPhotoPath(MAIN_PHOTO_PATH)
-                .photoPaths(PHOTO_PATHS)
+                .mainPhoto(MAIN_PHOTO)
+                .photos(PHOTOS)
                 .street(STREET)
                 .rentalAmount(RENTAL_AMOUNT)
                 .rentalTerm(RENTAL_TERM)
@@ -330,8 +330,8 @@ class ResponseFactoryImplTest {
                 .title(TITLE)
                 .district(DISTRICT)
                 .localNumber(LOCAL_NUMBER)
-                .mainPhotoPath(MAIN_PHOTO_PATH)
-                .photoPaths(PHOTO_PATHS)
+                .mainPhoto(MAIN_PHOTO_FILE)
+                .photos(PHOTO_FILES)
                 .street(STREET)
                 .rentalAmount(RENTAL_AMOUNT)
                 .rentalTerm(RENTAL_TERM)
@@ -351,8 +351,6 @@ class ResponseFactoryImplTest {
                 .title(TITLE)
                 .district(DISTRICT)
                 .localNumber(LOCAL_NUMBER)
-                .mainPhotoPath(MAIN_PHOTO_PATH)
-                .photoPaths(PHOTO_PATHS)
                 .street(STREET)
                 .rentalAmount(RENTAL_AMOUNT)
                 .rentalTerm(RENTAL_TERM)
@@ -372,7 +370,7 @@ class ResponseFactoryImplTest {
         return ObservedAnnouncementDTO
                 .builder()
                 .title(TITLE)
-                .mainPhotoPath(MAIN_PHOTO_PATH)
+                .mainPhoto(MAIN_PHOTO)
                 .userId(USER_ID)
                 .username(USERNAME)
                 .build();
