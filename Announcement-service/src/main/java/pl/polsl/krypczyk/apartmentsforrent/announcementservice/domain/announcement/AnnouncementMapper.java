@@ -22,6 +22,7 @@ import java.io.IOException;
 public interface AnnouncementMapper {
     AnnouncementDetailsDTO announcementDetailsEntityToAnnouncementDetailsDTO(AnnouncementDetailsEntity announcementDetailsEntity);
     @Mapping(target = "announcementDetailsDTO", ignore = true)
+    @Mapping(target = "username", ignore = true)
     AnnouncementDTO announcementEntityToAnnouncementDTO(AnnouncementEntity announcementEntity);
     @Mapping(target = "announcementId", ignore = true)
     @Mapping(target = "creationDate", ignore = true)
