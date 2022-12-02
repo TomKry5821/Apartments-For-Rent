@@ -18,7 +18,8 @@ public class GetAnnouncementWithAllDetailsResponse {
 
     private String title;
 
-    private String mainPhotoPath;
+    @ToString.Exclude
+    private byte[] mainPhoto;
 
     private Integer roomsNumber;
 
@@ -30,7 +31,8 @@ public class GetAnnouncementWithAllDetailsResponse {
 
     private String content;
 
-    private Collection<String> photoPaths;
+    @ToString.Exclude
+    private Collection<byte[]> photos;
 
     private String district;
 
