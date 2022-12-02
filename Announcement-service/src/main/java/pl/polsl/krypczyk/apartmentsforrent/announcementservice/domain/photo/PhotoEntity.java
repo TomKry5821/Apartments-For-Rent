@@ -1,4 +1,4 @@
-package pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.photopath;
+package pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.photo;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
