@@ -4,7 +4,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.photopath.PhotoEntity;
+import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.photo.PhotoEntity;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
