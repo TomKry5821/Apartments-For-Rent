@@ -11,7 +11,7 @@ public class ObservedAnnouncementDTO {
 
     private String title;
 
-    private String mainPhotoPath;
+    private byte[] mainPhoto;
 
     private Long userId;
 

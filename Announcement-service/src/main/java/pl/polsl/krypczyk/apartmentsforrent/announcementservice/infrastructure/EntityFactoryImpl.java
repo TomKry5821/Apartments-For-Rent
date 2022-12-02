@@ -13,8 +13,9 @@ import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announceme
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcementcontent.AnnouncementContentEntity;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcementdetails.AnnouncementDetailsEntity;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.observedannouncement.ObservedAnnouncementEntity;
-import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.photopath.PhotoPathEntity;
+import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.photo.PhotoEntity;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 
@@ -54,12 +55,17 @@ public class EntityFactoryImpl implements EntityFactory {
     public AnnouncementContentEntity createAnnouncementContentEntity(AddNewAnnouncementRequest addNewAnnouncementRequest) {
         var announcementContent = this.announcementMapper.addAnnouncementRequestDtoToAnnouncementContentEntity(addNewAnnouncementRequest);
 
-        var photoPaths = new ArrayList<PhotoPathEntity>();
-        addNewAnnouncementRequest.getPhotoPaths().forEach((r) -> {
-            var photoPath = this.announcementMapper.photoPathToPhotoPathEntity(r);
-            photoPaths.add(photoPath);
+        var photos = new ArrayList<PhotoEntity>();
+        addNewAnnouncementRequest.getPhotos().forEach((r) -> {
+            PhotoEntity photo;
+            try {
+                photo = this.announcementMapper.multipartFileToPhotoEntity(r);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            photos.add(photo);
         });
-        announcementContent.setPhotoPaths(photoPaths);
+        announcementContent.setPhotos(photos);
 
         log.trace("Created announcement content entity - " + announcementContent);
         return announcementContent;
