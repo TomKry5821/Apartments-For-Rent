@@ -4,7 +4,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.photopath.PhotoPathEntity;
+import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.photopath.PhotoEntity;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
@@ -33,6 +33,6 @@ public class AnnouncementContentEntity {
     private String content;
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    private Collection<PhotoPathEntity> photoPaths;
+    private Collection<PhotoEntity> photos;
 
 }
