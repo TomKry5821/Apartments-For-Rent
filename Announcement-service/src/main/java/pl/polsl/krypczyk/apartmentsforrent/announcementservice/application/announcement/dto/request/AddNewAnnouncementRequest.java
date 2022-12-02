@@ -2,6 +2,8 @@ package pl.polsl.krypczyk.apartmentsforrent.announcementservice.application.anno
 
 import lombok.Builder;
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Min;
@@ -23,14 +25,15 @@ public class AddNewAnnouncementRequest {
     @NotEmpty(message = "Invalid announcement title")
     private String title;
 
-    @NotEmpty(message = "Invalid main photo path")
-    private String mainPhotoPath;
+    @NotNull(message = "Invalid main photo")
+    private MultipartFile mainPhoto;
 
     @NotNull(message = "Invalid rooms number")
     @Min(message = "rooms number cannot be lower than 1", value = 0)
     private Integer roomsNumber;
 
     @FutureOrPresent(message = "Invalid rental term")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate rentalTerm;
 
     @Min(value = 0, message = "Caution cannot be lower than 0")
@@ -42,8 +45,7 @@ public class AddNewAnnouncementRequest {
     @NotEmpty(message = "Invalid announcement content")
     private String content;
 
-    @NotNull(message = "Photo paths cannot be null")
-    private Collection<String> photoPaths;
+    private Collection<MultipartFile> photos;
 
     @NotEmpty(message = "Invalid district")
     private String district;

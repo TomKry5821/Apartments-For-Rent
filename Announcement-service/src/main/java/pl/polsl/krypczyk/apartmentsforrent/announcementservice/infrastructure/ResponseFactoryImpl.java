@@ -17,7 +17,7 @@ import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.HttpServic
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.ResponseFactory;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.AnnouncementEntity;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.AnnouncementMapper;
-import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.photopath.PhotoPathEntity;
+import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.photo.PhotoEntity;
 
 import java.util.stream.Collectors;
 
@@ -62,7 +62,7 @@ public class ResponseFactoryImpl implements ResponseFactory {
         var announcementDetails = announcement.getAnnouncementDetailsEntity();
         var addressDetails = announcementDetails.getAddressDetailsEntity();
         var announcementContent = announcementDetails.getAnnouncementContent();
-        var photoPaths = announcementContent.getPhotoPaths();
+        var photos = announcementContent.getPhotos();
         var username = this.getUsername(announcement.getUserId());
 
         var getAnnouncementWithAllDetailsResponse = GetAnnouncementWithAllDetailsResponse
@@ -74,7 +74,7 @@ public class ResponseFactoryImpl implements ResponseFactory {
                 .district(announcement.getDistrict())
                 .city(announcement.getCity())
                 .title(announcementDetails.getTitle())
-                .mainPhotoPath(announcementDetails.getMainPhotoPath())
+                .mainPhoto(announcementDetails.getMainPhoto())
                 .roomsNumber(announcementDetails.getRoomsNumber())
                 .rentalTerm(announcementDetails.getRentalTerm())
                 .caution(announcementDetails.getCaution())
@@ -84,9 +84,9 @@ public class ResponseFactoryImpl implements ResponseFactory {
                 .buildingNumber(addressDetails.getBuildingNumber())
                 .localNumber(addressDetails.getLocalNumber())
                 .content(announcementContent.getContent())
-                .photoPaths(photoPaths
+                .photos(photos
                         .stream()
-                        .map(PhotoPathEntity::getPhotoPath)
+                        .map(PhotoEntity::getPhoto)
                         .collect(Collectors.toList()))
                 .build();
 
@@ -122,7 +122,7 @@ public class ResponseFactoryImpl implements ResponseFactory {
                 .title(announcement.getAnnouncementDetailsEntity().getTitle())
                 .userId(announcement.getUserId())
                 .username(username)
-                .mainPhotoPath(announcement.getAnnouncementDetailsEntity().getMainPhotoPath())
+                .mainPhoto(announcement.getAnnouncementDetailsEntity().getMainPhoto())
                 .build();
 
         log.trace("Created observed announcement DTO - " + observedAnnouncementDTO);

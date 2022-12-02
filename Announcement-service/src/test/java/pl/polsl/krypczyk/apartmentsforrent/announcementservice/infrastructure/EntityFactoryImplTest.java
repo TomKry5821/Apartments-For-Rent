@@ -4,7 +4,9 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.application.announcement.dto.request.AddNewAnnouncementRequest;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.EntityFactory;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.adressdetails.AddressDetailsEntity;
@@ -12,7 +14,7 @@ import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announceme
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcementcontent.AnnouncementContentEntity;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcementdetails.AnnouncementDetailsEntity;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.observedannouncement.ObservedAnnouncementEntity;
-import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.photopath.PhotoPathEntity;
+import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.photo.PhotoEntity;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -26,7 +28,9 @@ class EntityFactoryImplTest {
 
     private static final String TITLE = "Title";
 
-    private static final String MAIN_PHOTO_PATH = "test/path";
+    private static final byte[] MAIN_PHOTO = new byte[5];
+
+    private static final MultipartFile MAIN_PHOTO_FILE = new MockMultipartFile("test", new byte[5]);
 
     private static final Integer ROOMS_NUMBER = 2;
 
@@ -38,7 +42,13 @@ class EntityFactoryImplTest {
 
     private static final String CONTENT = "Content";
 
-    private static final List<String> PHOTO_PATHS = List.of("test/path/1", "test/path/2");
+    private static final List<byte[]> PHOTOS = List.of(
+            new byte[5],
+            new byte[5]);
+
+    private static final List<MultipartFile> PHOTOS_FILES = List.of(
+            new MockMultipartFile("test1", new byte[5]),
+            new MockMultipartFile("test2", new byte[5]));
 
     private static final String DISTRICT = "District";
 
@@ -81,7 +91,7 @@ class EntityFactoryImplTest {
         var actual = this.entityFactory.createAnnouncementDetailsEntity(addAnnouncementRequest, validAnnouncementContentEntity(), validAddressDetailsEntity());
 
         //THEN
-        Assertions.assertEquals(expected.getMainPhotoPath(), actual.getMainPhotoPath());
+        Assertions.assertEquals(expected.getMainPhoto().length, actual.getMainPhoto().length);
         Assertions.assertEquals(expected.getTitle(), actual.getTitle());
         Assertions.assertEquals(expected.getCaution(), actual.getCaution());
         Assertions.assertEquals(expected.getRoomsNumber(), actual.getRoomsNumber());
@@ -100,7 +110,7 @@ class EntityFactoryImplTest {
 
         //THEN
         Assertions.assertEquals(expected.getContent(), actual.getContent());
-        Assertions.assertEquals(expected.getPhotoPaths().stream().toList().get(0).getPhotoPath(), actual.getPhotoPaths().stream().toList().get(0).getPhotoPath());
+        Assertions.assertEquals(expected.getPhotos().stream().toList().get(0).getPhoto().length, actual.getPhotos().stream().toList().get(0).getPhoto().length);
     }
 
     @Test
@@ -151,7 +161,7 @@ class EntityFactoryImplTest {
         announcementDetails.setCaution(CAUTION);
         announcementDetails.setRoomsNumber(ROOMS_NUMBER);
         announcementDetails.setTitle(TITLE);
-        announcementDetails.setMainPhotoPath(MAIN_PHOTO_PATH);
+        announcementDetails.setMainPhoto(MAIN_PHOTO);
         announcementDetails.setRentalTerm(RENTAL_TERM);
         announcementDetails.setAddressDetailsEntity(validAddressDetailsEntity());
         announcementDetails.setAnnouncementContent(validAnnouncementContentEntity());
@@ -169,16 +179,16 @@ class EntityFactoryImplTest {
 
     private AnnouncementContentEntity validAnnouncementContentEntity() {
         var announcementContent = new AnnouncementContentEntity();
-        var photoPath = new PhotoPathEntity();
-        photoPath.setPhotoPath(PHOTO_PATHS.get(0));
-        var photoPath2 = new PhotoPathEntity();
-        photoPath2.setPhotoPath(PHOTO_PATHS.get(1));
+        var photoPath = new PhotoEntity();
+        photoPath.setPhoto(PHOTOS.get(0));
+        var photoPath2 = new PhotoEntity();
+        photoPath2.setPhoto(PHOTOS.get(1));
         announcementContent.setContent(CONTENT);
-        announcementContent.setPhotoPaths(List.of(photoPath, photoPath2));
+        announcementContent.setPhotos(List.of(photoPath, photoPath2));
         return announcementContent;
     }
 
-    private ObservedAnnouncementEntity validObservedAnnouncementEntity(AnnouncementEntity announcement){
+    private ObservedAnnouncementEntity validObservedAnnouncementEntity(AnnouncementEntity announcement) {
         var observedAnnouncement = new ObservedAnnouncementEntity();
         observedAnnouncement.setObservingUserId(USER_ID);
         observedAnnouncement.setAnnouncementEntity(announcement);
@@ -194,8 +204,8 @@ class EntityFactoryImplTest {
                 .content(CONTENT)
                 .district(DISTRICT)
                 .localNumber(LOCAL_NUMBER)
-                .mainPhotoPath(MAIN_PHOTO_PATH)
-                .photoPaths(PHOTO_PATHS)
+                .mainPhoto(MAIN_PHOTO_FILE)
+                .photos(PHOTOS_FILES)
                 .rentalAmount(RENTAL_AMOUNT)
                 .rentalTerm(RENTAL_TERM)
                 .roomsNumber(ROOMS_NUMBER)

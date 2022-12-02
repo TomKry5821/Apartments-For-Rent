@@ -16,6 +16,7 @@ import javax.persistence.Column;
 import javax.persistence.FetchType;
 import javax.persistence.OneToOne;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
@@ -35,8 +36,9 @@ public class AnnouncementDetailsEntity {
     @Column(name = "TITLE", nullable = false)
     private String title;
 
-    @Column(name = "MAIN_PHOTO_PATH")
-    private String mainPhotoPath;
+    @Column(name = "MAIN_PHOTO")
+    @Lob
+    private byte[] mainPhoto;
 
     @Column(name = "ROOMS_NUMBER", nullable = false)
     private Integer roomsNumber;

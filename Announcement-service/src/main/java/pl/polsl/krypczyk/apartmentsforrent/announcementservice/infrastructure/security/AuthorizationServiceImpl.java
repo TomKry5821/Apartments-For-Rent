@@ -26,6 +26,9 @@ public class AuthorizationServiceImpl implements AuthorizationService {
 
         log.info("Started user authorization with provided id - " + userId);
 
+        if(roles.contains(ROLE_ADMIN))
+            return;
+
         if (!userId.equals(requesterId) || !roles.contains(ROLE_USER))
             throw new UnauthorizedUserException();
 

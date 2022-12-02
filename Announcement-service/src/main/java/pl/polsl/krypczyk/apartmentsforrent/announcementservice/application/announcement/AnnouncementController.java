@@ -2,15 +2,8 @@ package pl.polsl.krypczyk.apartmentsforrent.announcementservice.application.anno
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.*;
 
 
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.application.announcement.dto.response.ObserveAnnouncementResponse;
@@ -32,6 +25,7 @@ import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.observedan
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import java.io.IOException;
 import java.util.Collection;
 
 @RestController
@@ -55,15 +49,15 @@ public class AnnouncementController {
         return this.announcementService.getAnnouncementWithAllDetails(announcementId);
     }
 
-    @PostMapping("/announcements")
-    public AddNewAnnouncementResponse addNewAnnouncement(@RequestBody @Valid AddNewAnnouncementRequest addNewAnnouncementRequest) throws UnauthorizedUserException {
+    @PostMapping(value = "/announcements", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    public AddNewAnnouncementResponse addNewAnnouncement(@Valid @ModelAttribute AddNewAnnouncementRequest addNewAnnouncementRequest) throws UnauthorizedUserException {
         this.authorizationService.authorizeUser(addNewAnnouncementRequest.getUserId());
         return this.announcementService.addNewAnnouncement(addNewAnnouncementRequest);
     }
 
-    @PutMapping("/announcements/{announcementId}")
-    public UpdateAnnouncementResponse updateAnnouncement(@RequestBody @Valid UpdateAnnouncementRequest updateAnnouncementRequest,
-                                                         @PathVariable @NotNull @Min(value = 1) Long announcementId) throws AnnouncementNotFoundException, ClosedAnnouncementException, UnauthorizedUserException {
+    @PutMapping(value = "/announcements/{announcementId}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    public UpdateAnnouncementResponse updateAnnouncement(@Valid @ModelAttribute UpdateAnnouncementRequest updateAnnouncementRequest,
+                                                         @PathVariable @NotNull @Min(value = 1) Long announcementId) throws AnnouncementNotFoundException, ClosedAnnouncementException, UnauthorizedUserException, IOException {
         this.authorizationService.authorizeUser(updateAnnouncementRequest.getUserId());
         return this.announcementService.updateAnnouncement(updateAnnouncementRequest, announcementId);
     }

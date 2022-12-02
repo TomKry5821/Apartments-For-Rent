@@ -2,6 +2,7 @@ package pl.polsl.krypczyk.apartmentsforrent.announcementservice.application.anno
 
 import lombok.Builder;
 import lombok.Data;
+import lombok.ToString;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -12,7 +13,8 @@ public class AnnouncementDetailsDTO {
 
     private String title;
 
-    private String mainPhotoPath;
+    @ToString.Exclude
+    private byte[] mainPhoto;
 
     private Integer roomsNumber;
 

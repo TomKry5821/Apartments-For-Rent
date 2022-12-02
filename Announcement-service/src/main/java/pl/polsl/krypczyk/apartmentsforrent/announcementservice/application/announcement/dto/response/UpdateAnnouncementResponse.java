@@ -6,7 +6,6 @@ import lombok.ToString;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.Collection;
 
 @Data
 @Builder
@@ -17,8 +16,6 @@ public class UpdateAnnouncementResponse {
 
     private String title;
 
-    private String mainPhotoPath;
-
     private Integer roomsNumber;
 
     private LocalDate rentalTerm;
@@ -28,9 +25,7 @@ public class UpdateAnnouncementResponse {
     private BigDecimal rentalAmount;
 
     private String content;
-
-    private Collection<String> photoPaths;
-
+    
     private String district;
 
     private String city;

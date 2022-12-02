@@ -5,7 +5,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.admin.AdminService;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.adressdetails.AddressDetailsRepository;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcement.AnnouncementRepository;
@@ -14,7 +16,7 @@ import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announceme
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.application.announcement.dto.request.AddNewAnnouncementRequest;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcementcontent.AnnouncementContentRepository;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcementdetails.AnnouncementDetailsRepository;
-import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.photopath.PhotoPathRepository;
+import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.photo.PhotoRepository;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -32,8 +34,12 @@ class AdminServiceImplTest {
     private static final String BUILDING_NUMBER = "1A";
     private static final String STREET = "Street";
     private static final String TITLE = "Title";
-    private static final List<String> PHOTO_PATHS = List.of("test", "test2");
-    private static final String MAIN_PHOTO_PATH = "path";
+
+    private static final List<MultipartFile> PHOTO_FILES = List.of(
+            new MockMultipartFile("test1", new byte[5]),
+            new MockMultipartFile("test2", new byte[5]));
+
+    private static final MultipartFile MAIN_PHOTO_FILE = new MockMultipartFile("test", new byte[5]);
     private static final BigDecimal RENTAL_AMOUNT = BigDecimal.valueOf(10.55);
     private static final int ROOMS_NUMBER = 1;
     private static final String ZIP_CODE = "11-111";
@@ -60,7 +66,7 @@ class AdminServiceImplTest {
     private AddressDetailsRepository addressDetailsRepository;
 
     @Autowired
-    private PhotoPathRepository photoPathRepository;
+    private PhotoRepository photoRepository;
 
     @BeforeEach
     void deleteDbContent() {
@@ -82,7 +88,7 @@ class AdminServiceImplTest {
         Assertions.assertTrue(this.announcementContentRepository.findAll().isEmpty());
         Assertions.assertTrue(this.announcementDetailsRepository.findAll().isEmpty());
         Assertions.assertTrue(this.addressDetailsRepository.findAll().isEmpty());
-        Assertions.assertTrue(this.photoPathRepository.findAll().isEmpty());
+        Assertions.assertTrue(this.photoRepository.findAll().isEmpty());
     }
 
     @Test
@@ -108,8 +114,8 @@ class AdminServiceImplTest {
                 .buildingNumber(BUILDING_NUMBER)
                 .street(STREET)
                 .title(TITLE)
-                .photoPaths(PHOTO_PATHS)
-                .mainPhotoPath(MAIN_PHOTO_PATH)
+                .photos(PHOTO_FILES)
+                .mainPhoto(MAIN_PHOTO_FILE)
                 .rentalAmount(RENTAL_AMOUNT)
                 .roomsNumber(ROOMS_NUMBER)
                 .zipCode(ZIP_CODE)

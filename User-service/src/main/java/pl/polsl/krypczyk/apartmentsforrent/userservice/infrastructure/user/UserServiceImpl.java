@@ -90,15 +90,16 @@ public class UserServiceImpl implements UserService {
         if (Objects.isNull(user))
             throw new UserNotFoundException();
         var userDetails = user.getUserDetailsEntity();
+        var actualUserEmail = userDetails.getEmail();
 
-        this.changeAndSaveUserDetails(userDetails, changeUserDetailsRequest);
+        this.changeAndSaveUserDetails(userDetails, changeUserDetailsRequest, actualUserEmail);
         var changeUserDetailsResponse = this.responseFactory.createChangeUserDetailsResponse(changeUserDetailsRequest);
 
         log.info("Successfully updated user data - " + changeUserDetailsResponse);
         return changeUserDetailsResponse;
     }
 
-    private void changeAndSaveUserDetails(UserDetailsEntity userDetailsEntity, ChangeUserDetailsRequest changeUserDetailsRequest) throws UserAlreadyExistsException {
+    private void changeAndSaveUserDetails(UserDetailsEntity userDetailsEntity, ChangeUserDetailsRequest changeUserDetailsRequest, String actualUserEmail) throws UserAlreadyExistsException {
         var name = changeUserDetailsRequest.getName();
         if (!Objects.isNull(name))
             userDetailsEntity.setName(name);
@@ -107,7 +108,8 @@ public class UserServiceImpl implements UserService {
             userDetailsEntity.setSurname(surname);
         var email = changeUserDetailsRequest.getEmail();
         if (!Objects.isNull(email)) {
-            if (this.userDetailsRepository.existsByEmail(email))
+            if (this.userDetailsRepository.existsByEmail(email)
+                    && !email.equals(actualUserEmail))
                 throw new UserAlreadyExistsException();
             userDetailsEntity.setEmail(email);
         }
@@ -141,7 +143,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public String getUsername(Long userId) {
         var user = this.userRepository.findUserEntityById(userId);
-        if(Objects.isNull(user))
+        if (Objects.isNull(user))
             return "Nieznany użytkownik";
 
         return user.getUserDetailsEntity().getName();

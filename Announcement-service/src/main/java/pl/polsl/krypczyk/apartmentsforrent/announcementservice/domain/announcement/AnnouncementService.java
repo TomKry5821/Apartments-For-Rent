@@ -9,6 +9,7 @@ import pl.polsl.krypczyk.apartmentsforrent.announcementservice.application.annou
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.application.announcement.dto.response.GetAnnouncementWithAllDetailsResponse;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.application.announcement.dto.response.UpdateAnnouncementResponse;
 
+import java.io.IOException;
 import java.util.Collection;
 
 public interface AnnouncementService {
@@ -19,7 +20,7 @@ public interface AnnouncementService {
     AddNewAnnouncementResponse addNewAnnouncement(AddNewAnnouncementRequest addNewAnnouncementRequest);
 
     UpdateAnnouncementResponse updateAnnouncement(UpdateAnnouncementRequest updateAnnouncementRequest,
-                                                  Long announcementId) throws AnnouncementNotFoundException, ClosedAnnouncementException;
+                                                  Long announcementId) throws AnnouncementNotFoundException, ClosedAnnouncementException, IOException;
 
     void closeAnnouncement(Long announcementId, Long userId) throws AnnouncementNotFoundException;
 
