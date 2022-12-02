@@ -22,12 +22,13 @@ import pl.polsl.krypczyk.apartmentsforrent.announcementservice.application.annou
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcementcontent.AnnouncementContentEntity;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcementcontent.AnnouncementContentRepository;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.observedannouncement.ObservedAnnouncementRepository;
-import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.photopath.PhotoPathEntity;
-import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.photopath.PhotoPathRepository;
+import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.photo.PhotoEntity;
+import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.photo.PhotoRepository;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcementdetails.AnnouncementDetailsEntity;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.domain.announcementdetails.AnnouncementDetailsRepository;
 import pl.polsl.krypczyk.apartmentsforrent.announcementservice.infrastructure.utils.AnnouncementUtils;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
@@ -42,7 +43,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     private final AnnouncementContentRepository announcementContentRepository;
     private final AddressDetailsRepository addressDetailsRepository;
     private final AnnouncementDetailsRepository announcementDetailsRepository;
-    private final PhotoPathRepository photoPathRepository;
+    private final PhotoRepository photoRepository;
     private final ObservedAnnouncementRepository observedAnnouncementRepository;
     private final ResponseFactory responseFactory;
     private final EntityFactory entityFactory;
@@ -93,7 +94,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
 
     @Override
     public UpdateAnnouncementResponse updateAnnouncement(UpdateAnnouncementRequest updateAnnouncementRequest,
-                                                         Long announcementId) throws AnnouncementNotFoundException, ClosedAnnouncementException {
+                                                         Long announcementId) throws AnnouncementNotFoundException, ClosedAnnouncementException, IOException {
         log.info("Started updating announcement with id - " + announcementId + " By user with id - " + updateAnnouncementRequest.getUserId());
 
         var announcement = this.announcementUtils.getAnnouncementElseThrowAnnouncementNotFound(announcementId);
@@ -109,7 +110,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     }
 
     private void updateAnnouncementEntity(AnnouncementEntity announcement,
-                                          UpdateAnnouncementRequest updateAnnouncementRequest) {
+                                          UpdateAnnouncementRequest updateAnnouncementRequest) throws IOException {
 
         var district = updateAnnouncementRequest.getDistrict();
         if (!Objects.isNull(district))
@@ -125,13 +126,13 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     }
 
     private void updateAnnouncementDetailsEntity(AnnouncementDetailsEntity announcementDetails,
-                                                 UpdateAnnouncementRequest updateAnnouncementRequest) {
+                                                 UpdateAnnouncementRequest updateAnnouncementRequest) throws IOException {
         var title = updateAnnouncementRequest.getTitle();
         if (!Objects.isNull(title))
             announcementDetails.setTitle(title);
-        var mainPhotoPath = updateAnnouncementRequest.getMainPhotoPath();
+        var mainPhotoPath = updateAnnouncementRequest.getMainPhoto();
         if (!Objects.isNull(mainPhotoPath))
-            announcementDetails.setMainPhotoPath(mainPhotoPath);
+            announcementDetails.setMainPhoto(mainPhotoPath.getBytes());
         var roomsNumber = updateAnnouncementRequest.getRoomsNumber();
         if (!Objects.isNull(roomsNumber))
             announcementDetails.setRoomsNumber(roomsNumber);
@@ -159,19 +160,22 @@ public class AnnouncementServiceImpl implements AnnouncementService {
         var content = updateAnnouncementRequest.getContent();
         if (!Objects.isNull(content))
             announcementContent.setContent(content);
-        var photoPaths = updateAnnouncementRequest.getPhotoPaths();
-        if (!Objects.isNull(photoPaths)) {
-            Collection<PhotoPathEntity> photoPathEntities = new ArrayList<>();
-            photoPaths.forEach(pp -> {
-                var photoPath = new PhotoPathEntity();
-                photoPath.setPhotoPath(pp);
-                this.photoPathRepository.save(photoPath);
+        var photos = updateAnnouncementRequest.getPhotos();
+        if (!Objects.isNull(photos)) {
+            Collection<PhotoEntity> photoPathEntities = new ArrayList<>();
+            photos.forEach(pp -> {
+                var photoPath = new PhotoEntity();
+                try {
+                    photoPath.setPhoto(pp.getBytes());
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+                this.photoRepository.save(photoPath);
                 photoPathEntities.add(photoPath);
             });
-            announcementContent.getPhotoPaths().clear();
-            announcementContent.setPhotoPaths(photoPathEntities);
+            announcementContent.getPhotos().clear();
+            announcementContent.setPhotos(photoPathEntities);
         }
-
         this.announcementContentRepository.save(announcementContent);
     }
 
