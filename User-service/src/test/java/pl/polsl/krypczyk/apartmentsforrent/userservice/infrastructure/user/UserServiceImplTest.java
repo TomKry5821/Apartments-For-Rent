@@ -118,16 +118,19 @@ class UserServiceImplTest {
     }
 
     @Test
-    void testChangeUserDetailsWithExistingEmailShouldThrowUserAlreadyExistsException() throws UserAlreadyExistsException {
+    void testChangeUserDetailsWithoutEmailChangeShouldNotThrowUserAlreadyExistsException() throws UserAlreadyExistsException, UserNotFoundException, InvalidUserDetailsException {
         //GIVEN
         var user = this.createValidUserRequest();
         var createUserResponse = this.userService.createUser(user);
         var userId = createUserResponse.getId();
         var changeUserDetailsRequest = this.createValidChangeUserDetailsRequest();
 
-        //WHEN AND THEN
-        Assertions.assertThrows(UserAlreadyExistsException.class, () ->
-                this.userService.changeUserDetails(changeUserDetailsRequest, userId));
+        //WHEN
+        this.userService.changeUserDetails(changeUserDetailsRequest, userId);
+
+        //THEN
+        Assertions.assertDoesNotThrow(UserNotFoundException::new);
+        Assertions.assertDoesNotThrow(UserAlreadyExistsException::new);
     }
 
     @Test
