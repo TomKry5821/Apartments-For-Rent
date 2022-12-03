@@ -25,7 +25,6 @@ public class UpdateAnnouncementRequest {
     @NotEmpty(message = "Invalid announcement title")
     private String title;
 
-    @NotNull(message = "Invalid main photo")
     private MultipartFile mainPhoto;
 
     @NotNull(message = "Invalid rooms number")
