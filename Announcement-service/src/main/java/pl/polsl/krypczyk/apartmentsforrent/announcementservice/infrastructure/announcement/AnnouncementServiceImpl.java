@@ -39,6 +39,7 @@ import java.util.Objects;
 @Slf4j
 public class AnnouncementServiceImpl implements AnnouncementService {
 
+    private static final boolean ACTIVE = false;
     private final AnnouncementRepository announcementRepository;
     private final AnnouncementContentRepository announcementContentRepository;
     private final AddressDetailsRepository addressDetailsRepository;
@@ -50,10 +51,12 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     private final AnnouncementUtils announcementUtils;
 
     @Override
-    public Collection<AnnouncementDTO> getAllActiveAnnouncements() {
+    public Collection<AnnouncementDTO> getAllActiveAnnouncements(Long userId) {
         log.info("Started retrieving all active announcements");
 
-        var announcements = this.announcementRepository.findAnnouncementEntitiesByIsClosed(false);
+        var announcements = (Objects.isNull(userId)) ?
+                this.announcementRepository.findAnnouncementEntitiesByIsClosed(false):
+                this.announcementRepository.findAnnouncementEntitiesByIsClosedAndUserId(ACTIVE, userId);
 
         Collection<AnnouncementDTO> announcementDTOS = new ArrayList<>();
         announcements.forEach(a -> announcementDTOS.add(this.responseFactory.createAnnouncementDTO(a)));
