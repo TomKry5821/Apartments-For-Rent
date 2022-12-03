@@ -13,6 +13,8 @@ import java.time.LocalDate;
 @ToString
 public class AnnouncementDTO {
 
+    private Long id;
+
     private Long userId;
 
     private String username;
