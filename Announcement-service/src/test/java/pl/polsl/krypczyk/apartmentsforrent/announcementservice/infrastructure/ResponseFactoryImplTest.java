@@ -77,6 +77,7 @@ class ResponseFactoryImplTest {
         var actual = this.responseFactory.createAnnouncementDTO(announcement);
 
         //THEN
+        Assertions.assertEquals(expected.getId(), actual.getId());
         Assertions.assertEquals(expected.getUserId(), actual.getUserId());
         Assertions.assertEquals(expected.getDistrict(), actual.getDistrict());
         Assertions.assertEquals(expected.getCity(), actual.getCity());
