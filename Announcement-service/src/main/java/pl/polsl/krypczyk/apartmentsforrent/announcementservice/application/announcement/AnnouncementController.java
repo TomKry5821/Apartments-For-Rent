@@ -40,8 +40,8 @@ public class AnnouncementController {
     private final AuthorizationService authorizationService;
 
     @GetMapping("/public/announcements")
-    public Collection<AnnouncementDTO> getAllActiveAnnouncements() {
-        return this.announcementService.getAllActiveAnnouncements();
+    public Collection<AnnouncementDTO> getAllActiveAnnouncements(@RequestParam(required = false) Long userId) {
+        return this.announcementService.getAllActiveAnnouncements(userId);
     }
 
     @GetMapping("/public/announcements/{announcementId}")

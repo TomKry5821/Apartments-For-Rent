@@ -239,7 +239,7 @@ class AnnouncementControllerTest {
                         .param("userId", "1")
                         .param("title", "Title")
                         .param("roomsNumber", "3")
-                        .param("rentalTerm", "2022-12-03")
+                        .param("rentalTerm", "2023-12-03")
                         .param("caution", "1000.00")
                         .param("rentalAmount", "1000.00")
                         .param("content", "Content")

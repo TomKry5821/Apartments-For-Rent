@@ -76,7 +76,7 @@ class AnnouncementServiceImplTest {
         Collection<AnnouncementDTO> expected = new ArrayList<>();
 
         //WHEN
-        var actual = this.announcementService.getAllActiveAnnouncements();
+        var actual = this.announcementService.getAllActiveAnnouncements(null);
 
         //THEN
         assertEquals(expected, actual);
@@ -89,7 +89,7 @@ class AnnouncementServiceImplTest {
         this.announcementService.addNewAnnouncement(addNewAnnouncementRequest);
 
         //WHEN
-        var actual = this.announcementService.getAllActiveAnnouncements();
+        var actual = this.announcementService.getAllActiveAnnouncements(null);
 
         //THEN
         assertFalse(actual.isEmpty());

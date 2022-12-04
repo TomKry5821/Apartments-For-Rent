@@ -13,7 +13,7 @@ import java.io.IOException;
 import java.util.Collection;
 
 public interface AnnouncementService {
-    Collection<AnnouncementDTO> getAllActiveAnnouncements();
+    Collection<AnnouncementDTO> getAllActiveAnnouncements(Long userId);
 
     GetAnnouncementWithAllDetailsResponse getAnnouncementWithAllDetails(Long announcementId) throws AnnouncementNotFoundException;
 
