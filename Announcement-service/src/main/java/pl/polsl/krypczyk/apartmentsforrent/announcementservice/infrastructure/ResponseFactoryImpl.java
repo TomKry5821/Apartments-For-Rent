@@ -119,6 +119,7 @@ public class ResponseFactoryImpl implements ResponseFactory {
         var username = this.getUsername(announcement.getUserId());
         var observedAnnouncementDTO = ObservedAnnouncementDTO
                 .builder()
+                .announcementId(announcement.getId())
                 .title(announcement.getAnnouncementDetailsEntity().getTitle())
                 .userId(announcement.getUserId())
                 .username(username)
