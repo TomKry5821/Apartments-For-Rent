@@ -12,10 +12,7 @@ import pl.polsl.krypczyk.apartmentsforrent.messageservice.domain.ResponseFactory
 import pl.polsl.krypczyk.apartmentsforrent.messageservice.domain.message.MessageEntity;
 import pl.polsl.krypczyk.apartmentsforrent.messageservice.domain.message.MessageMapper;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 @Component
 @Slf4j
@@ -29,7 +26,7 @@ public class ResponseFactoryImpl implements ResponseFactory {
     @Override
     public AddNewMessageResponse createAddNewMessageResponse(AddNewMessageRequest addNewMessageRequest, Long messageId) {
         var addNewMessageResponse = this.messageMapper.addNewMessageRequestToAddNewMessageResponse(addNewMessageRequest);
-        addNewMessageResponse.setAttachmentsCount(addNewMessageRequest.getAttachments().size());
+        addNewMessageResponse.setAttachmentsCount(Objects.requireNonNullElse(addNewMessageRequest.getAttachments(), Collections.emptyList()).size());
         addNewMessageResponse.setId(messageId);
 
         log.trace("Created add new message response - " + addNewMessageResponse);

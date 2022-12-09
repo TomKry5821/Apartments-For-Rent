@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 import pl.polsl.krypczyk.apartmentsforrent.messageservice.application.message.dto.request.AddNewMessageRequest;
 import pl.polsl.krypczyk.apartmentsforrent.messageservice.application.message.dto.response.AddNewMessageResponse;
 import pl.polsl.krypczyk.apartmentsforrent.messageservice.application.message.dto.response.MessageDTO;
@@ -15,10 +16,7 @@ import pl.polsl.krypczyk.apartmentsforrent.messageservice.domain.message.Message
 import pl.polsl.krypczyk.apartmentsforrent.messageservice.domain.message.MessageRepository;
 import pl.polsl.krypczyk.apartmentsforrent.messageservice.domain.message.MessageService;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
@@ -41,7 +39,8 @@ public class MessageServiceImpl implements MessageService {
         log.info("Started adding message - " + addNewMessageRequest);
 
         var attachments = new ArrayList<AttachmentEntity>();
-        addNewMessageRequest.getAttachments().forEach(f ->
+        Objects.requireNonNullElse(addNewMessageRequest.getAttachments(), new ArrayList<MultipartFile>())
+                .forEach(f ->
                attachments.add(this.attachmentRepository.save(this.entityFactory.createAttachmentEntity(f))));
 
         var message = this.entityFactory.createMessageEntity(addNewMessageRequest, attachments);
