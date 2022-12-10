@@ -216,6 +216,7 @@ class ResponseFactoryImplTest {
 
     private AnnouncementEntity validAnnouncementWithAllDetailsEntity() {
         var announcement = new AnnouncementEntity();
+        announcement.setId(ANNOUNCEMENT_ID);
         announcement.setCity(CITY);
         announcement.setDistrict(DISTRICT);
         announcement.setUserId(USER_ID);
