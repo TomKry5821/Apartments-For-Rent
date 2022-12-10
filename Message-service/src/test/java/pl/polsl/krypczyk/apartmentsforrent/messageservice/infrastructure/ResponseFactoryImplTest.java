@@ -7,6 +7,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.web.multipart.MultipartFile;
 import pl.polsl.krypczyk.apartmentsforrent.messageservice.application.message.dto.request.AddNewMessageRequest;
 import pl.polsl.krypczyk.apartmentsforrent.messageservice.application.message.dto.response.AddNewMessageResponse;
+import pl.polsl.krypczyk.apartmentsforrent.messageservice.application.message.dto.response.ConversationDTO;
 import pl.polsl.krypczyk.apartmentsforrent.messageservice.application.message.dto.response.MessageDTO;
 import pl.polsl.krypczyk.apartmentsforrent.messageservice.domain.ResponseFactory;
 import pl.polsl.krypczyk.apartmentsforrent.messageservice.domain.attachment.AttachmentEntity;
@@ -68,6 +69,21 @@ class ResponseFactoryImplTest {
         Assertions.assertEquals(expected.get(0).getReceiverName(), actual.stream().toList().get(0).getReceiverName());
     }
 
+    @Test
+    void testCreatConversationDTOWithValidUserIdAndReceiverIdShouldReturnExpectedConversationDTO(){
+        //GIVEN
+        var expected = validConversationDTO();
+
+        //WHEN
+        var actual = this.responseFactory.createConversationDTO(SENDER_ID, RECEIVER_ID);
+
+        //THEN
+        Assertions.assertEquals(expected.getSenderId(), actual.getSenderId());
+        Assertions.assertEquals(expected.getSenderName(), actual.getSenderName());
+        Assertions.assertEquals(expected.getReceiverId(), actual.getReceiverId());
+        Assertions.assertEquals(expected.getReceiverName(), actual.getReceiverName());
+    }
+
     private AddNewMessageRequest validAddMessageRequest() {
         return AddNewMessageRequest
                 .builder()
@@ -100,7 +116,7 @@ class ResponseFactoryImplTest {
                 .build();
     }
 
-    private MessageEntity validMessageEntity(){
+    private MessageEntity validMessageEntity() {
         var message = new MessageEntity();
         message.setMessage(MESSAGE);
         message.setSenderId(SENDER_ID);
@@ -108,6 +124,16 @@ class ResponseFactoryImplTest {
         message.setAttachments(DB_ATTACHMENTS);
 
         return message;
+    }
+
+    private ConversationDTO validConversationDTO() {
+        return ConversationDTO
+                .builder()
+                .senderId(SENDER_ID)
+                .senderName(USERNAME)
+                .receiverId(RECEIVER_ID)
+                .receiverName(USERNAME)
+                .build();
     }
 
 }

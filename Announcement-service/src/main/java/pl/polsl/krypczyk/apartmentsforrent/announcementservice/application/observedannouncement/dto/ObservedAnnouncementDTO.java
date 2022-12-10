@@ -9,6 +9,8 @@ import lombok.ToString;
 @ToString
 public class ObservedAnnouncementDTO {
 
+    private Long announcementId;
+
     private String title;
 
     private byte[] mainPhoto;

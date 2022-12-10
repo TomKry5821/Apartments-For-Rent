@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import pl.polsl.krypczyk.apartmentsforrent.messageservice.application.message.dto.request.AddNewMessageRequest;
 import pl.polsl.krypczyk.apartmentsforrent.messageservice.application.message.dto.response.AddNewMessageResponse;
+import pl.polsl.krypczyk.apartmentsforrent.messageservice.application.message.dto.response.ConversationDTO;
 import pl.polsl.krypczyk.apartmentsforrent.messageservice.application.message.dto.response.MessageDTO;
 import pl.polsl.krypczyk.apartmentsforrent.messageservice.domain.message.MessageService;
 import pl.polsl.krypczyk.apartmentsforrent.messageservice.domain.security.authorization.AuthorizationService;
@@ -43,5 +44,11 @@ public class MessageController {
                                                   @PathVariable @NotNull @Min(value = 1) Long receiverId) throws UnauthorizedUserException {
         this.authorizationService.authorizeUser(senderId);
         return this.messageService.getConversation(senderId, receiverId);
+    }
+
+    @GetMapping(value = "/messages/conversations/{userId}")
+    public Collection<ConversationDTO> getConversation(@PathVariable @NotNull @Min(value = 1) Long userId) throws UnauthorizedUserException {
+        this.authorizationService.authorizeUser(userId);
+        return this.messageService.getUserConversations(userId);
     }
 }

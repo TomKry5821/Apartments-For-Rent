@@ -67,6 +67,29 @@ class MessageServiceImplTest {
         Assertions.assertTrue(this.messageRepository.findAll().isEmpty());
     }
 
+    @Test
+    void testGetUserConversationsWithNotEmptyConversationShouldReturnNotEmptyConversationList(){
+        //GIVEN
+        var addNewMessageRequest = this.addNewMessageRequest();
+        this.messageService.addNewMessage(addNewMessageRequest);
+
+        //WHEN
+        var conversations = this.messageService.getUserConversations(SENDER_ID);
+
+        //THEN
+        Assertions.assertFalse(conversations.isEmpty());
+    }
+
+    @Test
+    void testGetUserConversationsWithEmptyConversationShouldReturnEmptyConversationList(){
+        //GIVEN
+        //WHEN
+        var conversations = this.messageService.getUserConversations(SENDER_ID);
+
+        //THEN
+        Assertions.assertTrue(conversations.isEmpty());
+    }
+
     private AddNewMessageRequest addNewMessageRequest() {
         return AddNewMessageRequest
                 .builder()

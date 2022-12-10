@@ -6,16 +6,14 @@ import org.mapstruct.factory.Mappers;
 import org.springframework.stereotype.Component;
 import pl.polsl.krypczyk.apartmentsforrent.messageservice.application.message.dto.request.AddNewMessageRequest;
 import pl.polsl.krypczyk.apartmentsforrent.messageservice.application.message.dto.response.AddNewMessageResponse;
+import pl.polsl.krypczyk.apartmentsforrent.messageservice.application.message.dto.response.ConversationDTO;
 import pl.polsl.krypczyk.apartmentsforrent.messageservice.application.message.dto.response.MessageDTO;
 import pl.polsl.krypczyk.apartmentsforrent.messageservice.domain.HttpService;
 import pl.polsl.krypczyk.apartmentsforrent.messageservice.domain.ResponseFactory;
 import pl.polsl.krypczyk.apartmentsforrent.messageservice.domain.message.MessageEntity;
 import pl.polsl.krypczyk.apartmentsforrent.messageservice.domain.message.MessageMapper;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 @Component
 @Slf4j
@@ -29,7 +27,7 @@ public class ResponseFactoryImpl implements ResponseFactory {
     @Override
     public AddNewMessageResponse createAddNewMessageResponse(AddNewMessageRequest addNewMessageRequest, Long messageId) {
         var addNewMessageResponse = this.messageMapper.addNewMessageRequestToAddNewMessageResponse(addNewMessageRequest);
-        addNewMessageResponse.setAttachmentsCount(addNewMessageRequest.getAttachments().size());
+        addNewMessageResponse.setAttachmentsCount(Objects.requireNonNullElse(addNewMessageRequest.getAttachments(), Collections.emptyList()).size());
         addNewMessageResponse.setId(messageId);
 
         log.trace("Created add new message response - " + addNewMessageResponse);
@@ -52,9 +50,25 @@ public class ResponseFactoryImpl implements ResponseFactory {
         return messageDTOS;
     }
 
-    private Map<Long, String> createUsernamesMap(Long senderId, Long receiverId){
+    @Override
+    public ConversationDTO createConversationDTO(Long userId, Long receiverId) {
+        var userNamesMap = this.createUsernamesMap(userId, receiverId);
+
+        var conversationDTO = ConversationDTO
+                .builder()
+                .senderId(userId)
+                .senderName(userNamesMap.get(userId))
+                .receiverId(receiverId)
+                .receiverName(userNamesMap.get(receiverId))
+                .build();
+
+        log.trace("Created conversation DTO - " + conversationDTO);
+        return conversationDTO;
+    }
+
+    private Map<Long, String> createUsernamesMap(Long senderId, Long receiverId) {
         var usernamesMap = new HashMap<Long, String>();
-        var senderName =  this.httpService.retrieveUsernameFromUserService(senderId);
+        var senderName = this.httpService.retrieveUsernameFromUserService(senderId);
         var receiverName = this.httpService.retrieveUsernameFromUserService(receiverId);
 
         usernamesMap.put(senderId, senderName);

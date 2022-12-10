@@ -9,6 +9,7 @@ import java.time.LocalDate;
 
 @Data
 @Builder
+@ToString
 public class AnnouncementDetailsDTO {
 
     private String title;

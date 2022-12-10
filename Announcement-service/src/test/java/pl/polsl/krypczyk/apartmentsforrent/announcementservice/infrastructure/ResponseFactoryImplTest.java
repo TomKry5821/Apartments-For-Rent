@@ -178,7 +178,7 @@ class ResponseFactoryImplTest {
     }
 
     @Test
-    void testCreateObservedAnnouncementDTOWithValidAnnouncementEntityShouldReturnExpectedObservedAnnouncmentDTO() {
+    void testCreateObservedAnnouncementDTOWithValidAnnouncementEntityShouldReturnExpectedObservedAnnouncementDTO() {
         //GIVEN
         var announcement = validAnnouncementWithAllDetailsEntity();
         var expected = validObservedAnnouncementDTO();
@@ -188,6 +188,7 @@ class ResponseFactoryImplTest {
 
         //THEN
         Assertions.assertEquals(expected.getUserId(), actual.getUserId());
+        Assertions.assertEquals(expected.getAnnouncementId(), actual.getAnnouncementId());
         Assertions.assertEquals(expected.getTitle(), actual.getTitle());
         Assertions.assertEquals(expected.getMainPhoto(), actual.getMainPhoto());
         Assertions.assertEquals(expected.getUsername(), actual.getUsername());
@@ -370,6 +371,7 @@ class ResponseFactoryImplTest {
     private ObservedAnnouncementDTO validObservedAnnouncementDTO() {
         return ObservedAnnouncementDTO
                 .builder()
+                .announcementId(ANNOUNCEMENT_ID)
                 .title(TITLE)
                 .mainPhoto(MAIN_PHOTO)
                 .userId(USER_ID)
