@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import pl.polsl.krypczyk.apartmentsforrent.messageservice.application.message.dto.request.AddNewMessageRequest;
 import pl.polsl.krypczyk.apartmentsforrent.messageservice.application.message.dto.response.AddNewMessageResponse;
+import pl.polsl.krypczyk.apartmentsforrent.messageservice.application.message.dto.response.ConversationDTO;
 import pl.polsl.krypczyk.apartmentsforrent.messageservice.application.message.dto.response.MessageDTO;
 import pl.polsl.krypczyk.apartmentsforrent.messageservice.domain.EntityFactory;
 import pl.polsl.krypczyk.apartmentsforrent.messageservice.domain.ResponseFactory;
@@ -16,8 +17,12 @@ import pl.polsl.krypczyk.apartmentsforrent.messageservice.domain.message.Message
 import pl.polsl.krypczyk.apartmentsforrent.messageservice.domain.message.MessageRepository;
 import pl.polsl.krypczyk.apartmentsforrent.messageservice.domain.message.MessageService;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.Objects;
 import java.util.stream.Collectors;
+import java.util.List;
 
 
 @Service
@@ -41,7 +46,7 @@ public class MessageServiceImpl implements MessageService {
         var attachments = new ArrayList<AttachmentEntity>();
         Objects.requireNonNullElse(addNewMessageRequest.getAttachments(), new ArrayList<MultipartFile>())
                 .forEach(f ->
-               attachments.add(this.attachmentRepository.save(this.entityFactory.createAttachmentEntity(f))));
+                        attachments.add(this.attachmentRepository.save(this.entityFactory.createAttachmentEntity(f))));
 
         var message = this.entityFactory.createMessageEntity(addNewMessageRequest, attachments);
         this.messageRepository.save(message);
@@ -70,5 +75,18 @@ public class MessageServiceImpl implements MessageService {
                 .stream()
                 .sorted(sendDateComparator)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public Collection<ConversationDTO> getUserConversations(Long userId) {
+        log.info("Started retrieving all conversations for user with id - " + userId);
+        var receiverIds = this.messageRepository.getAllReceiversBySenderId(userId);
+        var userConversations = receiverIds
+                .stream()
+                .map(rId -> this.responseFactory.createConversationDTO(userId, rId))
+                .collect(Collectors.toList());
+
+        log.info("Successfully retrieved all conversations for user with id - " + userId);
+        return userConversations;
     }
 }
