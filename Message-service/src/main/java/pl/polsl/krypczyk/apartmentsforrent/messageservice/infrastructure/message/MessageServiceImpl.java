@@ -70,7 +70,7 @@ public class MessageServiceImpl implements MessageService {
         conversation.addAll(this.messageRepository.getMessageEntitiesBySenderIdAndReceiverId(receiverId, senderId));
 
 
-        Comparator<MessageEntity> sendDateComparator = (m1, m2) -> m1.getSendDate().isAfter(m2.getSendDate()) ? -1 : m1.getSendDate().isBefore(m2.getSendDate()) ? 1 : 0;
+        Comparator<MessageEntity> sendDateComparator = (m1, m2) -> m1.getSendDate().isBefore(m2.getSendDate()) ? -1 : m1.getSendDate().isBefore(m2.getSendDate()) ? 1 : 0;
         return conversation
                 .stream()
                 .sorted(sendDateComparator)
@@ -81,6 +81,7 @@ public class MessageServiceImpl implements MessageService {
     public Collection<ConversationDTO> getUserConversations(Long userId) {
         log.info("Started retrieving all conversations for user with id - " + userId);
         var receiverIds = this.messageRepository.getAllReceiversBySenderId(userId);
+        receiverIds.addAll(this.messageRepository.getAllSendersByReceiverId(userId));
         var userConversations = receiverIds
                 .stream()
                 .map(rId -> this.responseFactory.createConversationDTO(userId, rId))
