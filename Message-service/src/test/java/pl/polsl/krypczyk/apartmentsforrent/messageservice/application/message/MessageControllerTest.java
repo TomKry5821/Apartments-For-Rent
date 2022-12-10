@@ -73,7 +73,16 @@ class MessageControllerTest {
                         .header("X-USER-ID", 1L)
                         .header("X-USER-ROLES", "ROLE_ADMIN, ROLE_USER]"))
                 .andExpect(status().isOk());
+    }
 
+    @Test
+    void testGetUserConversationsWithValidSenderIdShouldReturn200() throws Exception {
+        this.addNewMessage();
+
+        mvc.perform(get("/message/api/v1/messages/conversations/1")
+                        .header("X-USER-ID", 1L)
+                        .header("X-USER-ROLES", "ROLE_ADMIN, ROLE_USER]"))
+                .andExpect(status().isOk());
     }
 
     @Test
